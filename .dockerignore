@@ -1,0 +1,37 @@
+# Dev/data pipeline scripts
+data/
+.claude/
+.benchmarks/
+docs/
+tests/
+
+# Secrets
+.env
+.env*
+
+# Debug/temp
+debug_product.html
+.DS_Store
+
+# VCS / local workspace
+.git/
+.gitignore
+
+# Virtualenvs / dependency caches
+.venv/
+venv/
+env/
+node_modules/
+
+# Build artifacts
+skincare_advisor.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+dist/
+build/
+__pycache__/
+*.pyc
+*.pyo

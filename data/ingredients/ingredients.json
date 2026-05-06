@@ -1,0 +1,2721 @@
+[
+  {
+    "inci_name": "acetyl hexapeptide-3",
+    "common_names": [
+      "argireline",
+      "acetyl hexapeptide-8"
+    ],
+    "functions": [
+      "anti-wrinkle*",
+      "muscle relaxant peptide*"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [
+      "salicylic acid"
+    ],
+    "known_conflicts_detail": [
+      {
+        "inci_name": "salicylic acid",
+        "level": "caution",
+        "reason": "Low pH from salicylic acid can hydrolyse peptide bonds over time. Separate AM/PM."
+      }
+    ],
+    "safety_notes": "",
+    "usage_guidance": "Apply twice daily, morning and evening, to clean skin before moisturizer. Focus on areas prone to expression lines—forehead, around eyes, and between brows. Works best with consistent use over 4 to 8 weeks. Can be layered with other actives including vitamin C, niacinamide, and retinoids. No significant pH sensitivity. Typically found in serums at concentrations of 5-10%.",
+    "confidence": 2,
+    "sources": []
+  },
+  {
+    "inci_name": "adapalene",
+    "common_names": [
+      "adapalene",
+      "differin"
+    ],
+    "functions": [
+      "keratolytic",
+      "retinoid"
+    ],
+    "suitable_skin_types": [
+      "oily",
+      "acne-prone"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [
+      "acne vulgaris",
+      "verrucae",
+      "molluscum contagiosum",
+      "Darier disease",
+      "Fox-Fordyce disease",
+      "Dowling-Degos disease",
+      "photoaging",
+      "pigmentary disorders",
+      "actinic keratoses",
+      "alopecia areata"
+    ],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Poorly absorbed after topical application with blood levels less than 0.25 mcg/L with long-term use. Should be applied to the smallest possible surface area for the shortest time necessary. Avoid applying to the nipple area during breastfeeding.",
+    "usage_guidance": "Apply once daily in the evening to clean, dry skin. Start with use every other night for the first 1-2 weeks to allow your skin to acclimate, then increase to nightly use as tolerated. Apply a pea-sized amount after cleansing but before moisturizer. Expect some dryness, peeling, or mild irritation during the first few weeks as your skin adjusts. Always use a broad-spectrum SPF during the day as retinoids increase sun sensitivity. Avoid using with other potentially irritating actives like strong AHAs or BHAs until your skin has adapted.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Efficacy and Safety of a Fixed-Dose Clindamycin Phosphate 1.2%, Benzoyl Peroxide 3.1%, and Adapalene 0.15% Gel for Moderate-to-Severe Acne: A Randomized Phase II Study of the First Triple-Combination Drug.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/30000483/"
+      },
+      {
+        "title": "No title",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/29494115/"
+      }
+    ]
+  },
+  {
+    "inci_name": "allantoin",
+    "common_names": [
+      "allantoin"
+    ],
+    "functions": [
+      "protein aggregation suppressor*",
+      "skin protectant*",
+      "soothing agent*"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [
+      "rosacea"
+    ],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "",
+    "usage_guidance": "Allantoin is exceptionally gentle and can be used morning and evening without restriction. It works well in any step of your routine—serums, moisturizers, or treatments—and layers easily with other actives including acids, retinoids, and vitamin C. No wait time or tolerance-building is needed. You can start using it daily from day one. It's particularly helpful for calming irritation from other actives, so consider products containing allantoin if you're introducing stronger treatments into your routine.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Chemiluminescence of Lucigenin-Allantoin and Its Application for the Detection of Allantoin.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/28208242/"
+      },
+      {
+        "title": "Allantoin and hydantoin as new protein aggregation suppressors.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/29505874/"
+      }
+    ]
+  },
+  {
+    "inci_name": "aloe vera",
+    "common_names": [
+      "aloe vera",
+      "aloe barbadensis"
+    ],
+    "functions": [
+      "anti-inflammatory",
+      "antimicrobial",
+      "wound healing",
+      "antioxidant",
+      "moisturizing*",
+      "soothing*"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [
+      "burns",
+      "cuts",
+      "insect bites",
+      "eczema",
+      "photoaging",
+      "actinic keratosis"
+    ],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "",
+    "usage_guidance": "Aloe vera is gentle enough for twice-daily use, morning and evening. Apply to cleansed skin before heavier creams and oils — it absorbs quickly and layers well under other products. You can also use it as needed on irritated areas or after sun exposure. Most formulations contain 5–10% aloe vera, though higher concentrations up to 20% are used in specialized treatments. It's cooling on application and should feel immediately soothing. Safe for long-term daily use with no need for cycling or breaks.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Pharmacological Update Properties of Aloe Vera and its Major Active Constituents.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/32183224/"
+      },
+      {
+        "title": "Aloe Vera Gel and Rind-Derived Nanoparticles Mitigate Skin Photoaging via Activation of Nrf2/ARE Pathway.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/40191040/"
+      },
+      {
+        "title": "High-Content Aloe vera Based Hydrogels: Physicochemical and Pharmaceutical Properties.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/36904552/"
+      },
+      {
+        "title": "Development and Characterization of Fusidic Acid-Loaded Alginate-Aloe vera Based Hydrogel Film.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/39760405/"
+      }
+    ]
+  },
+  {
+    "inci_name": "alpha arbutin",
+    "common_names": [
+      "alpha arbutin"
+    ],
+    "functions": [
+      "skin brightening"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [
+      "melasma",
+      "hyperpigmentation"
+    ],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "",
+    "usage_guidance": "Apply once or twice daily, morning or evening, to clean skin before moisturizer. Alpha arbutin works well in concentrations between 1-5% and is stable across a wide pH range. It can be used alongside most other actives including vitamin C and niacinamide. Results typically appear after 4-8 weeks of consistent use. While alpha arbutin itself is not photosensitizing, always use SPF during the day when treating pigmentation, as UV exposure can worsen discoloration.",
+    "confidence": 2,
+    "sources": [
+      {
+        "title": "A comprehensive review of the therapeutic potential of α-arbutin.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/33724594/"
+      }
+    ]
+  },
+  {
+    "inci_name": "ascorbic acid",
+    "common_names": [
+      "vitamin C",
+      "L-ascorbic acid",
+      "ascorbic acid"
+    ],
+    "functions": [
+      "antioxidant",
+      "anti-inflammatory"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [
+      "benzoyl peroxide",
+      "copper tripeptide-1",
+      "kojic acid",
+      "niacinamide",
+      "retinal",
+      "retinol",
+      "sodium bicarbonate"
+    ],
+    "known_conflicts_detail": [
+      {
+        "inci_name": "retinol",
+        "level": "avoid",
+        "reason": "Ascorbic acid works at low pH which destabilises retinol. Both are individually sensitising. Use vitamin C in AM, retinol in PM."
+      },
+      {
+        "inci_name": "retinal",
+        "level": "avoid",
+        "reason": "Ascorbic acid works at low pH which destabilises retinoids. Use vitamin C in AM, retinal in PM."
+      },
+      {
+        "inci_name": "niacinamide",
+        "level": "caution",
+        "reason": "At high concentrations both can form nicotinic acid, causing skin flushing and formula yellowing. At typical cosmetic concentrations (<10% each) the risk is low. Separate AM/PM if using high-strength versions of both."
+      },
+      {
+        "inci_name": "sodium bicarbonate",
+        "level": "avoid",
+        "reason": "Sodium bicarbonate is strongly alkaline and rapidly degrades ascorbic acid. Do not combine."
+      },
+      {
+        "inci_name": "benzoyl peroxide",
+        "level": "avoid",
+        "reason": "Benzoyl peroxide oxidises ascorbic acid, making it ineffective and potentially causing discolouration. Use BPO in AM and vitamin C in PM or on separate days."
+      },
+      {
+        "inci_name": "copper tripeptide-1",
+        "level": "caution",
+        "reason": "Ascorbic acid chelates copper ions, reducing the efficacy of copper peptides. Use vitamin C in AM and copper peptides in PM."
+      },
+      {
+        "inci_name": "kojic acid",
+        "level": "caution",
+        "reason": "Both are unstable and can oxidise each other when combined in high concentrations. Separate AM/PM or use a formulation that stabilises both."
+      }
+    ],
+    "safety_notes": "Ascorbic acid can have pro-oxidant effects in the presence of free transition metals. Its role in prevention of DNA mutation and cellular effects, especially in relation to cancer cells, is controversial.",
+    "usage_guidance": "Apply in the morning to clean, dry skin before moisturiser and SPF. L-ascorbic acid works best at concentrations between 10–20% and requires a pH below 3.5 for optimal penetration. Start with a lower concentration if you're new to vitamin C and work up as your skin adapts. Store in a cool, dark place and replace if the product turns brown or yellow, as this indicates oxidation. Always follow with broad-spectrum SPF during the day, as vitamin C enhances photoprotection. You may experience slight tingling on application, which typically subsides with continued use.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "No title",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/29763052/"
+      },
+      {
+        "title": "Ascorbic acid as antioxidant.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/36707136/"
+      },
+      {
+        "title": "Antioxidative and Anti-Inflammatory Activity of Ascorbic Acid.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/36290716/"
+      }
+    ]
+  },
+  {
+    "inci_name": "ascorbyl glucoside",
+    "common_names": [
+      "ascorbyl glucoside"
+    ],
+    "functions": [
+      "antioxidant",
+      "skin brightening",
+      "skin-conditioning agent"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [
+      "hyperpigmentation",
+      "solar lentigos"
+    ],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Ascorbyl glucoside and sodium ascorbyl glucoside are safe in cosmetics at current use concentrations according to the Expert Panel for Cosmetic Ingredient Safety. No irritation was observed in clinical studies, and no hypo-pigmenting effects or skin problems were reported.",
+    "usage_guidance": "Apply once or twice daily, morning or evening. As a stable vitamin C derivative, ascorbyl glucoside works well in both AM and PM routines and does not require the same pH considerations as pure ascorbic acid. Layer under moisturizer and sunscreen. For brightening effects on dark spots and sun damage, use consistently for at least 12 weeks — clinical studies show visible improvements in pigmentation at 12 and 24 weeks. Effective concentrations range from around 2% up to 28% in clinical formulations. This ingredient is well-tolerated and suitable for sensitive skin.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Safety Assessment of Ascorbyl Glucoside and Sodium Ascorbyl Glucoside as Used in Cosmetics.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/39513541/"
+      },
+      {
+        "title": "Treatment with Ascorbyl Glucoside-Arginine Complex Ameliorates Solar Lentigos.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/39769217/"
+      },
+      {
+        "title": "Preparation and evaluation of ascorbyl glucoside and ascorbic acid solid in oil nanodispersions for corneal epithelial wound healing.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/36155791/"
+      }
+    ]
+  },
+  {
+    "inci_name": "avobenzone",
+    "common_names": [
+      "avobenzone",
+      "butyl methoxydibenzoylmethane"
+    ],
+    "functions": [
+      "UV filter*",
+      "UVA absorber*"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Avobenzone undergoes photodegradation when exposed to UV light, which can reduce its protective effectiveness and may produce degradation products. Some studies suggest potential endocrine disrupting properties, particularly anti-androgenic effects, though research is ongoing.",
+    "usage_guidance": "Apply avobenzone-containing sunscreen generously 15 minutes before sun exposure. Reapply every 2 hours and immediately after swimming or sweating. Look for formulations that include photostabilizers to prevent breakdown of avobenzone during UV exposure. Use daily in the morning as the final step of your routine, before makeup. Avobenzone is most effective when combined with other UV filters for broad-spectrum protection.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Patent review on photostability enhancement of avobenzone and its formulations.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/25643262/"
+      },
+      {
+        "title": "Drug Delivery Strategies for Avobenzone: A Case Study of Photostabilization.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/36986867/"
+      },
+      {
+        "title": "Single and mixture toxicity evaluation of avobenzone and homosalate to male zebrafish and H295R cells.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/37758070/"
+      }
+    ]
+  },
+  {
+    "inci_name": "azelaic acid",
+    "common_names": [
+      "azelaic acid"
+    ],
+    "functions": [
+      "anti-inflammatory",
+      "antioxidant",
+      "antimicrobial",
+      "tyrosinase inhibitor",
+      "skin brightening",
+      "keratolytic*"
+    ],
+    "suitable_skin_types": [
+      "oily",
+      "acne-prone",
+      "combination",
+      "sensitive*"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [
+      "acne vulgaris",
+      "rosacea",
+      "melasma",
+      "post-inflammatory hyperpigmentation",
+      "hidradenitis suppurativa",
+      "keratosis pilaris"
+    ],
+    "known_conflicts": [
+      "retinol"
+    ],
+    "known_conflicts_detail": [
+      {
+        "inci_name": "retinol",
+        "level": "caution",
+        "reason": "Both are active at low pH. Start by separating AM/PM and monitor for irritation before combining in the same routine step."
+      }
+    ],
+    "safety_notes": "Well tolerated when applied topically. Side effects are limited to generally mild and transient local skin irritation. Safe for a range of dermatological conditions as monotherapy or in combination.",
+    "usage_guidance": "Apply once or twice daily to clean, dry skin. Can be used morning or evening; if using in the AM, always follow with SPF. Typical concentrations range from 10% to 20% for prescription formulations, with 5-10% in over-the-counter products. Start with once-daily application and increase to twice daily as tolerated. Apply before heavier moisturisers in your routine. You may experience mild tingling, warmth, or temporary irritation in the first 2-4 weeks—this typically subsides with continued use. Results for hyperpigmentation and acne typically appear after 4-8 weeks of consistent use. Azelaic acid works well layered with other actives and can be used long-term.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "The versatility of azelaic acid in dermatology.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/32730109/"
+      },
+      {
+        "title": "The multiple uses of azelaic acid in dermatology: mechanism of action, preparations, and potential therapeutic applications.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/38282869/"
+      }
+    ]
+  },
+  {
+    "inci_name": "benzoyl peroxide",
+    "common_names": [
+      "benzoyl peroxide",
+      "BPO"
+    ],
+    "functions": [
+      "antibacterial",
+      "acne treatment"
+    ],
+    "suitable_skin_types": [
+      "oily",
+      "acne-prone"
+    ],
+    "avoid_skin_types": [
+      "sensitive*"
+    ],
+    "conditions": [
+      "acne vulgaris"
+    ],
+    "known_conflicts": [
+      "ascorbic acid",
+      "niacinamide",
+      "retinal",
+      "retinol",
+      "retinyl palmitate"
+    ],
+    "known_conflicts_detail": [
+      {
+        "inci_name": "retinol",
+        "level": "avoid",
+        "reason": "Benzoyl peroxide oxidises retinol on contact, making it ineffective. Use on separate evenings or apply BPO in AM only."
+      },
+      {
+        "inci_name": "retinal",
+        "level": "avoid",
+        "reason": "Benzoyl peroxide oxidises retinoids on contact, making them ineffective. Use on separate evenings or apply BPO in AM only."
+      },
+      {
+        "inci_name": "retinyl palmitate",
+        "level": "avoid",
+        "reason": "Benzoyl peroxide oxidises retinoids. Use on separate occasions."
+      },
+      {
+        "inci_name": "ascorbic acid",
+        "level": "avoid",
+        "reason": "Benzoyl peroxide oxidises ascorbic acid, making it ineffective and potentially causing discolouration. Use BPO in AM and vitamin C in PM or on separate days."
+      },
+      {
+        "inci_name": "niacinamide",
+        "level": "caution",
+        "reason": "Benzoyl peroxide can oxidise and degrade niacinamide. Use BPO in AM and niacinamide in PM, or use different products for each step."
+      }
+    ],
+    "safety_notes": "Only about 5% is absorbed through skin after topical application. Considered low risk during breastfeeding, but ensure infant skin does not come into direct contact with treated areas. Use only water-miscible cream or gel formulations on the breast.",
+    "usage_guidance": "Start with a lower concentration (2.5% to 5%) once daily in the evening and build up to twice daily as your skin adjusts. Apply to clean, dry skin after cleansing and before moisturizer. Can also be used in the morning, but always follow with SPF as benzoyl peroxide can increase sun sensitivity. Expect some dryness, redness, or peeling in the first 1-2 weeks—this typically subsides as your skin adapts. If irritation persists, reduce frequency or switch to a lower concentration. Avoid combining with other potentially irritating actives like retinoids or acids until your skin is fully adjusted.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Topical benzoyl peroxide for acne.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/30000481/"
+      },
+      {
+        "title": "No title",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/30725905/"
+      },
+      {
+        "title": "No title",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/32175593/"
+      }
+    ]
+  },
+  {
+    "inci_name": "bisabolol",
+    "common_names": [
+      "bisabolol",
+      "alpha-bisabolol"
+    ],
+    "functions": [
+      "anti-inflammatory",
+      "antibacterial",
+      "skin-soothing"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [
+      "atopic dermatitis",
+      "allergic contact dermatitis"
+    ],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Generally well-tolerated with anti-inflammatory and skin-soothing properties. Contact dermatitis from bisabolol has been reported in Europe and the United States. Patients sensitized to bisabolol should avoid any bisabolol-containing products.",
+    "usage_guidance": "Bisabolol can be used morning and evening as it appears in a wide range of products including moisturizers, cleansers, sunscreens, and makeup. It layers well with other ingredients and does not require special timing or sequencing. No adjustment period is typically needed. If you develop irritation, redness, or worsening skin condition, discontinue use and consider patch testing to confirm sensitivity before trying bisabolol-containing products again.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Bisabolol.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/29025339/"
+      },
+      {
+        "title": "Bisabolol.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/20137740/"
+      }
+    ]
+  },
+  {
+    "inci_name": "caffeine",
+    "common_names": [
+      "caffeine"
+    ],
+    "functions": [
+      "antioxidant",
+      "anti-cellulite",
+      "microcirculation enhancer",
+      "lipolytic agent",
+      "hair growth stimulator"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [
+      "cellulite",
+      "photoaging",
+      "hair loss"
+    ],
+    "known_conflicts": [
+      "creatine"
+    ],
+    "known_conflicts_detail": [
+      {
+        "inci_name": "creatine",
+        "level": "caution",
+        "reason": "Extracted by LLM from sources — not yet verified in curated lookup."
+      }
+    ],
+    "safety_notes": "Low doses under 10 μM have been shown to be effective and well-tolerated in skin applications. Commercial topical formulations typically contain 3% caffeine. Pregnant women should exercise caution with caffeine exposure.",
+    "usage_guidance": "Caffeine can be used morning or evening and is safe for daily application. In eye creams and serums, apply to clean skin before moisturizer to help with puffiness and microcirculation. In body products targeting cellulite, massage into affected areas once or twice daily. For hair loss concerns, caffeine shampoos should be used during regular washing and left in contact with the scalp for a few minutes before rinsing. Expect to see improvements in skin texture and tone after several weeks of consistent use. Caffeine formulations are generally well-tolerated with minimal irritation.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Caffeine's mechanisms of action and its cosmetic use.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/23075568/"
+      },
+      {
+        "title": "Caffeine Protects Skin from Oxidative Stress-Induced Senescence through the Activation of Autophagy.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/30555576/"
+      },
+      {
+        "title": "Anti-hair loss effect of a shampoo containing caffeine and adenosine.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/38764299/"
+      },
+      {
+        "title": "Common questions and misconceptions about caffeine supplementation: what does the scientific evidence really show?",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/38466174/"
+      },
+      {
+        "title": "Creatine and Caffeine: Considerations for Concurrent Supplementation.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/26219105/"
+      }
+    ]
+  },
+  {
+    "inci_name": "carbomer",
+    "common_names": [
+      "carbomer",
+      "carbopol"
+    ],
+    "functions": [
+      "gel-forming*",
+      "thickening*",
+      "film-forming",
+      "stabilizing*"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [
+      "psoriasis",
+      "diabetic foot ulcer",
+      "radiation-induced skin injury",
+      "wound healing"
+    ],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Demonstrated excellent biocompatibility with no toxicity in cell viability studies. Used safely in wound dressings and topical formulations.",
+    "usage_guidance": "Carbomer is a gel-forming agent used in skincare formulations to create smooth, stable textures. You'll find it in gels, creams, and serums. It's typically used by manufacturers as a thickener and doesn't require special application considerations on your part. Apply products containing carbomer as directed by the specific product instructions. It works well in both AM and PM routines and layers easily with other products. No adjustment period needed — it's well-tolerated from first use.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "FbD Supported Development and In Vitro Evaluation of Carbomer based Resveratrol Loaded Topical Antipsoriatic Nanoemulgel for its Targeted Skin Delivery.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/31995028/"
+      },
+      {
+        "title": "A Combined Cyanine/Carbomer Gel Enhanced Photodynamic Antimicrobial Activity and Wound Healing.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/35808008/"
+      },
+      {
+        "title": "Highly Absorbent Egg White/Carbomer-940 Hydrofilm as a Potential Diabetic Wound Dressing.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/37939368/"
+      }
+    ]
+  },
+  {
+    "inci_name": "centella asiatica extract",
+    "common_names": [
+      "centella asiatica",
+      "CICA",
+      "gotu kola"
+    ],
+    "functions": [
+      "antioxidant",
+      "anti-inflammatory",
+      "moisturizing",
+      "barrier support"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [
+      "atopic dermatitis",
+      "photoaging"
+    ],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "",
+    "usage_guidance": "Can be used morning and evening. Apply after cleansing and before heavier moisturisers or oils. Centella asiatica is particularly effective at concentrations of 2.5–5% for hydration and soothing benefits. Suitable for daily use with no need for a build-up period. You may notice improved hydration and reduced redness within 2–4 weeks of consistent use. Pairs well with most actives and can help calm irritation from stronger treatments.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Moisturizing and Antiinflammatory Properties of Cosmetic Formulations Containing Centella asiatica Extract.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/27168678/"
+      },
+      {
+        "title": "Inhibitory Effect of Centella asiatica Extract on DNCB-Induced Atopic Dermatitis in HaCaT Cells and BALB/c Mice.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/32033291/"
+      },
+      {
+        "title": "Oral Centella asiatica Extract Attenuates UVB-Induced Skin Photoaging via Antioxidant, Anti-Inflammatory, and Extracellular Matrix-Preserving Effects in Hairless Mice.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/41516082/"
+      }
+    ]
+  },
+  {
+    "inci_name": "ceramide ap",
+    "common_names": [
+      "ceramide AP",
+      "ceramide 6-II"
+    ],
+    "functions": [
+      "emollient*",
+      "barrier repair*"
+    ],
+    "suitable_skin_types": [
+      "dry",
+      "mature*",
+      "sensitive*"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "",
+    "usage_guidance": "Ceramide AP is a lipid naturally found in skin's barrier and can be used morning and evening without restriction. Apply it in your serum or moisturizer step — it works well layered under or mixed with other hydrating products. It's particularly beneficial for restoring skin barrier function in aged or compromised skin. You can use it daily from the start; there's no adjustment period needed. It pairs well with other barrier-supporting ingredients and is safe to use alongside actives like retinoids or acids.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Development and application of coarse-grained MARTINI model of skin lipid ceramide [AP].",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/32583227/"
+      },
+      {
+        "title": "Synthesis of specifically deuterated ceramide [AP]-C18 and its biophysical characterization using neutron diffraction.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/28202334/"
+      },
+      {
+        "title": "Lecithin-based microemulsions for targeted delivery of ceramide AP into the stratum corneum: formulation, characterizations, and in vitro release and penetration studies.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/23135817/"
+      }
+    ]
+  },
+  {
+    "inci_name": "ceramide eop",
+    "common_names": [
+      "ceramide EOP",
+      "ceramide 1"
+    ],
+    "functions": [
+      "emollient*",
+      "skin barrier repair*"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "",
+    "usage_guidance": "Ceramide EOP is a lipid that helps restore and maintain the skin barrier. It can be used morning and evening as part of your regular routine. Apply after water-based serums but before heavier creams, or look for it already formulated in your moisturiser. Ceramides work well in combination with other barrier-supporting ingredients like cholesterol and fatty acids. This ingredient is generally well-tolerated from first use, with improvements in skin smoothness and hydration typically noticed within 1 to 2 weeks of consistent use.",
+    "confidence": 2,
+    "sources": []
+  },
+  {
+    "inci_name": "ceramide np",
+    "common_names": [
+      "ceramide NP",
+      "ceramide 3"
+    ],
+    "functions": [
+      "emollient*",
+      "skin barrier repair*"
+    ],
+    "suitable_skin_types": [
+      "sensitive",
+      "dry*",
+      "all*"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "",
+    "usage_guidance": "Suitable for both AM and PM use. Ceramide NP is a core lipid component of the skin barrier and works well in serums, moisturizers, and creams. Apply after water-based products but before heavier occlusives to help restore and maintain barrier function. Safe for daily use from the start—no need to build tolerance. Especially beneficial after exfoliation or when skin feels compromised. Works synergistically with other barrier-repair ingredients like cholesterol, fatty acids, and panthenol.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "The Design and Optimization of Ceramide NP-Loaded Liposomes to Restore the Skin Barrier.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/38140026/"
+      },
+      {
+        "title": "Retarder action of isosorbide in a microemulsion for a targeted delivery of ceramide NP into the stratum corneum.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/29441901/"
+      }
+    ]
+  },
+  {
+    "inci_name": "citric acid",
+    "common_names": [
+      "citric acid"
+    ],
+    "functions": [
+      "pH-adjuster*",
+      "exfoliant*",
+      "chelating agent*"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [
+      "sodium hypochlorite"
+    ],
+    "known_conflicts_detail": [
+      {
+        "inci_name": "sodium hypochlorite",
+        "level": "caution",
+        "reason": "Extracted by LLM from sources — not yet verified in curated lookup."
+      }
+    ],
+    "safety_notes": "Can decrease dentin microhardness and cause decalcification and erosion, especially when used before sodium hypochlorite (NaOCl). Effects on skin barrier depend on concentration and pH.",
+    "usage_guidance": "Citric acid is typically used at low concentrations as a pH adjuster in formulations or at higher concentrations (10-20%) as a chemical exfoliant. When used as an exfoliant, apply in the evening 2-3 times per week initially, building to nightly if tolerated. Apply to clean, dry skin before heavier serums and moisturizers. Mild tingling is normal initially. Always apply SPF the following morning as citric acid can increase photosensitivity. Avoid layering with products containing sodium hypochlorite or strong oxidizers.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Citric acid from Aspergillus niger: a comprehensive overview.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/33044884/"
+      },
+      {
+        "title": "Citric Acid: Properties, Microbial Production, and Applications in Industries.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/38202605/"
+      },
+      {
+        "title": "Update on citric acid use in endodontic treatment: a systematic review.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/36220913/"
+      }
+    ]
+  },
+  {
+    "inci_name": "coenzyme q10",
+    "common_names": [
+      "coQ10",
+      "ubiquinone",
+      "coenzyme Q10"
+    ],
+    "functions": [
+      "antioxidant",
+      "cellular energy support*"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [
+      "skin aging"
+    ],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "",
+    "usage_guidance": "Apply morning or evening, or both, to clean skin before heavier creams and oils. CoQ10 is lipid-soluble, so it penetrates well when applied to slightly damp skin or layered under moisturizer. Suitable for daily use. Most formulations contain 0.1% to 1% CoQ10. You may notice improved skin texture and resilience within 4 to 8 weeks of consistent use, as the ingredient works to replenish antioxidant reserves and support mitochondrial function in aging skin.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "The Role of Coenzyme Q10 in Skin Aging and Opportunities for Topical Intervention: A Review.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/39148958/"
+      }
+    ]
+  },
+  {
+    "inci_name": "copper tripeptide-1",
+    "common_names": [
+      "GHK-Cu",
+      "copper peptide"
+    ],
+    "functions": [
+      "antioxidant*",
+      "skin-repairing*",
+      "anti-aging*"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [
+      "ascorbic acid",
+      "glycolic acid",
+      "lactic acid"
+    ],
+    "known_conflicts_detail": [
+      {
+        "inci_name": "ascorbic acid",
+        "level": "caution",
+        "reason": "Ascorbic acid chelates copper ions, reducing the efficacy of copper peptides. Use vitamin C in AM and copper peptides in PM."
+      },
+      {
+        "inci_name": "glycolic acid",
+        "level": "caution",
+        "reason": "Low pH from AHAs can destabilise copper peptide complexes. Separate AM/PM or use on alternate days."
+      },
+      {
+        "inci_name": "lactic acid",
+        "level": "caution",
+        "reason": "Low pH from AHAs can destabilise copper peptide complexes. Separate AM/PM or use on alternate days."
+      }
+    ],
+    "safety_notes": "",
+    "usage_guidance": "Can be used both morning and evening. Apply after cleansing and any water-based serums, before heavier creams or oils. Copper peptides work well in the earlier steps of your routine. Generally well-tolerated with minimal irritation. Results for firmness and texture typically become noticeable after 4 to 8 weeks of consistent use. Most effective at concentrations between 0.5% and 2%.",
+    "confidence": 2,
+    "sources": []
+  },
+  {
+    "inci_name": "dimethicone",
+    "common_names": [
+      "dimethicone",
+      "silicone"
+    ],
+    "functions": [
+      "conditioning agent",
+      "occlusive",
+      "film-forming"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Dimethicone is not absorbed through skin and has minimal irritation potential. It has been tested as non-sensitizing in multiple studies and is well tolerated even at high concentrations up to 15% in cosmetic formulations. Suitable for use on atopic and sensitive skin, including in children from 12 months of age.",
+    "usage_guidance": "Dimethicone can be used morning and evening as part of your routine. It forms a protective, breathable film on the skin surface that helps lock in moisture without clogging pores. Apply after water-based serums but before heavier creams, or use products containing dimethicone as your final moisturising step. It's particularly useful for protecting skin from environmental irritants and reducing transepidermal water loss. No special precautions or build-up period needed — it's safe for daily use from the start.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Final report on the safety assessment of stearoxy dimethicone, dimethicone, methicone, amino bispropyl dimethicone, aminopropyl dimethicone, amodimethicone, amodimethicone hydroxystearate, behenoxy dimethicone, C24-28 alkyl methicone, C30-45 alkyl methicone, C30-45 alkyl dimethicone, cetearyl methicone, cetyl dimethicone, dimethoxysilyl ethylenediaminopropyl dimethicone, hexyl methicone, hydroxypropyldimethicone, stearamidopropyl dimethicone, stearyl dimethicone, stearyl methicone, and vinyldimethicone.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/14555417/"
+      },
+      {
+        "title": "Effectiveness and tolerability of a squalane and dimethicone-based treatment for head lice.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/33797611/"
+      }
+    ]
+  },
+  {
+    "inci_name": "ethylhexylglycerin",
+    "common_names": [
+      "ethylhexylglycerin"
+    ],
+    "functions": [
+      "preservative booster",
+      "antimicrobial",
+      "surfactant",
+      "emollient",
+      "skin-conditioning"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Generally well-tolerated at typical cosmetic concentrations. A small number of users may develop allergic contact dermatitis, though this is relatively uncommon. Occasionally reported as a contact allergen since 2002.",
+    "usage_guidance": "Ethylhexylglycerin is a multifunctional ingredient that works behind the scenes in your products. It's typically used at low concentrations (under 1%) and works synergistically with other preservatives to keep your products safe and stable. You don't need to seek it out specifically or avoid it—it's a standard formulation ingredient that helps boost preservative efficacy while conditioning the skin. Use products containing it as directed on their labels, morning or evening as appropriate for that product type. No special layering considerations are needed.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Ethylhexylglycerin: a low-risk, but highly relevant, sensitizer in 'hypo-allergenic' cosmetics.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/26876063/"
+      },
+      {
+        "title": "Ethylhexylglycerin-a contact allergen in cosmetic products.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/23169213/"
+      },
+      {
+        "title": "Ethylhexylglycerin Impairs Membrane Integrity and Enhances the Lethal Effect of Phenoxyethanol.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/27783695/"
+      },
+      {
+        "title": "In vivo efficacy of an alcohol-based surgical hand disinfectant containing a synergistic combination of ethylhexylglycerin and preservatives.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/16759740/"
+      }
+    ]
+  },
+  {
+    "inci_name": "ferulic acid",
+    "common_names": [
+      "ferulic acid"
+    ],
+    "functions": [
+      "antioxidant",
+      "photoprotective",
+      "skin brightening",
+      "anti-inflammatory",
+      "wound healing"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [
+      "hyperpigmentation",
+      "photoaging",
+      "radiation-induced skin injury"
+    ],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Ferulic acid has low toxicity and is well-tolerated. Its main limitation is a tendency to be rapidly oxidized, which can reduce effectiveness over time.",
+    "usage_guidance": "Apply in the morning for best photoprotection. Ferulic acid works most effectively when combined with vitamins C and E, providing up to 8-fold sun protection enhancement. Look for formulations with 0.5% to 1% ferulic acid paired with 15% vitamin C and 1% vitamin E for optimal stability and efficacy. Apply to clean, dry skin before moisturizer, and always follow with broad-spectrum SPF. Ferulic acid is stable enough for daily use and should be incorporated as a regular part of your antioxidant defense routine. Store the product away from light and heat to prevent oxidation.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Antioxidant Properties of Ferulic Acid and Its Possible Application.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/30235459/"
+      },
+      {
+        "title": "Ferulic acid stabilizes a solution of vitamins C and E and doubles its photoprotection of skin.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/16185284/"
+      },
+      {
+        "title": "Multifunctional carbomer based ferulic acid hydrogel promotes wound healing in radiation-induced skin injury by inactivating NLRP3 inflammasome.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/39300534/"
+      }
+    ]
+  },
+  {
+    "inci_name": "glycerin",
+    "common_names": [
+      "glycerin",
+      "glycerol"
+    ],
+    "functions": [
+      "humectant",
+      "skin conditioning agent",
+      "hair conditioning agent",
+      "viscosity-decreasing agent",
+      "skin protectant",
+      "fragrance ingredient",
+      "denaturant"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Glycerin is safe as a cosmetic ingredient in the practices of use and concentration described in cosmetic safety assessments. It is well-tolerated across formulations.",
+    "usage_guidance": "Glycerin works in both AM and PM routines and is safe for daily use. It draws moisture into the skin, so apply it to damp skin for best results, then follow with a moisturizer or occlusive to lock in hydration. It layers well under serums, moisturizers, and sunscreen. In very dry climates, pair it with occlusives to prevent moisture loss. You can use products containing glycerin immediately with no adjustment period needed.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Safety Assessment of Glycerin as Used in Cosmetics.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/31840548/"
+      }
+    ]
+  },
+  {
+    "inci_name": "glycolic acid",
+    "common_names": [
+      "glycolic acid",
+      "AHA"
+    ],
+    "functions": [
+      "exfoliant*",
+      "keratolytic*",
+      "pH-adjuster*"
+    ],
+    "suitable_skin_types": [
+      "oily",
+      "acne-prone",
+      "mature*"
+    ],
+    "avoid_skin_types": [
+      "sensitive*"
+    ],
+    "conditions": [],
+    "known_conflicts": [
+      "bromelain",
+      "copper tripeptide-1",
+      "lactic acid",
+      "papain",
+      "retinal",
+      "retinol",
+      "salicylic acid"
+    ],
+    "known_conflicts_detail": [
+      {
+        "inci_name": "retinol",
+        "level": "avoid",
+        "reason": "Combined use significantly increases irritation and dryness. Use on alternate evenings or separate AM/PM."
+      },
+      {
+        "inci_name": "retinal",
+        "level": "avoid",
+        "reason": "Retinal is more potent than retinol. Combined use with AHAs significantly increases irritation risk. Use on alternate evenings."
+      },
+      {
+        "inci_name": "salicylic acid",
+        "level": "caution",
+        "reason": "Using both at active concentrations risks over-exfoliation and barrier damage. Use on alternate days or use one as a toner at low concentration alongside the other."
+      },
+      {
+        "inci_name": "lactic acid",
+        "level": "caution",
+        "reason": "Combining two AHAs at active concentrations increases irritation and over-exfoliation risk. Choose one as your primary exfoliant."
+      },
+      {
+        "inci_name": "copper tripeptide-1",
+        "level": "caution",
+        "reason": "Low pH from AHAs can destabilise copper peptide complexes. Separate AM/PM or use on alternate days."
+      },
+      {
+        "inci_name": "papain",
+        "level": "avoid",
+        "reason": "Combining enzyme and acid exfoliants significantly increases over-exfoliation and barrier damage risk. Use on separate days."
+      },
+      {
+        "inci_name": "bromelain",
+        "level": "avoid",
+        "reason": "Combining enzyme and acid exfoliants significantly increases over-exfoliation and barrier damage risk. Use on separate days."
+      }
+    ],
+    "safety_notes": "Considered safe to use during breastfeeding as it is unlikely to be appreciably absorbed or appear in breastmilk. Avoid application to areas that might come in direct contact with an infant's skin.",
+    "usage_guidance": "Use in the evening, starting 2 to 3 times per week and gradually increasing frequency as your skin builds tolerance. Apply to clean, dry skin before moisturizer. Always wear broad-spectrum SPF during the day, as glycolic acid increases photosensitivity. Expect mild tingling or redness initially—this typically subsides within 2 to 4 weeks as your skin acclimates. If using higher concentrations (above 10%), consider less frequent application. Avoid using on the same evening as retinoids until your skin is fully acclimated to both.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Glycolic acid peels.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/29999971/"
+      }
+    ]
+  },
+  {
+    "inci_name": "green tea extract",
+    "common_names": [
+      "green tea",
+      "camellia sinensis"
+    ],
+    "functions": [
+      "antioxidant",
+      "anti-inflammatory",
+      "antimicrobial",
+      "anti-aging"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [
+      "skin infections",
+      "acne vulgaris"
+    ],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Well tolerated with no reported toxicity at concentrations up to 500 μg/ml in cell studies. Typical topical and oral applications in studies ranged from 28 mg to 1600 mg EGCG over periods up to 6 months without significant adverse effects.",
+    "usage_guidance": "Green tea extract can be used morning and evening. Apply after cleansing and before heavier serums or moisturisers. It's gentle enough for daily use from the start. You may notice improved skin texture and reduced inflammation within 2 to 4 weeks. Works well layered with other actives and plays nicely in most routines. While it contains antioxidants, it doesn't replace your SPF—still wear sun protection daily.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Green tea extract: possible mechanism and antibacterial activity on skin pathogens.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/22868144/"
+      },
+      {
+        "title": "Green tea and green tea extract in oncological treatment: A systematic review.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/33593083/"
+      },
+      {
+        "title": "Green tea extract-patents and diversity of uses.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/20653541/"
+      }
+    ]
+  },
+  {
+    "inci_name": "hyaluronic acid",
+    "common_names": [
+      "hyaluronic acid",
+      "HA",
+      "sodium hyaluronate"
+    ],
+    "functions": [
+      "humectant",
+      "hydrating",
+      "anti-aging",
+      "skin rejuvenating"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [
+      "skin aging",
+      "wrinkles",
+      "dehydration"
+    ],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Well tolerated across studies with minimal adverse effects documented. Demonstrated good tolerability as both a topical cosmeceutical and adjuvant to dermatological procedures.",
+    "usage_guidance": "Apply twice daily, morning and evening, to clean skin. Hyaluronic acid works best on damp skin — apply to slightly wet skin or mist your face after application to maximize hydration. Layer under moisturizer and sunscreen in the AM, or under moisturizer and treatment products in the PM. Molecular weight matters: low molecular weight HA penetrates deeper for plumping effects, while high molecular weight HA sits on the surface for immediate hydration. You should notice improved hydration within days and gradual improvement in skin plumpness over weeks. Works well in serums, gels, creams, and lotions at varying concentrations.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Benefits of topical hyaluronic acid for skin quality and signs of skin aging: From literature review to clinical evidence.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/36200921/"
+      },
+      {
+        "title": "Hyaluronic acid, a promising skin rejuvenating biomedicine: A review of recent updates and pre-clinical and clinical investigations on cosmetic and nutricosmetic effects.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/30287361/"
+      },
+      {
+        "title": "Hyaluronic Acid: A Powerful Biomolecule with Wide-Ranging Applications-A Comprehensive Review.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/37373443/"
+      },
+      {
+        "title": "Advantages of Hyaluronic Acid and Its Combination with Other Bioactive Ingredients in Cosmeceuticals.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/34361586/"
+      }
+    ]
+  },
+  {
+    "inci_name": "jojoba oil",
+    "common_names": [
+      "jojoba oil",
+      "simmondsia chinensis"
+    ],
+    "functions": [
+      "emollient",
+      "moisturizer",
+      "antioxidant",
+      "anti-inflammatory",
+      "antimicrobial",
+      "occlusive"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [
+      "acne vulgaris",
+      "psoriasis",
+      "skin disorders",
+      "scalp disorders",
+      "superficial wounds"
+    ],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Jojoba oil has been extensively studied and demonstrates a wide safety profile. It is well-tolerated in cosmetic and pharmaceutical formulations including topical, transdermal, and parenteral preparations.",
+    "usage_guidance": "Apply jojoba oil to slightly damp skin morning or evening to lock in moisture. It absorbs well and can be used alone as a facial oil or mixed with moisturiser. For hair and scalp, warm a small amount between palms and work through ends or massage into scalp. Suitable for daily use. Because it closely mimics skin's natural sebum, it won't feel greasy once absorbed. You can use it around the eye area and on sensitive skin without concern.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "A Comprehensive Review of Plant-Based Cosmetic Oils (Virgin Coconut Oil, Olive Oil, Argan Oil, and Jojoba Oil): Chemical and Biological Properties and Their Cosmeceutical Applications.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/39524627/"
+      },
+      {
+        "title": "Bioactivities of Jojoba Oil Beyond Skincare.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/38695844/"
+      },
+      {
+        "title": "Jojoba Oil: An Updated Comprehensive Review on Chemistry, Pharmaceutical Uses, and Toxicity.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/34073772/"
+      },
+      {
+        "title": "Novel jojoba oil-based emulsion gel formulations for clotrimazole delivery.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/21225383/"
+      }
+    ]
+  },
+  {
+    "inci_name": "kojic acid",
+    "common_names": [
+      "kojic acid"
+    ],
+    "functions": [
+      "skin brightening",
+      "tyrosinase inhibitor",
+      "antioxidant",
+      "antimicrobial",
+      "anti-inflammatory",
+      "UV protector"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [
+      "melasma",
+      "hyperpigmentation",
+      "skin color disorders"
+    ],
+    "known_conflicts": [
+      "ascorbic acid"
+    ],
+    "known_conflicts_detail": [
+      {
+        "inci_name": "ascorbic acid",
+        "level": "caution",
+        "reason": "Both are unstable and can oxidise each other when combined in high concentrations. Separate AM/PM or use a formulation that stabilises both."
+      }
+    ],
+    "safety_notes": "",
+    "usage_guidance": "Kojic acid is typically used at concentrations of 1-2% in formulations and can be applied morning or evening. Apply after cleansing and before heavier creams or oils. It works by inhibiting melanin production, so results build gradually over 4-8 weeks of consistent use. Always pair with daily SPF, especially since you're addressing pigmentation. If using products with kojic acid above 2%, start slowly—every other evening—to assess tolerance before increasing frequency.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Kojic acid applications in cosmetic and pharmaceutical preparations.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/30537675/"
+      },
+      {
+        "title": "The Efficacy of Topical Cosmetic Containing Alpha-Arbutin 5% and Kojic Acid 2% Compared With Triple Combination Cream for the Treatment of Melasma: A Split-Face, Evaluator-Blinded Randomized Pilot Study.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/39555866/"
+      },
+      {
+        "title": "The combination of glycolic acid and hydroquinone or kojic acid for the treatment of melasma and related conditions.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/8634807/"
+      }
+    ]
+  },
+  {
+    "inci_name": "lactic acid",
+    "common_names": [
+      "lactic acid",
+      "AHA"
+    ],
+    "functions": [
+      "exfoliant*",
+      "keratolytic*",
+      "pH-adjuster*",
+      "humectant*"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [
+      "bromelain",
+      "copper tripeptide-1",
+      "glycolic acid",
+      "papain",
+      "retinal",
+      "retinol",
+      "salicylic acid"
+    ],
+    "known_conflicts_detail": [
+      {
+        "inci_name": "retinol",
+        "level": "avoid",
+        "reason": "Combined use significantly increases irritation and dryness. Use on alternate evenings or separate AM/PM."
+      },
+      {
+        "inci_name": "retinal",
+        "level": "avoid",
+        "reason": "Retinal is more potent than retinol. Combined use with AHAs significantly increases irritation risk. Use on alternate evenings."
+      },
+      {
+        "inci_name": "salicylic acid",
+        "level": "caution",
+        "reason": "Using both at active concentrations risks over-exfoliation and barrier damage. Use on alternate days or use one at low concentration."
+      },
+      {
+        "inci_name": "glycolic acid",
+        "level": "caution",
+        "reason": "Combining two AHAs at active concentrations increases irritation and over-exfoliation risk. Choose one as your primary exfoliant."
+      },
+      {
+        "inci_name": "copper tripeptide-1",
+        "level": "caution",
+        "reason": "Low pH from AHAs can destabilise copper peptide complexes. Separate AM/PM or use on alternate days."
+      },
+      {
+        "inci_name": "papain",
+        "level": "avoid",
+        "reason": "Combining enzyme and acid exfoliants significantly increases over-exfoliation risk. Use on separate days."
+      },
+      {
+        "inci_name": "bromelain",
+        "level": "avoid",
+        "reason": "Combining enzyme and acid exfoliants significantly increases over-exfoliation risk. Use on separate days."
+      }
+    ],
+    "safety_notes": "",
+    "usage_guidance": "Best used in the evening, 2 to 3 times per week initially, building up to nightly as your skin adapts. Apply to clean, dry skin before serums and moisturizer. Typical effective concentrations range from 5% to 10%. Always use SPF during the day when using lactic acid, as AHAs increase sun sensitivity. Mild tingling on first use is normal and usually subsides within 2 to 4 weeks. If you have very sensitive skin, start with lower concentrations (5%) and less frequent application.",
+    "confidence": 3,
+    "sources": []
+  },
+  {
+    "inci_name": "licorice root extract",
+    "common_names": [
+      "licorice extract",
+      "glycyrrhiza glabra"
+    ],
+    "functions": [
+      "antioxidant",
+      "antibacterial",
+      "wound healing*"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "",
+    "usage_guidance": "Licorice root extract is well-tolerated and can be used morning and evening. Apply after cleansing and before heavier creams or oils. It layers well with other antioxidants like vitamin C and works effectively in leave-on serums, creams, and essences. You may notice a gradual improvement in skin tone and brightness over 4 to 8 weeks of consistent use. No specific waiting time needed between application and other products.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Preparation of sodium alginate and xanthan gum bionanocomposite films reinforced with hybrid halloysite nanotubes containing ZnO and licorice root extract for wound dressing applications.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/40086546/"
+      }
+    ]
+  },
+  {
+    "inci_name": "mandelic acid",
+    "common_names": [
+      "mandelic acid",
+      "AHA"
+    ],
+    "functions": [
+      "exfoliant",
+      "antimicrobial",
+      "preservative",
+      "skin firming"
+    ],
+    "suitable_skin_types": [
+      "acne-prone",
+      "mature",
+      "hyperpigmented*"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [
+      "acne",
+      "hyperpigmentation"
+    ],
+    "known_conflicts": [
+      "retinol"
+    ],
+    "known_conflicts_detail": [
+      {
+        "inci_name": "retinol",
+        "level": "avoid",
+        "reason": "Combined use raises irritation risk. Use on alternate evenings or separate AM/PM."
+      }
+    ],
+    "safety_notes": "Well tolerated by patients in clinical studies. Applied topically twice daily for four weeks without reported adverse effects.",
+    "usage_guidance": "Apply once or twice daily to clean skin. Can be used morning or evening, though evening application may be preferable if you're new to AHAs. Layer under moisturizer. Mandelic acid is one of the gentler AHAs due to its larger molecular size, which means slower penetration and less irritation. You may experience mild tingling initially; this typically subsides as skin adapts. Always use broad-spectrum SPF during the day, as all AHAs increase sun sensitivity. Results for improved elasticity and firmness become measurable around four weeks of consistent use.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Effects of Topical Mandelic Acid Treatment on Facial Skin Viscoelasticity.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/30513536/"
+      },
+      {
+        "title": "Non-Alcohol Hand Sanitiser Gels with Mandelic Acid and Essential Oils.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/36835267/"
+      },
+      {
+        "title": "Formulating Sustainable Emulsions: Mandelic Acid and Essential Oils as Natural Preservatives.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/39339504/"
+      }
+    ]
+  },
+  {
+    "inci_name": "niacinamide",
+    "common_names": [
+      "niacinamide",
+      "vitamin B3",
+      "nicotinamide"
+    ],
+    "functions": [
+      "antioxidant",
+      "skin brightening",
+      "anti-aging",
+      "sebostatic",
+      "antimicrobial",
+      "barrier support",
+      "anti-inflammatory"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [
+      "hyperpigmentation",
+      "acne vulgaris",
+      "rosacea",
+      "actinic keratosis",
+      "dermatitis"
+    ],
+    "known_conflicts": [
+      "ascorbic acid",
+      "benzoyl peroxide"
+    ],
+    "known_conflicts_detail": [
+      {
+        "inci_name": "ascorbic acid",
+        "level": "caution",
+        "reason": "At high concentrations both can form nicotinic acid, causing skin flushing and formula yellowing. At typical cosmetic concentrations (<10% each) the risk is low. Separate AM/PM if using high-strength versions of both."
+      },
+      {
+        "inci_name": "benzoyl peroxide",
+        "level": "caution",
+        "reason": "Benzoyl peroxide can oxidise and degrade niacinamide. Use BPO in AM and niacinamide in PM, or use different products for each step."
+      }
+    ],
+    "safety_notes": "Niacinamide is well-tolerated by skin and considered safe across multiple clinical studies. It is widely used in cosmetic products with a favorable safety profile.",
+    "usage_guidance": "Use morning or evening, or both. Apply to clean skin before heavier creams and oils. Niacinamide can be used daily from the start without a gradual introduction period. It works well at concentrations between 2-10%, with 5% being the most common in cosmetic products. You can layer it with other actives including vitamin C, retinoids, and acids. Improvements in skin texture, tone, and barrier function typically become visible after 4-8 weeks of consistent use. No specific pH considerations or sun protection requirements beyond normal daily SPF use.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Niacinamide - mechanisms of action and its topical use in dermatology.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/24993939/"
+      },
+      {
+        "title": "Niacinamide: a review on dermal delivery strategies and clinical evidence.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/38722460/"
+      },
+      {
+        "title": "Niacinamide: A B vitamin that improves aging facial skin appearance.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/16029679/"
+      },
+      {
+        "title": "Nicotinic acid/niacinamide and the skin.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/17147561/"
+      },
+      {
+        "title": "Mechanistic Basis and Clinical Evidence for the Applications of Nicotinamide (Niacinamide) to Control Skin Aging and Pigmentation.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/34439563/"
+      }
+    ]
+  },
+  {
+    "inci_name": "octinoxate",
+    "common_names": [
+      "octinoxate",
+      "ethylhexyl methoxycinnamate"
+    ],
+    "functions": [
+      "UV filter*",
+      "sunscreen agent*"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Studies indicate potential thyroid hormone disruption in aquatic organisms at high doses. Environmental concerns have led to restrictions in some regions due to effects on coral reefs. Further research is ongoing regarding endocrine disruption potential.",
+    "usage_guidance": "Apply in the morning as part of your sunscreen or sun protection product. Octinoxate absorbs and converts UV radiation to protect skin from sun damage. It works best when applied 15-20 minutes before sun exposure and reapplied every 2 hours during prolonged outdoor activity, or immediately after swimming or sweating. Can be used daily as your primary or supplementary UV protection. Layer under makeup or after your morning moisturizer if using a standalone sunscreen.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Freshwater Environmental Risk Assessment of Down-the-Drain Octinoxate Emissions in the United States.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/36148933/"
+      },
+      {
+        "title": "Update About the Effects of the Sunscreen Ingredients Oxybenzone and Octinoxate on Humans and the Environment.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/31790045/"
+      },
+      {
+        "title": "Octinoxate as a potential thyroid hormone disruptor - A combination of in vivo and in vitro data.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/36181807/"
+      }
+    ]
+  },
+  {
+    "inci_name": "palmitoyl tetrapeptide-7",
+    "common_names": [
+      "palmitoyl tetrapeptide-7",
+      "matrixyl 3000"
+    ],
+    "functions": [
+      "anti-aging*",
+      "collagen support*",
+      "anti-inflammatory*"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [
+      "salicylic acid"
+    ],
+    "known_conflicts_detail": [
+      {
+        "inci_name": "salicylic acid",
+        "level": "caution",
+        "reason": "Low pH from salicylic acid can hydrolyse peptide bonds over time. Separate AM/PM."
+      }
+    ],
+    "safety_notes": "",
+    "usage_guidance": "Apply morning or evening, or both, after cleansing and before heavier serums or moisturizer. This peptide works well in leave-on products like serums and creams. It's typically effective at concentrations between 2-5%, though commercial products rarely disclose exact percentages. Peptides are generally slow-acting—expect to see improvements in skin texture and firmness after 8-12 weeks of consistent use. Stable at neutral pH and compatible with most other actives. No photosensitivity concerns, so no special SPF requirements beyond normal daily protection.",
+    "confidence": 2,
+    "sources": []
+  },
+  {
+    "inci_name": "palmitoyl tripeptide-1",
+    "common_names": [
+      "palmitoyl tripeptide-1",
+      "matrixyl"
+    ],
+    "functions": [
+      "anti-aging*",
+      "collagen-stimulating*",
+      "skin conditioning*"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [
+      "salicylic acid"
+    ],
+    "known_conflicts_detail": [
+      {
+        "inci_name": "salicylic acid",
+        "level": "caution",
+        "reason": "Low pH from salicylic acid can hydrolyse peptide bonds over time, reducing peptide efficacy. Separate AM/PM."
+      }
+    ],
+    "safety_notes": "",
+    "usage_guidance": "Apply morning or evening, or both, as part of your serum step after cleansing and before moisturiser. Palmitoyl tripeptide-1 is well-tolerated and works well in leave-on products at typical cosmetic concentrations (usually 2-5%). It layers easily with other actives including retinoids, vitamin C, and acids. Peptides work gradually — expect to see improvements in skin texture and firmness over 8 to 12 weeks of consistent use. No special precautions needed.",
+    "confidence": 2,
+    "sources": []
+  },
+  {
+    "inci_name": "panthenol",
+    "common_names": [
+      "panthenol",
+      "vitamin B5",
+      "pro-vitamin B5"
+    ],
+    "functions": [
+      "humectant*",
+      "moisturizing*",
+      "soothing*",
+      "skin barrier support*"
+    ],
+    "suitable_skin_types": [
+      "sensitive",
+      "dry*",
+      "all*"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [
+      "actinic keratosis",
+      "sensitive skin"
+    ],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Well tolerated in patients with sensitive skin and those undergoing clinical procedures like photodynamic therapy and cataract surgery.",
+    "usage_guidance": "Panthenol is gentle enough to use both morning and evening. Apply to damp skin after cleansing and before heavier creams or oils — this helps lock in moisture. It's typically found in concentrations of 1-5% in skincare products. You can use it daily from the start without a gradual introduction period. Panthenol works well under sunscreen in the morning and pairs easily with other actives. It's particularly helpful when your skin feels irritated, dry, or compromised. You should notice softer, more hydrated skin within a few days of consistent use.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Prebiotic and panthenol-containing dermocosmetic improves tolerance from artificial daylight photodynamic therapy: A randomized controlled trial in patients with actinic keratosis.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/39528008/"
+      },
+      {
+        "title": "Alpha-Glycerylphosphorylcholine and D-Panthenol Eye Drops in Patients Undergoing Cataract Surgery.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/35711284/"
+      }
+    ]
+  },
+  {
+    "inci_name": "papain",
+    "common_names": [
+      "papain",
+      "papaya enzyme"
+    ],
+    "functions": [
+      "exfoliant*",
+      "keratolytic*"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [
+      "sensitive*"
+    ],
+    "conditions": [
+      "keloids",
+      "hypertrophic scars"
+    ],
+    "known_conflicts": [
+      "glycolic acid",
+      "lactic acid",
+      "salicylic acid"
+    ],
+    "known_conflicts_detail": [
+      {
+        "inci_name": "glycolic acid",
+        "level": "avoid",
+        "reason": "Combining enzyme and acid exfoliants significantly increases over-exfoliation and barrier damage risk. Use on separate days."
+      },
+      {
+        "inci_name": "lactic acid",
+        "level": "avoid",
+        "reason": "Combining enzyme and acid exfoliants significantly increases over-exfoliation risk. Use on separate days."
+      },
+      {
+        "inci_name": "salicylic acid",
+        "level": "avoid",
+        "reason": "Combining enzyme and acid exfoliants significantly increases over-exfoliation risk. Use on separate days."
+      }
+    ],
+    "safety_notes": "Papain is cytotoxic at concentrations above 0.01 mg/ml based on cell studies. In solution form, it can cause noticeable degradation of the epidermis. It is also known to cause allergic reactions, particularly through inhalation in occupational settings.",
+    "usage_guidance": "Papain is a proteolytic enzyme from papaya that breaks down proteins on the skin's surface, making it effective for gentle exfoliation. Use products containing papain 1 to 3 times per week, typically in the evening. Apply to clean, dry skin and follow with moisturizer. If you have known allergies to papaya or tropical fruits, patch test before use. Because it works by enzymatic action rather than acids, it can be gentler than chemical exfoliants but may still cause irritation in sensitive individuals. Start with once-weekly application and increase frequency as tolerated. While papain itself is not photosensitizing, exfoliation increases sun sensitivity, so always apply SPF during the day.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Liposomes and transferosomes in the delivery of papain for the treatment of keloids and hypertrophic scars.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/38100466/"
+      },
+      {
+        "title": "Plant and Arthropod IgE-Binding Papain-like Cysteine Proteases: Multiple Contributions to Allergenicity.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/38472904/"
+      }
+    ]
+  },
+  {
+    "inci_name": "petrolatum",
+    "common_names": [
+      "petrolatum",
+      "petroleum jelly",
+      "vaseline"
+    ],
+    "functions": [
+      "occlusive*",
+      "emollient*",
+      "skin permeation enhancer"
+    ],
+    "suitable_skin_types": [
+      "dry",
+      "sensitive",
+      "normal"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Petrolatum can block UVA photoreaction, which may interfere with phototherapy treatments like PUVA. Application just before such treatments is not recommended. Generally well-tolerated with good biocompatibility in topical formulations.",
+    "usage_guidance": "Apply to damp skin as a final step to lock in moisture, both morning and evening if needed. Petrolatum forms a protective barrier that prevents water loss, making it ideal for dry patches, chapped areas, or as a slugging treatment overnight. Use a thin layer — a little goes a long way. It sits on top of the skin rather than absorbing, so layer it after all water-based products and treatments. Safe for long-term daily use. If using phototherapy or light-based treatments, avoid application beforehand as it may reduce treatment effectiveness.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Development and Evaluation of Biocompatible Topical Petrolatum-liquid Crystal Formulations with Enhanced Skin Permeation Properties.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/35173089/"
+      },
+      {
+        "title": "Effects of topical petrolatum and salicylic acid upon skin photoreaction to UVA.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/15908297/"
+      }
+    ]
+  },
+  {
+    "inci_name": "phenoxyethanol",
+    "common_names": [
+      "phenoxyethanol"
+    ],
+    "functions": [
+      "preservative",
+      "antimicrobial"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Considered one of the most well-tolerated preservatives in cosmetics and is a rare sensitizer. Safe for all consumers including children when used at concentrations up to 1%. May be toxic to meibomian gland epithelial cells (eye area glands) at approved concentrations, though systemic adverse effects only occur at exposures roughly 200-fold higher than typical cosmetic use.",
+    "usage_guidance": "Phenoxyethanol is a background preservative ingredient that works passively to keep your products safe from microbial contamination. You don't need to adjust your routine around it — it's compatible with both AM and PM use and layers seamlessly with other actives. It's present at low concentrations (typically under 1%) and requires no special application technique. If using products around the delicate eye area, some research suggests caution, but this applies to the specific cells of the eyelid glands rather than general skin tolerance.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Safety review of phenoxyethanol when used as a preservative in cosmetics.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/31588615/"
+      },
+      {
+        "title": "Fragrance material review on 2-phenoxyethanol.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/22036980/"
+      },
+      {
+        "title": "Toxicity of the cosmetic preservatives parabens, phenoxyethanol and chlorphenesin on human meibomian gland epithelial cells.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/32387382/"
+      }
+    ]
+  },
+  {
+    "inci_name": "potassium sorbate",
+    "common_names": [
+      "potassium sorbate"
+    ],
+    "functions": [
+      "preservative*",
+      "antimicrobial*"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Considered a rare skin sensitizer. Products containing potassium sorbate may also contain sorbic acid, and allergic contact dermatitis has been documented in topical pharmaceuticals and medical devices.",
+    "usage_guidance": "Potassium sorbate is a preservative ingredient used to prevent microbial contamination in skincare formulations. You'll find it listed in the ingredients but won't apply it separately — it's already incorporated into products like cleansers, moisturizers, and serums at safe, effective levels (typically well under 1%). No special handling or timing considerations are needed. If you have a history of contact dermatitis or suspect sensitivity to preservatives, patch test new products containing this ingredient before full facial application.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Allergic contact dermatitis from potassium sorbate and sorbic acid in topical pharmaceuticals and medical devices.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/33656744/"
+      }
+    ]
+  },
+  {
+    "inci_name": "propylene glycol",
+    "common_names": [
+      "propylene glycol"
+    ],
+    "functions": [
+      "emollient",
+      "emulsifier",
+      "solvent*"
+    ],
+    "suitable_skin_types": [],
+    "avoid_skin_types": [
+      "sensitive*"
+    ],
+    "conditions": [],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Can cause both irritant and allergic contact dermatitis. Acts as a weak sensitizer and irritant, particularly problematic for those with underlying skin conditions or compromised skin barriers. Named Allergen of the Year 2018 by the American Contact Dermatitis Society.",
+    "usage_guidance": "Propylene glycol is typically used as a supporting ingredient in skincare formulations rather than an active. It helps other ingredients penetrate and improves product texture. If you have sensitive skin or a history of contact dermatitis, consider patch testing products containing this ingredient on a small area before full application. It can be used morning or evening as part of your regular routine. If you experience stinging, redness, or irritation, discontinue use and choose formulations without this ingredient.",
+    "confidence": 2,
+    "sources": [
+      {
+        "title": "Propylene Glycol.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/29059092/"
+      },
+      {
+        "title": "Propylene glycol dermatitis.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/1999538/"
+      },
+      {
+        "title": "Propylene glycol, skin sensitisation and allergic contact dermatitis: A scientific and regulatory conundrum.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/36702195/"
+      }
+    ]
+  },
+  {
+    "inci_name": "pyridoxine",
+    "common_names": [
+      "pyridoxine",
+      "vitamin B6"
+    ],
+    "functions": [
+      "skin barrier support*",
+      "differentiation regulator*"
+    ],
+    "suitable_skin_types": [
+      "dry",
+      "sensitive",
+      "normal"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [
+      "atopic dermatitis",
+      "seborrheic dermatitis",
+      "acne"
+    ],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Rare cases of photosensitivity and rosacea-like dermatitis have been reported, primarily with high pharmacologic doses. Photopatch testing showed photoallergic reactions in isolated cases. Generally well-tolerated in topical cosmetic formulations.",
+    "usage_guidance": "Pyridoxine (vitamin B6) can be used morning or evening in your routine. It works by stimulating filaggrin production, which strengthens the skin barrier over time. Apply after cleansing and before heavier creams or oils. Results build gradually over several weeks as barrier function improves. Suitable for daily use. While photosensitivity is extremely rare and typically associated with high oral doses, apply SPF during the day as part of your regular routine.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Photosensitive dermatitis caused by pyridoxine hydrochloride.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/9703142/"
+      },
+      {
+        "title": "Pyridoxine induced rosacea-like dermatitis.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/26058251/"
+      },
+      {
+        "title": "Pyridoxine stimulates filaggrin production in human epidermal keratinocytes.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/34302584/"
+      }
+    ]
+  },
+  {
+    "inci_name": "resveratrol",
+    "common_names": [
+      "resveratrol"
+    ],
+    "functions": [
+      "antioxidant",
+      "anti-inflammatory"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Resveratrol appears to be relatively free from adverse reactions and is generally well-tolerated. However, some toxicity and adverse effects have been reported following consumption at high doses, and long-term safety data in topical skincare applications remains limited.",
+    "usage_guidance": "Apply resveratrol products once or twice daily, typically in the morning and evening, after cleansing and before moisturiser. As an antioxidant, it works well in morning routines to help protect against environmental stressors throughout the day. You can also use it in the evening to support skin repair overnight. Resveratrol is generally gentle and can be layered with most other skincare ingredients. If you're new to antioxidant serums, start once daily and increase as your skin adjusts. Most users tolerate it immediately without irritation.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Health benefits of resveratrol administration.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/30816367/"
+      },
+      {
+        "title": "Therapeutic potential of resveratrol: the in vivo evidence.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/16732220/"
+      },
+      {
+        "title": "Potential Adverse Effects of Resveratrol: A Literature Review.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/30000939/"
+      },
+      {
+        "title": "No title",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/32197410/"
+      }
+    ]
+  },
+  {
+    "inci_name": "retinal",
+    "common_names": [
+      "retinaldehyde",
+      "retinal"
+    ],
+    "functions": [],
+    "suitable_skin_types": [],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [
+      "ascorbic acid",
+      "benzoyl peroxide",
+      "glycolic acid",
+      "lactic acid",
+      "salicylic acid"
+    ],
+    "known_conflicts_detail": [
+      {
+        "inci_name": "glycolic acid",
+        "level": "avoid",
+        "reason": "Retinal is more potent than retinol. Combined use with AHAs significantly increases irritation risk. Use on alternate evenings."
+      },
+      {
+        "inci_name": "lactic acid",
+        "level": "avoid",
+        "reason": "Retinal is more potent than retinol. Combined use with AHAs significantly increases irritation risk. Use on alternate evenings."
+      },
+      {
+        "inci_name": "salicylic acid",
+        "level": "avoid",
+        "reason": "Retinal is more potent than retinol. Combined use with BHA significantly increases irritation risk. Use on alternate evenings."
+      },
+      {
+        "inci_name": "ascorbic acid",
+        "level": "avoid",
+        "reason": "Ascorbic acid works at low pH which destabilises retinoids. Use vitamin C in AM, retinal in PM."
+      },
+      {
+        "inci_name": "benzoyl peroxide",
+        "level": "avoid",
+        "reason": "Benzoyl peroxide oxidises retinoids on contact, making them ineffective. Use on separate evenings or apply BPO in AM only."
+      }
+    ],
+    "safety_notes": "",
+    "usage_guidance": "",
+    "confidence": 2,
+    "sources": []
+  },
+  {
+    "inci_name": "retinol",
+    "common_names": [
+      "retinol",
+      "vitamin A"
+    ],
+    "functions": [
+      "antioxidant*",
+      "anti-aging*",
+      "cell-communicating*"
+    ],
+    "suitable_skin_types": [
+      "mature*",
+      "normal*",
+      "oily*",
+      "combination*"
+    ],
+    "avoid_skin_types": [
+      "sensitive*"
+    ],
+    "conditions": [],
+    "known_conflicts": [
+      "ascorbic acid",
+      "azelaic acid",
+      "benzoyl peroxide",
+      "glycolic acid",
+      "lactic acid",
+      "mandelic acid",
+      "salicylic acid"
+    ],
+    "known_conflicts_detail": [
+      {
+        "inci_name": "glycolic acid",
+        "level": "avoid",
+        "reason": "Combined use significantly increases irritation and dryness. Use on alternate evenings or separate AM/PM."
+      },
+      {
+        "inci_name": "lactic acid",
+        "level": "avoid",
+        "reason": "Combined use significantly increases irritation and dryness. Use on alternate evenings or separate AM/PM."
+      },
+      {
+        "inci_name": "salicylic acid",
+        "level": "avoid",
+        "reason": "Combined use significantly increases irritation and peeling. Use on alternate evenings or separate AM/PM."
+      },
+      {
+        "inci_name": "mandelic acid",
+        "level": "avoid",
+        "reason": "Combined use raises irritation risk. Use on alternate evenings or separate AM/PM."
+      },
+      {
+        "inci_name": "azelaic acid",
+        "level": "caution",
+        "reason": "Both are active at low pH. Start by separating AM/PM and monitor for irritation before combining in the same routine step."
+      },
+      {
+        "inci_name": "ascorbic acid",
+        "level": "avoid",
+        "reason": "Ascorbic acid works at low pH which destabilises retinol. Both are individually sensitising. Use vitamin C in AM, retinol in PM."
+      },
+      {
+        "inci_name": "benzoyl peroxide",
+        "level": "avoid",
+        "reason": "Benzoyl peroxide oxidises retinol on contact, making it ineffective. Use on separate evenings or apply BPO in AM only."
+      }
+    ],
+    "safety_notes": "",
+    "usage_guidance": "Use only in the evening — retinol breaks down in sunlight and increases sun sensitivity. Start with 2 to 3 times per week, applying to clean, completely dry skin. Wait 20 to 30 minutes after cleansing to minimize irritation. Apply a pea-sized amount to the face, then follow with moisturizer. Build up to nightly use over 4 to 8 weeks as your skin acclimates. Expect mild dryness, flaking, or redness in the first 2 to 4 weeks — this is normal and typically subsides. Always wear broad-spectrum SPF 30 or higher during the day. Start with lower concentrations (0.25% to 0.5%) if you're new to retinoids, working up to 1% as tolerated.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "SUPPLEMENT ARTICLE: Retinol: The Ideal Retinoid for Cosmetic Solutions.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/35816071/"
+      }
+    ]
+  },
+  {
+    "inci_name": "retinyl palmitate",
+    "common_names": [
+      "retinyl palmitate"
+    ],
+    "functions": [
+      "antioxidant",
+      "anti-aging",
+      "whitening",
+      "skin penetration enhancer",
+      "anti-inflammatory"
+    ],
+    "suitable_skin_types": [
+      "mature*",
+      "normal*",
+      "dry*"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [
+      "photoaging"
+    ],
+    "known_conflicts": [
+      "benzoyl peroxide"
+    ],
+    "known_conflicts_detail": [
+      {
+        "inci_name": "benzoyl peroxide",
+        "level": "avoid",
+        "reason": "Benzoyl peroxide oxidises retinoids. Use on separate occasions."
+      }
+    ],
+    "safety_notes": "",
+    "usage_guidance": "Apply in the evening to clean, dry skin before moisturizer. Start 2 to 3 times a week and gradually increase frequency as your skin adjusts. Retinyl palmitate is a gentler vitamin A derivative compared to retinol, making it suitable for those new to retinoids. It works by converting to retinol in the skin. Since it offers photoprotective benefits but vitamin A derivatives can increase photosensitivity, always wear broad-spectrum SPF during the day. You may see improvements in skin texture and firmness over 8 to 12 weeks with consistent use.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Efficacy and mechanism of retinyl palmitate against UVB-induced skin photoaging.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/37927602/"
+      },
+      {
+        "title": "Retinol and Retinyl Palmitate.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/29025343/"
+      },
+      {
+        "title": "Nanoemulgel for Improved Topical Delivery of Retinyl Palmitate: Formulation Design and Stability Evaluation.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/32353979/"
+      }
+    ]
+  },
+  {
+    "inci_name": "rosehip oil",
+    "common_names": [
+      "rosehip oil",
+      "rosa canina"
+    ],
+    "functions": [
+      "antioxidant",
+      "skin-regenerating",
+      "emollient*"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [
+      "melasma",
+      "hyperpigmentation",
+      "wound healing"
+    ],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "No cytotoxicity was observed at formulation concentrations ranging from 0.06% to 1% in cell viability studies.",
+    "usage_guidance": "Rosehip oil can be used morning and evening. Apply after water-based serums but before heavier creams, or mix a few drops into your moisturiser. It absorbs well and works across all steps of your routine. For hyperpigmentation concerns, consistency is key—use daily for at least 8-12 weeks to see results. The oil is generally well-tolerated and suitable for long-term use. If using in the morning, always follow with SPF as part of your routine.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Nanoemulsion Containing Kojic Dipalmitate and Rosehip Oil: A Promising Formulation to Treat Melasma.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/36839792/"
+      },
+      {
+        "title": "Rosehip Oil Promotes Excisional Wound Healing by Accelerating the Phenotypic Transition of Macrophages.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/30199901/"
+      }
+    ]
+  },
+  {
+    "inci_name": "salicylic acid",
+    "common_names": [
+      "salicylic acid",
+      "BHA"
+    ],
+    "functions": [
+      "exfoliant*",
+      "keratolytic*"
+    ],
+    "suitable_skin_types": [
+      "oily",
+      "acne-prone"
+    ],
+    "avoid_skin_types": [
+      "sensitive*"
+    ],
+    "conditions": [
+      "acne vulgaris"
+    ],
+    "known_conflicts": [
+      "acetyl hexapeptide-3",
+      "bromelain",
+      "glycolic acid",
+      "lactic acid",
+      "palmitoyl tetrapeptide-7",
+      "palmitoyl tripeptide-1",
+      "papain",
+      "retinal",
+      "retinol"
+    ],
+    "known_conflicts_detail": [
+      {
+        "inci_name": "retinol",
+        "level": "avoid",
+        "reason": "Combined use significantly increases irritation and peeling. Use on alternate evenings or separate AM/PM."
+      },
+      {
+        "inci_name": "retinal",
+        "level": "avoid",
+        "reason": "Retinal is more potent than retinol. Combined use with BHA significantly increases irritation risk. Use on alternate evenings."
+      },
+      {
+        "inci_name": "glycolic acid",
+        "level": "caution",
+        "reason": "Using both at active concentrations risks over-exfoliation and barrier damage. Use on alternate days or use one as a toner at low concentration alongside the other."
+      },
+      {
+        "inci_name": "lactic acid",
+        "level": "caution",
+        "reason": "Using both at active concentrations risks over-exfoliation and barrier damage. Use on alternate days or use one at low concentration."
+      },
+      {
+        "inci_name": "palmitoyl tripeptide-1",
+        "level": "caution",
+        "reason": "Low pH from salicylic acid can hydrolyse peptide bonds over time, reducing peptide efficacy. Separate AM/PM."
+      },
+      {
+        "inci_name": "palmitoyl tetrapeptide-7",
+        "level": "caution",
+        "reason": "Low pH from salicylic acid can hydrolyse peptide bonds over time. Separate AM/PM."
+      },
+      {
+        "inci_name": "acetyl hexapeptide-3",
+        "level": "caution",
+        "reason": "Low pH from salicylic acid can hydrolyse peptide bonds over time. Separate AM/PM."
+      },
+      {
+        "inci_name": "papain",
+        "level": "avoid",
+        "reason": "Combining enzyme and acid exfoliants significantly increases over-exfoliation risk. Use on separate days."
+      },
+      {
+        "inci_name": "bromelain",
+        "level": "avoid",
+        "reason": "Combining enzyme and acid exfoliants significantly increases over-exfoliation risk. Use on separate days."
+      }
+    ],
+    "safety_notes": "",
+    "usage_guidance": "Start 2 to 3 times a week in the evening and build up to daily as tolerated. Apply to clean dry skin before moisturiser. Salicylic acid works best at concentrations between 0.5% and 2% for daily use, with higher concentrations reserved for occasional peels. Always wear SPF the following morning, as BHAs increase sun sensitivity. Expect some initial tingling or mild dryness — this typically settles within 2 to 3 weeks. If using other exfoliating acids, alternate days to avoid over-exfoliation.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Topical azelaic acid, salicylic acid, nicotinamide, sulphur, zinc and fruit acid (alpha-hydroxy acid) for acne.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/32356369/"
+      },
+      {
+        "title": "Salicylic acid as a peeling agent: a comprehensive review.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/26347269/"
+      }
+    ]
+  },
+  {
+    "inci_name": "shea butter",
+    "common_names": [
+      "shea butter",
+      "butyrospermum parkii"
+    ],
+    "functions": [
+      "emollient",
+      "antioxidant",
+      "anti-inflammatory",
+      "occlusive*"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [
+      "diaper dermatitis",
+      "skin irritation",
+      "wound healing",
+      "scabies",
+      "general dermatoses"
+    ],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Well-tolerated across multiple age groups including infants and pregnant women. Used safely in traditional medicine for dermatologic conditions across Sub-Saharan Africa.",
+    "usage_guidance": "Apply as needed, morning or evening, to areas requiring moisture or protection. Works well as one of the final steps in your routine due to its rich, occlusive texture. Can be used on face or body. Layer over water-based serums and lightweight moisturizers to lock in hydration. Safe for daily use. The butter melts on contact with skin and absorbs slowly—allow a few minutes before dressing or applying makeup. Suitable for sensitive areas and can be used preventatively or to address existing irritation.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Nutritional composition of shea products and chemical properties of shea butter: a review.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/24261539/"
+      },
+      {
+        "title": "Clinical Evaluation of a Diaper Containing a Shea Butter-Based Emollient and Impact on Diapered Skin Erythema.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/40189822/"
+      },
+      {
+        "title": "A review of ethnomedicinal uses of shea butter for dermatoses in Sub-Saharan Africa.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/33480103/"
+      }
+    ]
+  },
+  {
+    "inci_name": "sodium ascorbyl phosphate",
+    "common_names": [
+      "sodium ascorbyl phosphate",
+      "SAP"
+    ],
+    "functions": [
+      "antioxidant",
+      "skin conditioning"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [
+      "wrinkles"
+    ],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Demonstrated little toxicity in acute oral and parenteral studies across multiple animal species. Generally recognized as safe (GRAS) for use in cosmetics. Used at concentrations ranging from 0.01% to 3% in cosmetic formulations.",
+    "usage_guidance": "Apply once or twice daily, morning or evening. Sodium ascorbyl phosphate is more stable than pure vitamin C and works well in both AM and PM routines. It converts to active vitamin C in the skin through enzymatic action, so results build gradually over weeks. Layer under moisturizer and sunscreen. Can be used at concentrations between 0.5% to 3% for optimal antioxidant benefits. No wait time needed after application. Suitable for daily use without irritation.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Sodium ascorbyl phosphate in topical microemulsions.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/12695012/"
+      },
+      {
+        "title": "Final report of the safety assessment of L-Ascorbic Acid, Calcium Ascorbate, Magnesium Ascorbate, Magnesium Ascorbyl Phosphate, Sodium Ascorbate, and Sodium Ascorbyl Phosphate as used in cosmetics.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/16154915/"
+      },
+      {
+        "title": "Comparative physicochemical stability and clinical anti-wrinkle efficacy of transdermal emulgel preparations of 5% sodium ascorbyl phosphate and or ascorbic acid on human volunteers.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/32383548/"
+      }
+    ]
+  },
+  {
+    "inci_name": "sodium benzoate",
+    "common_names": [
+      "sodium benzoate"
+    ],
+    "functions": [
+      "preservative"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Studies on oral intake at high concentrations have shown sodium benzoate may induce oxidative stress and have detrimental health effects. Topical cosmetic use involves significantly lower exposure than oral consumption, but long-term effects from repeated topical application have not been well-documented in the provided sources.",
+    "usage_guidance": "Sodium benzoate is a preservative ingredient you'll find in the ingredient list of many skincare products, where it works to prevent microbial growth and extend product shelf life. It's not an active treatment ingredient, so you don't need to apply it in any particular order or at a specific time of day. You'll encounter it in formulations you use morning or evening as part of your routine. No special precautions are needed for topical cosmetic products containing this preservative at standard concentrations.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Sodium Benzoate Inhibits Osteoblast Differentiation and Accelerates Bone Loss by Regulating the FGF2/p38/RUNX2 Pathway.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/40404584/"
+      },
+      {
+        "title": "Toxicological assessment of sodium benzoate in Drosophila melanogaster.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/37986221/"
+      }
+    ]
+  },
+  {
+    "inci_name": "sodium hyaluronate",
+    "common_names": [
+      "sodium hyaluronate",
+      "hyaluronic acid salt"
+    ],
+    "functions": [
+      "humectant",
+      "skin conditioning"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Considered safe for use in cosmetics at concentrations up to 2%. Not toxic, not a sensitizer, and not immunogenic in animal studies. Widespread clinical use has been free of significant adverse reactions.",
+    "usage_guidance": "Apply morning and evening to damp skin for maximum hydration benefits. Layer under heavier creams and oils — as a humectant, sodium hyaluronate draws moisture into the skin, so applying it to slightly damp skin or following with an occlusive helps lock in hydration. Works well with virtually all other skincare ingredients. You should notice plumper, more hydrated skin immediately upon use. Safe for daily use at typical cosmetic concentrations.",
+    "confidence": 2,
+    "sources": [
+      {
+        "title": "Final report of the safety assessment of hyaluronic acid, potassium hyaluronate, and sodium hyaluronate.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/19636067/"
+      }
+    ]
+  },
+  {
+    "inci_name": "sodium hydroxide",
+    "common_names": [
+      "sodium hydroxide",
+      "lye"
+    ],
+    "functions": [
+      "pH adjuster*"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "",
+    "usage_guidance": "Sodium hydroxide is a pH adjuster used in tiny amounts to balance the acidity of skincare formulas. You won't see it listed at active concentrations—it's neutralized during manufacturing and doesn't interact with your skin as lye. No special precautions needed; it's compatible with all other ingredients and routines. You can use products containing it morning and evening without concern.",
+    "confidence": 2,
+    "sources": []
+  },
+  {
+    "inci_name": "sorbitol",
+    "common_names": [
+      "sorbitol"
+    ],
+    "functions": [
+      "humectant*"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "",
+    "usage_guidance": "Sorbitol is a sugar alcohol that functions as a humectant, drawing moisture into the skin. It can be used morning and evening in leave-on products like serums, moisturisers, and masks. It's well-tolerated across all skin types and can be layered with other actives without issue. No adjustment period is needed—products containing sorbitol can be incorporated into your routine immediately at any frequency.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Sugar alcohols derived from lactose: lactitol, galactitol, and sorbitol.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/32989517/"
+      }
+    ]
+  },
+  {
+    "inci_name": "squalane",
+    "common_names": [
+      "squalane"
+    ],
+    "functions": [
+      "emollient",
+      "skin hydrating",
+      "antioxidant",
+      "drug carrier"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Confirmed safe as a cosmetic ingredient by the Expert Panel for Cosmetic Ingredient Safety. Well tolerated with very little toxicity. Suitable for children with atopic skin from 12 months of age.",
+    "usage_guidance": "Use morning and evening as part of your regular routine. Squalane is lightweight and absorbs quickly, making it suitable for layering under or over other products. Apply after water-based serums but before heavier creams, or mix a few drops into your moisturizer. It can also be used alone as a final step to lock in hydration. No sensitization period needed — you can use it daily from the start. Works year-round and pairs well with virtually all other actives.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Biological importance and applications of squalene and squalane.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/22361190/"
+      },
+      {
+        "title": "Squalane and Squalene.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/37752766/"
+      },
+      {
+        "title": "Effectiveness and tolerability of a squalane and dimethicone-based treatment for head lice.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/33797611/"
+      }
+    ]
+  },
+  {
+    "inci_name": "sulfur",
+    "common_names": [
+      "sulfur",
+      "sulphur"
+    ],
+    "functions": [
+      "keratolytic",
+      "antimicrobial*"
+    ],
+    "suitable_skin_types": [
+      "oily",
+      "acne-prone"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [
+      "scabies"
+    ],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Safe for topical use at 5-10% concentrations, including in infants over 2 months. Approximately 1% is systemically absorbed. Adverse effects are uncommon and mainly limited to skin reactions. Fatal outcomes after extensive application in infants have been reported.",
+    "usage_guidance": "Sulfur is typically used at 5-10% concentration in skincare products. Apply to clean, dry skin in the evening, starting 2-3 times per week and gradually increasing frequency as tolerated. Its keratolytic action works by forming hydrogen sulfide through interaction with skin cells, making smaller particle formulations more effective. When applied topically, expect some initial dryness or flaking as it exfoliates the skin. The petrolatum base often used in sulfur formulations can feel heavy, so follow with a lightweight moisturizer if needed. Allow the product to fully absorb before layering other treatments.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Comparison of sulfur ointment and permethrin treatments in scabies.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/36193643/"
+      },
+      {
+        "title": "Sulfur revisited.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/30000000/"
+      },
+      {
+        "title": "No title",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/2450900/"
+      }
+    ]
+  },
+  {
+    "inci_name": "tetrahexyldecyl ascorbate",
+    "common_names": [
+      "THD ascorbate"
+    ],
+    "functions": [
+      "antioxidant",
+      "skin brightening",
+      "anti-aging"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [
+      "photoaging",
+      "uneven pigmentation"
+    ],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "THDA alone may reduce keratinocyte viability under oxidative stress and can activate pro-inflammatory pathways. These effects are mitigated when combined with stabilizing antioxidants like acetyl zingerone.",
+    "usage_guidance": "Apply daily, morning or evening. As a stable, oil-soluble form of vitamin C, THDA penetrates well and is suitable for layering under or over other products. It works best when formulated with stabilizing antioxidants to prevent rapid degradation in the oxidative environment of skin. Expect gradual improvement in skin brightness and texture over 4 to 8 weeks. Can be used alongside retinoids and niacinamide. While more stable than L-ascorbic acid, still wear SPF during the day as with all antioxidants.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Open-label topical application of tetrahexyldecyl ascorbate and acetyl zingerone containing serum improves the appearance of photoaging and uneven pigmentation.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/38634176/"
+      },
+      {
+        "title": "Tetrahexyldecyl Ascorbate (THDC) Degrades Rapidly under Oxidative Stress but Can Be Stabilized by Acetyl Zingerone to Enhance Collagen Production and Antioxidant Effects.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/34445461/"
+      }
+    ]
+  },
+  {
+    "inci_name": "titanium dioxide",
+    "common_names": [
+      "titanium dioxide",
+      "mineral SPF"
+    ],
+    "functions": [
+      "UV filter",
+      "photoprotectant"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Safe for topical use at concentrations up to 25% on healthy and compromised skin. Does not penetrate beyond outer skin layers. Avoid spray or powder formulations that may lead to lung inhalation. Incidental oral exposure from lip products poses no health risk.",
+    "usage_guidance": "Apply in the morning as part of your sunscreen or SPF-containing products (day creams, foundations, lip balms). Titanium dioxide provides strong UVB protection and some UVA coverage. It sits on the skin surface rather than absorbing into it, so apply it as your final skincare step before makeup. Reapply sunscreen every 2 hours during sun exposure. Safe for daily use on face and body. Avoid spray sunscreens with this ingredient due to inhalation risk.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Safety of titanium dioxide nanoparticles in cosmetics.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/31588611/"
+      },
+      {
+        "title": "A review of inorganic UV filters zinc oxide and titanium dioxide.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/30444533/"
+      }
+    ]
+  },
+  {
+    "inci_name": "tocopherol",
+    "common_names": [
+      "vitamin E",
+      "tocopherol",
+      "alpha-tocopherol"
+    ],
+    "functions": [
+      "antioxidant"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Studies show tocopherol acetate reduces sunburn-associated erythema, edema, and skin sensitivity when applied after UV exposure. Generally well-tolerated in topical application.",
+    "usage_guidance": "Can be used morning and evening. Tocopherol works well in serums and moisturizers, often appearing at concentrations between 0.1% and 5%. Apply after water-based products but before heavier creams and oils. It pairs particularly well with vitamin C, enhancing antioxidant protection. No adjustment period needed — you can incorporate it into your routine immediately. Works both as a preventive antioxidant and to help calm skin after sun exposure.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Topical tocopherol acetate reduces post-UVB, sunburn-associated erythema, edema, and skin sensitivity in hairless mice.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/1632644/"
+      },
+      {
+        "title": "Penetration and distribution of alpha-tocopherol, alpha- or gamma-tocotrienols applied individually onto murine skin.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/9470177/"
+      },
+      {
+        "title": "Ubiquinone and tocopherol: dissimilar siblings.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/18499086/"
+      }
+    ]
+  },
+  {
+    "inci_name": "tocopheryl acetate",
+    "common_names": [
+      "vitamin E acetate",
+      "tocopheryl acetate"
+    ],
+    "functions": [
+      "antioxidant*"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "",
+    "usage_guidance": "Tocopheryl acetate is a stable form of vitamin E suitable for use morning or evening. It works well in serums, moisturizers, and other leave-on products. While the acetate form has lower immediate antioxidant activity than pure vitamin E, it converts to the active form once absorbed into skin. It layers well with other actives and doesn't require special timing or concentration considerations. Suitable for daily use without build-up period.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Determination of tocopheryl acetate and ascorbyl tetraisopalmitate in cosmetic formulations by HPLC.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/19467029/"
+      },
+      {
+        "title": "Uptake and bioconversion of alpha-tocopheryl acetate to alpha-tocopherol in skin of hairless mice.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/8506388/"
+      }
+    ]
+  },
+  {
+    "inci_name": "tranexamic acid",
+    "common_names": [
+      "tranexamic acid"
+    ],
+    "functions": [
+      "skin brightening",
+      "anti-inflammatory",
+      "anti-angiogenic",
+      "melanogenesis inhibitor"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [
+      "melasma",
+      "post-inflammatory hyperpigmentation",
+      "acne",
+      "rosacea"
+    ],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "",
+    "usage_guidance": "Tranexamic acid can be used morning or evening, typically in concentrations of 2-5% for topical application. Apply after cleansing and before heavier serums or moisturizers. It works well layered with other brightening ingredients and can be used daily. Results for hyperpigmentation typically become visible after 8-12 weeks of consistent use. No specific pH requirements, and it does not increase sun sensitivity, though SPF is always recommended when treating pigmentation.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "THE USE OF TRANEXAMIC ACID IN DERMATOLOGY.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/38549597/"
+      },
+      {
+        "title": "Oral Tranexamic Acid for the Treatment of Melasma: A Review.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/29677015/"
+      }
+    ]
+  },
+  {
+    "inci_name": "triethanolamine",
+    "common_names": [
+      "triethanolamine",
+      "TEA"
+    ],
+    "functions": [
+      "pH adjuster",
+      "surfactant"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [
+      "sensitive*"
+    ],
+    "conditions": [],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Generally safe when formulated to be non-irritating. Can cause skin, eye, and respiratory tract irritation, though it is less irritating than related compounds. Should not be used in products where N-nitroso compounds can form.",
+    "usage_guidance": "Triethanolamine is typically used as a pH adjuster or emulsifier in formulations rather than as an active ingredient, so you won't need to adjust how you use products containing it. It's found in cleansers, lotions, and creams at varying concentrations. If you have sensitive skin and notice irritation from a product containing TEA, particularly at higher concentrations, discontinue use. No special timing or layering considerations are needed — simply follow the instructions for the product it's formulated in.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Safety assessment of triethanolamine and triethanolamine-containing ingredients as used in cosmetics.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/23696578/"
+      },
+      {
+        "title": "Toxicology of mono-, di-, and triethanolamine.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/8956558/"
+      }
+    ]
+  },
+  {
+    "inci_name": "urea",
+    "common_names": [
+      "urea",
+      "carbamide"
+    ],
+    "functions": [
+      "humectant",
+      "moisturizer",
+      "keratolytic",
+      "emollient",
+      "penetration enhancer",
+      "antimicrobial"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [
+      "xerosis",
+      "atopic dermatitis",
+      "psoriasis",
+      "ichthyosis",
+      "seborrheic dermatitis"
+    ],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Urea is well tolerated across concentrations. Side effects are mild and more frequent at high concentrations above 10%. Generally safe for regular use in skincare formulations.",
+    "usage_guidance": "Use products with up to 10% urea as a daily moisturizer, morning or evening, suitable for all skin types including sensitive. These lower concentrations hydrate and support barrier function without irritation. Products with concentrations above 10% work as exfoliants to remove dead skin and should be introduced gradually—start 2 to 3 times per week in the evening and build to daily use as your skin adapts. Apply to clean skin before heavier moisturizers. At higher percentages, you may notice mild tingling initially, which typically subsides with continued use. Urea can enhance absorption of other actives, making it a useful addition to layered routines. No specific photosensitivity concerns, but general sun protection is always recommended.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "Topical urea in skincare: A review.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/30378232/"
+      },
+      {
+        "title": "Urea in Dermatology: A Review of its Emollient, Moisturizing, Keratolytic, Skin Barrier Enhancing and Antimicrobial Properties.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/34596890/"
+      }
+    ]
+  },
+  {
+    "inci_name": "zinc oxide",
+    "common_names": [
+      "zinc oxide",
+      "mineral SPF"
+    ],
+    "functions": [
+      "UV filter",
+      "photoprotective",
+      "antimicrobial*"
+    ],
+    "suitable_skin_types": [
+      "all"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "Human health risks are extremely low with topical use due to lack of skin absorption. Avoid spray formulations containing nanoparticles due to potential inhalation risk.",
+    "usage_guidance": "Apply zinc oxide sunscreen as the final step of your morning skincare routine, 15 minutes before sun exposure. Use approximately a quarter teaspoon for face and reapply every 2 hours during sun exposure, or immediately after swimming or sweating. Zinc oxide provides broad-spectrum UVA and UVB protection and can be used daily. It sits on the skin's surface rather than absorbing, so apply it after serums and moisturizers but before makeup. Modern formulations use nanoparticles to minimize the white cast, though some may still leave a slight tint. Safe for daily use on all skin types including sensitive skin.",
+    "confidence": 3,
+    "sources": [
+      {
+        "title": "A review of inorganic UV filters zinc oxide and titanium dioxide.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/30444533/"
+      }
+    ]
+  },
+  {
+    "inci_name": "zinc pca",
+    "common_names": [
+      "zinc PCA"
+    ],
+    "functions": [
+      "sebostatic*",
+      "antimicrobial*",
+      "astringent*"
+    ],
+    "suitable_skin_types": [
+      "oily*",
+      "acne-prone*",
+      "combination*"
+    ],
+    "avoid_skin_types": [],
+    "conditions": [],
+    "known_conflicts": [],
+    "known_conflicts_detail": [],
+    "safety_notes": "",
+    "usage_guidance": "Use morning or evening, or both if tolerated. Zinc PCA works well in serums, toners, and moisturizers targeting oil control. Apply after cleansing and before heavier products. It's generally well-tolerated and can be used daily without a build-up period. Pairs well with niacinamide and salicylic acid. You should notice reduced oiliness and smaller-looking pores within 2 to 4 weeks of consistent use.",
+    "confidence": 2,
+    "sources": []
+  }
+]

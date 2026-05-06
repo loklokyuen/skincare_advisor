@@ -216,3 +216,14 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Local workspace files
+.DS_Store
+.claude/
+docs/superpowers/
+
+# Debug artifacts
+debug_product.html
+
+# Large raw data exports
+data/products/en.openbeautyfacts.org.products.tsv
