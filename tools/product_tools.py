@@ -292,6 +292,13 @@ def _same_product(left: dict, right: dict) -> bool:
     return left_name == right_name and (not left_brand or not right_brand or left_brand == right_brand)
 
 
+_GENERIC_PRODUCT_TOKENS = {
+    "serum", "cream", "lotion", "moisturiser", "moisturizer", "gel", "balm",
+    "mask", "toner", "cleanser", "sunscreen", "oil", "treatment", "essence",
+    "skin", "face", "day", "night", "spray", "wash",
+}
+
+
 def _product_named_in_response(product: dict, response: str) -> bool:
     raw_name = str(product.get("product_name") or "")
     name = _normalise_match_text(raw_name)
@@ -306,14 +313,18 @@ def _product_named_in_response(product: dict, response: str) -> bool:
     if family_name and len(family_name) > 12 and family_name in response_family:
         return True
 
-    # DB name may differ from what LLM wrote (extra suffix, missing "with", etc.).
-    # Fall back to token overlap: require 90%+ of distinctive tokens and at least 5 tokens
-    # to avoid false positives between products that share a brand/series prefix.
-    _STOP = {"for", "the", "and", "with", "a", "an", "to", "of", "in", "by", "on", "or"}
-    name_tokens = {t for t in family_name.split() if t not in _STOP and len(t) > 1}
-    if len(name_tokens) >= 5:
+    # DB name may differ from what LLM wrote (extra suffix, missing "with",
+    # different size, etc.). Compare distinctive tokens only — drop generic
+    # product-category words (serum, cream, ...) so two products in the same
+    # category aren't treated as the same.
+    stop = {"for", "the", "and", "with", "a", "an", "to", "of", "in", "by", "on", "or"}
+    name_tokens = {
+        t for t in family_name.split()
+        if t not in stop and t not in _GENERIC_PRODUCT_TOKENS and len(t) > 1
+    }
+    if len(name_tokens) >= 3:
         matched = sum(1 for t in name_tokens if t in response_text)
-        if matched / len(name_tokens) >= 0.90:
+        if matched / len(name_tokens) >= 0.85:
             return True
 
     return False
