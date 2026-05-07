@@ -480,6 +480,17 @@ def _heading_product_suggestion_queries(response: str) -> list[str]:
         if not match:
             continue
         query = re.sub(r"\s+", " ", match.group("name")).strip(" -")
+        # Strip leading editorial prefixes the writer added before the
+        # actual product name, e.g. "Recommendation — The Ordinary ..."
+        # or "Suggested product: ...".
+        query = re.sub(
+            r"^(?:recommendation|recommended|suggested\s+(?:product|sunscreen)?|"
+            r"product\s+suggestion|suggestion|alternative|second\s+choice|"
+            r"or)\b\s*[-–—:.]*\s*",
+            "",
+            query,
+            flags=re.IGNORECASE,
+        ).strip(" -")
         if query:
             queries.append(query)
             size_variant_query = re.sub(
