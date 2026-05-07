@@ -313,6 +313,15 @@ def _product_named_in_response(product: dict, response: str) -> bool:
     if family_name and len(family_name) > 12 and family_name in response_family:
         return True
 
+    # Catalog products often have variant suffixes after a comma, e.g.
+    #   "Skin + Me Breakouts + Visible Pores Serum, for Dry to Normal Skin, ..."
+    # The response writer typically only quotes the part before the first
+    # comma. Match if that core prefix family is contained in the response.
+    core = raw_name.split(",", 1)[0]
+    core_family = product_family_name(core)
+    if core_family and len(core_family) > 12 and core_family in response_family:
+        return True
+
     # DB name may differ from what LLM wrote (extra suffix, missing "with",
     # different size, etc.). Compare distinctive tokens only — drop generic
     # product-category words (serum, cream, ...) so two products in the same
