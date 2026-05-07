@@ -7,3 +7,7 @@ font = "sans serif"
 
 [server]
 runOnSave = true
+# "poll" skips walking every installed package's __path__, which made the
+# dev console spam ModuleNotFoundError tracebacks for transformers image
+# processors whose torchvision dependency is not installed.
+fileWatcherType = "poll"
