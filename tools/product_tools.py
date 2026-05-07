@@ -635,49 +635,6 @@ def _resolve_llm_product_selection(
 
 
 @tool
-def ask_online_product_research_agent(query: str, limit: int = 15) -> list[dict]:
-    """
-    Delegate to the online product research sub-agent for products missing from the DB.
-    Use this when search_product_catalog returns no local catalog matches.
-    """
-    try:
-        return _ask_online_product_agent(query.strip(), limit=limit)
-    except Exception as exc:
-        return [{"error": f"Online product research failed: {exc}"}]
-
-
-@tool
-def search_product_catalog(query: str, limit: int = 5) -> list[dict]:
-    """
-    Search the local skincare product catalog by product name or brand, then
-    delegate to the online product research sub-agent if the product is not in DB.
-    Use this when the user asks for product recommendations or names a product.
-    """
-    if not query.strip():
-        return []
-
-    try:
-        local_results = list(search_products(query.strip(), limit=limit) or [])
-    except Exception as exc:
-        local_results = [{"error": f"Product search failed: {exc}"}]
-
-    if local_results and not any("error" in item for item in local_results if isinstance(item, dict)):
-        return local_results
-
-    try:
-        online_results = _ask_online_product_agent(query.strip(), limit=limit)
-    except Exception as exc:
-        online_results = [{"error": f"Online product research failed: {exc}"}]
-
-    if online_results:
-        for product in online_results:
-            if isinstance(product, dict) and "error" not in product:
-                save_external_product(product)
-        return online_results
-    return local_results
-
-
-@tool
 def select_recommended_product_cards(
     response: str,
     candidate_products: list[dict] | None = None,
@@ -726,9 +683,7 @@ def select_recommended_product_cards(
 
 
 product_tools = [
-    search_product_catalog,
     select_recommended_product_cards,
     extract_recommended_product_names_from_response,
-    ask_online_product_research_agent,
     search_open_beauty_facts,
 ]

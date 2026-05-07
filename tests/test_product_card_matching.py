@@ -54,7 +54,6 @@ from services.reddit_service import (
     search as reddit_search,
 )
 from tools import product_tools
-from tools.profile_tools import save_user_key_facts_for_profile
 from utils.product_match import product_family_name
 
 
@@ -869,46 +868,6 @@ def test_context_block_includes_previous_recommendations():
     assert "## Previously recommended products" in context
     assert "The Ordinary Multi-Peptide + Hyaluronic Acid Serum for Aging Skin - 30ml" in context
     assert "Do not recommend these again" in context
-
-
-def test_sensitive_skin_saves_as_concern_when_skin_type_exists(monkeypatch):
-    saved_profiles = {}
-
-    def fake_save_profile(user_id, profile):
-        saved_profiles[user_id] = profile
-        return True
-
-    monkeypatch.setattr("tools.profile_tools.get_user_profile", lambda user_id: {})
-    monkeypatch.setattr("tools.profile_tools.save_user_profile", fake_save_profile)
-
-    result = save_user_key_facts_for_profile(
-        {"user_id": "u1", "skin_type": "Dry", "concerns": []},
-        skin_type="Sensitive",
-    )
-
-    assert result["saved"] is True
-    assert result["profile"]["skin_type"] == "Dry"
-    assert "Sensitivity / Irritation" in result["profile"]["concerns"]
-    assert result["changed_fields"] == ["concerns"]
-
-
-def test_context_block_includes_natural_profile_update_instruction():
-    context = _build_context_block(
-        {
-            "mode": "recommend",
-            "user_profile": {"skin_type": "Dry", "concerns": ["Sensitivity / Irritation"]},
-            "user_routine": {"items": []},
-            "tool_outputs": [
-                {
-                    "tool": "save_user_key_facts",
-                    "output": [{"saved": True, "changed_fields": ["concerns"]}],
-                }
-            ],
-        }
-    )
-
-    assert "## Profile updates saved this turn" in context
-    assert 'Never write "Saved:"' in context
 
 
 def test_saved_status_label_is_naturalised():

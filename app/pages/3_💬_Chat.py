@@ -594,11 +594,6 @@ if llm_prompt:
         community_request = result.get("community_search_request")
         literature_request = result.get("literature_search_request")
         evidence_summary = result.get("evidence_summary")
-        updated_profile = result.get("updated_user_profile")
-        if updated_profile:
-            st.session_state.user_profile = updated_profile
-            st.session_state.profile_user_id = updated_profile.get("user_id", st.session_state.get("profile_user_id"))
-            profile = updated_profile
 
         _render_assistant_markdown(response_text)
         _render_product_cards(matched_products, f"live_{len(st.session_state.chat_messages)}")
