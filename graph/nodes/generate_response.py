@@ -129,27 +129,19 @@ def _text_items(value: object) -> list[str]:
 
 def _previous_assistant_recommendations(state: GraphState) -> list[str]:
     from langchain_core.messages import AIMessage
+    from tools.product_tools import _response_product_suggestion_queries
 
     names = []
     seen = set()
-    heading_re = re.compile(r"^\s*#{4}\s+(?P<name>[^\n]{4,180})\s*$")
-    labeled_re = re.compile(
-        r"\b(?:product suggestion|recommendation|suggested product|suggested sunscreen)\b\s*\**\s*:\s*\**\s*(.+?)(?:[.;]|$)",
-        flags=re.IGNORECASE,
-    )
 
     for message in state.get("messages") or []:
         if not isinstance(message, AIMessage):
             continue
         content = message.content if isinstance(message.content, str) else ""
-        for line in content.splitlines():
-            stripped = line.strip()
-            match = heading_re.match(stripped)
-            if not match:
-                match = labeled_re.search(stripped)
-            if not match:
-                continue
-            name = re.sub(r"\s+", " ", match.group(1)).strip(" -:;.")
+        if not content:
+            continue
+        for query in _response_product_suggestion_queries(content):
+            name = re.sub(r"\s+", " ", query).strip(" -:;.")
             key = name.lower()
             if name and key not in seen:
                 names.append(name)

@@ -126,13 +126,23 @@ def _cards_for_selected_product_names(
     candidate_products: list[dict],
     routine_items: list[dict],
     limit: int = RECOMMENDATION_LIMIT,
+    response: str | None = None,
 ) -> list[dict]:
     """Resolve agent-selected names into UI card payloads.
 
     Prefer the catalog objects already in hand. The selector returns names as
     text, so we map those names back onto candidate objects by product family
     before falling back to catalog lookup for genuinely missing products.
+
+    When ``response`` is provided, only return products whose name actually
+    appears in that response. The agent can over-select (e.g. pick both a
+    Hyaluronic Acid serum and a Copper Peptides serum from the candidate
+    list) but the response writer often only describes one — gating on the
+    final response keeps the cards aligned with what the user actually
+    sees.
     """
+    from tools.product_tools import _product_named_in_response
+
     names = [
         re.split(r"\s+[·|]\s+", str(name).strip(), maxsplit=1)[0].strip()
         for name in selected_names
@@ -154,6 +164,8 @@ def _cards_for_selected_product_names(
     for name in names:
         product = family_index.get(product_family_name(name))
         if not product:
+            continue
+        if response and not _product_named_in_response(product, response):
             continue
         key = _product_family_key(product)
         if key in seen_keys:
@@ -506,6 +518,7 @@ def run_advisor_with_progress(
                 product_candidates,
                 routine_items,
                 limit=RECOMMENDATION_LIMIT,
+                response=response,
             )
         else:
             matched_products = select_recommended_product_cards.invoke(
