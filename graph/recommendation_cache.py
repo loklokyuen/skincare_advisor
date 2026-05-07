@@ -119,15 +119,24 @@ def _best_matching_entry_locked(
     entries: dict[tuple[str, str, str], object],
     key: tuple[str, str, str],
 ) -> object | None:
+    match = _best_matching_entry_with_key_locked(entries, key)
+    return match[1] if match else None
+
+
+def _best_matching_entry_with_key_locked(
+    entries: dict[tuple[str, str, str], object],
+    key: tuple[str, str, str],
+) -> tuple[tuple[str, str, str], object] | None:
     signature, mode_key, prompt_key = key
-    best: tuple[float, object] | None = None
-    for (entry_signature, entry_mode, entry_prompt), value in entries.items():
+    best: tuple[float, tuple[str, str, str], object] | None = None
+    for entry_key, value in entries.items():
+        entry_signature, entry_mode, entry_prompt = entry_key
         if entry_signature != signature or entry_mode != mode_key:
             continue
         score = _similarity(prompt_key, entry_prompt)
         if score >= 0.12 and (best is None or score > best[0]):
-            best = (score, value)
-    return best[1] if best else None
+            best = (score, entry_key, value)
+    return (best[1], best[2]) if best else None
 
 
 def _cache_result(key: tuple[str, str, str], result: dict) -> dict:
@@ -148,6 +157,7 @@ def get_prepared_answer(
     user_routine: dict | None,
     wait_timeout: float = 0.0,
 ) -> dict | None:
+    """Return prepared answer if available, popping it so later turns regenerate."""
     key = _cache_key(message, mode, user_profile, user_routine)
     now = time.monotonic()
     future: Future | None = None
@@ -156,29 +166,30 @@ def get_prepared_answer(
         _prune_locked(now)
         exact = _cache.get(key)
         if exact is not None:
-            return deepcopy(exact)
+            value = deepcopy(exact)
+            _cache.pop(key, None)
+            _timestamps.pop(key, None)
+            return value
 
         if not _is_generic_similar(message, mode):
             return None
 
-        cached = _best_matching_entry_locked(_cache, key)
-        if cached is not None:
-            return deepcopy(cached)
+        match = _best_matching_entry_with_key_locked(_cache, key)
+        if match is not None:
+            matched_key, cached = match
+            value = deepcopy(cached)
+            _cache.pop(matched_key, None)
+            _timestamps.pop(matched_key, None)
+            return value
 
         exact_future = _inflight.get(key)
         if exact_future is not None:
             future = exact_future
             future_key = key
         elif wait_timeout > 0:
-            matched_key = None
-            matched_future = _best_matching_entry_locked(_inflight, key)
-            if matched_future is not None:
-                for inflight_key, inflight_future in _inflight.items():
-                    if inflight_future is matched_future:
-                        matched_key = inflight_key
-                        break
-            future = matched_future
-            future_key = matched_key
+            inflight_match = _best_matching_entry_with_key_locked(_inflight, key)
+            if inflight_match is not None:
+                future_key, future = inflight_match
 
     if future is None or future_key is None:
         return None
@@ -190,7 +201,13 @@ def get_prepared_answer(
     except Exception as exc:
         log.debug("Advisor prewarm result unavailable for %s: %s", future_key[1], exc, exc_info=True)
         return None
-    return _cache_result(future_key, result)
+    # Result returned via _finish_prepare_job which already cached it; deliver
+    # and pop so the next turn re-runs the graph instead of replaying.
+    cached_value = _cache_result(future_key, result)
+    with _lock:
+        _cache.pop(future_key, None)
+        _timestamps.pop(future_key, None)
+    return cached_value
 
 
 def prepare_advisor_answers(

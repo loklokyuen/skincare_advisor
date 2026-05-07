@@ -351,6 +351,28 @@ def _promote_product_headings_to_h4(text: str, candidate_names: list[str]) -> st
 
 _BLOCK_HEADING_RE = re.compile(r"^\s*#{4}\s+(?P<name>[^\n]{4,180})\s*$")
 _ANY_HEADING_RE = re.compile(r"^\s*#{1,6}\s+")
+_STANDALONE_BOLD_RE = re.compile(
+    r"^\s*(?:[-*]|\d+[.)])?\s*\*\*(?P<name>[^*\n]{2,120})\*\*\s*[:.]?\s*$"
+)
+
+
+def _promote_standalone_bold_to_h4(text: str) -> str:
+    """Convert lines that are only **Bold** into #### Bold so they render as headings."""
+    if not text or "**" not in text:
+        return text
+    promoted = []
+    for line in text.splitlines():
+        if _ANY_HEADING_RE.match(line):
+            promoted.append(line)
+            continue
+        match = _STANDALONE_BOLD_RE.match(line)
+        if match:
+            name = re.sub(r"\s+", " ", match.group("name")).strip(" -:;.")
+            if name:
+                promoted.append(f"#### {name}")
+                continue
+        promoted.append(line)
+    return "\n".join(promoted)
 
 
 def _remove_blocked_product_blocks(text: str, blocked_names: set[str]) -> str:
@@ -621,6 +643,7 @@ def validate_response(state: GraphState) -> GraphState:
     draft = _remove_stock_acknowledgement_opening(draft)
     draft = _remove_optional_labels(draft)
     draft = _remove_recommendation_template_headings(draft)
+    draft = _promote_standalone_bold_to_h4(draft)
     draft = _promote_product_headings_to_h4(draft, _candidate_product_names(state))
     draft_before_previous_filter = draft
     draft = _remove_blocked_product_blocks(draft, _previous_recommended_product_names(state))
