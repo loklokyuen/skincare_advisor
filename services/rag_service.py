@@ -52,16 +52,6 @@ def _search_ingredients_by_embedding(embedding: list[float], limit: int) -> list
     return [_format_ingredient(row) for row in rows or []]
 
 
-def search_products_semantic(query: str, limit: int = 15) -> list[Product]:
-    embedding = embed_query(query)
-    return _search_products_by_embedding(embedding, limit) if embedding is not None else []
-
-
-def search_ingredients_semantic(query: str, limit: int = 15) -> list[IngredientDetail]:
-    embedding = embed_query(query)
-    return _search_ingredients_by_embedding(embedding, limit) if embedding is not None else []
-
-
 def retrieve_semantic_context(
     query: str,
     product_limit: int = 15,

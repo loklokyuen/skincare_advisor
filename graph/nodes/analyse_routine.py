@@ -36,7 +36,9 @@ def analyse_routine(state: GraphState) -> GraphState:
         }
 
     basics = analyse_routine_basics.invoke({"profile": profile, "routine_items": routine_items})
-    ingredient_terms = extract_ingredient_terms.invoke({"text": state.get("message", "")})
+    ingredient_terms = state.get("ingredient_terms")
+    if ingredient_terms is None:
+        ingredient_terms = extract_ingredient_terms.invoke({"text": state.get("message", "")})
     conflicts = flag_common_conflicts.invoke(
         {"ingredient_terms": ingredient_terms, "routine_items": routine_items}
     )

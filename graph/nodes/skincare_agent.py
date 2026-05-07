@@ -225,7 +225,7 @@ def skincare_agent(state: GraphState) -> GraphState:
     ]
 
     try:
-        context = _build_context_block(state)
+        context = state.get("context_block") or _build_context_block(state)
         messages = [
             SystemMessage(content=AGENT_SYSTEM_PROMPT),
             HumanMessage(
@@ -315,6 +315,7 @@ def skincare_agent(state: GraphState) -> GraphState:
         "ingredient_recommendation_analysis": ingredient_analysis_outputs,
         "agent_searched_products": _flatten_tool_products(product_search_outputs),
         "agent_selected_product_names": selected_product_names,
+        "context_block": context,
     }
     if updated_profile:
         next_state["user_profile"] = updated_profile

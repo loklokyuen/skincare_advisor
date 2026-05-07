@@ -4,6 +4,7 @@ import logging
 import json
 import re
 import time
+from concurrent.futures import ThreadPoolExecutor
 from typing import TYPE_CHECKING
 
 from psycopg2.extras import Json
@@ -12,6 +13,8 @@ from services.openai_embeddings import embed_query
 from utils.db import run_mutation, run_query
 from utils.ingredient_format import format_ingredient_name, format_ingredient_names
 from utils.product_match import product_identity_key
+
+_embedding_executor = ThreadPoolExecutor(max_workers=2, thread_name_prefix="product-embed")
 
 if TYPE_CHECKING:
     from schemas import Product, ProductSearchResult
@@ -244,13 +247,47 @@ def _generate_product_embedding(row: dict) -> str | None:
         return None
 
 
+def _backfill_embedding_async(row: dict) -> None:
+    """Compute embedding off-thread and UPDATE the row once ready."""
+    try:
+        embedding = _generate_product_embedding(row)
+        if not embedding:
+            return
+        if row.get("external_product_id"):
+            run_mutation(
+                """
+                UPDATE skincare_advisor.products
+                SET embedding = %s::vector
+                WHERE external_product_id = %s AND embedding IS NULL
+                """,
+                (embedding, row["external_product_id"]),
+            )
+        else:
+            run_mutation(
+                """
+                UPDATE skincare_advisor.products
+                SET embedding = %s::vector
+                WHERE lower(product_name) = lower(%s)
+                  AND lower(COALESCE(brand, '')) = lower(%s)
+                  AND embedding IS NULL
+                """,
+                (embedding, row["product_name"], row["brand"]),
+            )
+    except Exception as exc:
+        log.debug("Async embedding backfill skipped for %r: %s", row.get("product_name"), exc)
+
+
 def save_external_product(product: dict) -> bool:
-    """Persist an externally fetched product so future searches can use Cloud SQL."""
+    """Persist an externally fetched product so future searches can use Cloud SQL.
+
+    Embedding generation is deferred to a background thread to keep the
+    save path off the request hot path.
+    """
     row = _normalise_external_product(product)
     if not row["product_name"]:
         return False
 
-    embedding = _generate_product_embedding(row)
+    embedding = None
     base_obf_params = (
         row["external_product_id"],
         row["product_name"],
@@ -279,7 +316,7 @@ def save_external_product(product: dict) -> bool:
     emb_tuple = (embedding,) if embedding else ()
 
     if row["external_product_id"]:
-        return run_mutation(
+        ok = run_mutation(
             f"""
             INSERT INTO skincare_advisor.products (
                 external_product_id, product_name, brand, quantity, image_url,
@@ -308,6 +345,9 @@ def save_external_product(product: dict) -> bool:
             """,
             base_obf_params + emb_tuple,
         )
+        if ok:
+            _embedding_executor.submit(_backfill_embedding_async, row)
+        return ok
 
     existing = run_query(
         """
@@ -322,7 +362,7 @@ def save_external_product(product: dict) -> bool:
     if existing:
         return True
 
-    return run_mutation(
+    ok = run_mutation(
         f"""
         INSERT INTO skincare_advisor.products (
             product_name, brand, quantity, image_url, ingredients_raw,
@@ -332,6 +372,9 @@ def save_external_product(product: dict) -> bool:
         """,
         base_no_obf_params + emb_tuple,
     )
+    if ok:
+        _embedding_executor.submit(_backfill_embedding_async, row)
+    return ok
 
 
 # ── OBF live fallback ──────────────────────────────────────────────────────────

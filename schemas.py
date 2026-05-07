@@ -132,3 +132,5 @@ class GraphState(TypedDict):
     community_search_request: NotRequired[dict]
     literature_search_request: NotRequired[dict]
     evidence_summary: NotRequired[dict]
+    context_block: NotRequired[str]
+    ingredient_terms: NotRequired[list[str]]

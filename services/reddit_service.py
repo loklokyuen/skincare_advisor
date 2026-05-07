@@ -340,8 +340,11 @@ def _parse_posts(data: dict, limit: int) -> list[dict]:
     return posts
 
 
-def _parse_comment_bodies(node: object, limit: int, bodies: list[str]) -> None:
-    if len(bodies) >= limit or not isinstance(node, dict):
+_MAX_COMMENT_DEPTH = 8
+
+
+def _parse_comment_bodies(node: object, limit: int, bodies: list[str], depth: int = 0) -> None:
+    if len(bodies) >= limit or depth > _MAX_COMMENT_DEPTH or not isinstance(node, dict):
         return
     kind = node.get("kind")
     data = node.get("data") or {}
@@ -352,7 +355,7 @@ def _parse_comment_bodies(node: object, limit: int, bodies: list[str]) -> None:
     replies = data.get("replies")
     if isinstance(replies, dict):
         for child in ((replies.get("data") or {}).get("children") or []):
-            _parse_comment_bodies(child, limit, bodies)
+            _parse_comment_bodies(child, limit, bodies, depth + 1)
 
 
 def _fetch_comments(permalink: str, limit: int = 8) -> list[str]:

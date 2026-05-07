@@ -349,12 +349,16 @@ def _find_matched_products(message: str) -> list[dict]:
     return matched
 
 
-def _find_recommended_products(message: str, mode: str | None) -> list[dict]:
+def _find_recommended_products(
+    message: str,
+    mode: str | None,
+    embedding: list[float] | None = None,
+) -> list[dict]:
     """Return UI-facing product cards for modes where the assistant may recommend products."""
     if mode not in {"recommend", "build"}:
         return []
     try:
-        return search_products_for_routine(message, limit=15)
+        return search_products_for_routine(message, limit=15, embedding=embedding)
     except Exception:
         return []
 
@@ -528,7 +532,7 @@ def retrieve_context(state: GraphState) -> GraphState:
 
     matched_products = _dedupe_by_key(
         _find_matched_products(message)
-        + _find_recommended_products(product_query, mode)
+        + _find_recommended_products(product_query, mode, query_embedding)
         + product_card_candidates
         + _cards_from_product_context(products),
         "product_name",
@@ -544,4 +548,5 @@ def retrieve_context(state: GraphState) -> GraphState:
         "retrieved_ingredients": _dedupe_by_key(ingredients, "inci_name"),
         "matched_products": matched_products,
         "tool_outputs": tool_outputs,
+        "ingredient_terms": ingredient_terms,
     }
