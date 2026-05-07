@@ -1,5 +1,10 @@
 import streamlit as st
-from utils.ingredient_format import format_ingredient_name
+from utils.ingredient_format import format_ingredient_name, format_ingredient_names
+
+__all__ = [
+    "format_ingredient_name",
+    "format_ingredient_names",
+]
 
 
 def get_user_profile() -> dict:
