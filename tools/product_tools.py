@@ -319,6 +319,25 @@ def _product_named_in_response(product: dict, response: str) -> bool:
     return False
 
 
+_STOP = {"for", "the", "and", "with", "a", "an", "to", "of", "in", "by", "on", "or"}
+
+
+def _query_match_ratio(query: str, candidate_name: str) -> tuple[int, float]:
+    """Return (overlap_count, overlap_ratio) of distinctive tokens between query and candidate."""
+    query_tokens = {
+        t for t in product_family_name(query).split()
+        if t not in _STOP and len(t) > 1
+    }
+    if not query_tokens:
+        return 0, 0.0
+    candidate_tokens = {
+        t for t in product_family_name(candidate_name).split()
+        if t not in _STOP and len(t) > 1
+    }
+    overlap = query_tokens & candidate_tokens
+    return len(overlap), len(overlap) / len(query_tokens)
+
+
 def _find_catalog_product(
     query: str,
     brand: str = "",
@@ -334,8 +353,6 @@ def _find_catalog_product(
     except Exception:
         return None
 
-    _STOP = {"for", "the", "and", "with", "a", "an", "to", "of", "in", "by", "on"}
-
     target = {"product_name": query, "brand": brand}
     for match in matches:
         if _same_product(target, match):
@@ -343,10 +360,20 @@ def _find_catalog_product(
 
     if allow_first and matches:
         first = matches[0]
-        if use_obf and first.get("source") == "open_beauty_facts":
-            query_tokens = set(_normalise_match_text(query).split()) - _STOP
-            result_tokens = set(_normalise_match_text(first.get("product_name") or "").split())
-            if len(query_tokens & result_tokens) < 2:
+        first_name = str(first.get("product_name") or "")
+        overlap, ratio = _query_match_ratio(query, first_name)
+        # For specific multi-token queries, require strong overlap so a
+        # related-but-different product (e.g. "Copper Peptides" returned for
+        # a "Hyaluronic Acid" query) is not silently substituted.
+        query_distinctive_count = len({
+            t for t in product_family_name(query).split()
+            if t not in _STOP and len(t) > 1
+        })
+        if query_distinctive_count >= 4:
+            if ratio < 0.7:
+                return None
+        elif use_obf and first.get("source") == "open_beauty_facts":
+            if overlap < 2:
                 return None
         return first
     return None
@@ -521,7 +548,7 @@ def _resolve_catalog_product_cards_first(
 
     for query in _response_product_suggestion_queries(response):
         product = _find_catalog_product(query, allow_first=True, use_obf=True)
-        if product:
+        if product and _product_named_in_response(product, response):
             resolved.append(product)
         if len(resolved) >= limit:
             break
@@ -547,7 +574,12 @@ def _resolve_llm_product_selection(
             query = str(item.get("search_query") or item.get("product_name") or "").strip()
             brand = str(item.get("brand") or "").strip()
             if query and _normalise_match_text(query) in _normalise_match_text(response):
-                product = _find_catalog_product(query, brand=brand, allow_first=True, use_obf=True)
+                candidate = _find_catalog_product(query, brand=brand, allow_first=True, use_obf=True)
+                # Only accept the catalog match if its name actually appears
+                # in the assistant response — guards against the search
+                # returning a near-name match that the response never named.
+                if candidate and _product_named_in_response(candidate, response):
+                    product = candidate
 
         if product:
             resolved.append(product)
