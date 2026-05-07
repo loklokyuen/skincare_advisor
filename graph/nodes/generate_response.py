@@ -34,7 +34,7 @@ You are a practical, friendly, evidence-aware skincare advisor, focused on topic
 Draft the final user-facing answer using the provided context: saved profile,
 routine, advisor notes, product/ingredient analysis, catalog data, retrieved
 ingredient details, and conservative general skincare knowledge for uncatalogued
-terms. Do not call tools or mention internal actions.
+terms. Do not mention any internal actions or local catalog.
 
 Core rules:
 - Be concise, warm, conservative, and specific.
@@ -44,13 +44,12 @@ Core rules:
 - If there is a new term, assume it is about topical skincare products/ingredients, if it is not, politely decline to answer.
 - For a named skincare ingredient or product that is not in the provided catalog
   context, still answer the user's high-level educational question from general
-  skincare knowledge. Be conservative, say when evidence or formulation details
-  are limited, and do not claim local catalog confirmation.
+  skincare knowledge.
 - Do not ask the user for permission to give a high-level explanation of an
   uncatalogued skincare term. Ask a follow-up only when they want a specific
   product recommendation, routine placement, or compatibility check that needs
   profile, routine, or product-label details.
-- If required data is missing, ask for that data instead of guessing.
+- If required data from user is missing, ask for that data instead of guessing.
 - Do not diagnose medical conditions; for severe, persistent, prescription, pregnancy,
   infection, swelling, or burning concerns, advise speaking to a clinician.
 - Do not mention tools, searches, the catalog, database, Reddit, reviews, or evidence
@@ -132,12 +131,42 @@ def _text_items(value: object) -> list[str]:
     return [str(item) for item in value if item]
 
 
+_PREV_REC_STOP = {
+    "for", "the", "and", "with", "a", "an", "to", "of", "in", "by", "on", "or",
+}
+
+
 def _previous_assistant_recommendations(state: GraphState) -> list[str]:
+    """Return product names recommended in earlier assistant turns.
+
+    Filters out ingredient-style headings (e.g. "Squalane", "Azelaic Acid",
+    "Palmitoyl Tripeptide-1") so a follow-up like "tell me more about
+    Matrixyl" is not blocked. A heading counts as a real product only when
+    it has at least three distinctive tokens AND does not match an
+    ingredient name in the current retrieved_ingredients set.
+    """
     from langchain_core.messages import AIMessage
     from tools.product_tools import _response_product_suggestion_queries
+    from utils.product_match import product_family_name
 
-    names = []
-    seen = set()
+    ingredient_families: set[str] = set()
+    for ingredient in state.get("retrieved_ingredients") or []:
+        if not isinstance(ingredient, dict):
+            continue
+        for key in ("inci_name", "display_name"):
+            value = ingredient.get(key)
+            if not value:
+                continue
+            family = product_family_name(str(value))
+            if family:
+                ingredient_families.add(family)
+            for token in re.split(r"[,/]", str(value)):
+                family = product_family_name(token)
+                if family:
+                    ingredient_families.add(family)
+
+    names: list[str] = []
+    seen: set[str] = set()
 
     for message in state.get("messages") or []:
         if not isinstance(message, AIMessage):
@@ -147,10 +176,28 @@ def _previous_assistant_recommendations(state: GraphState) -> list[str]:
             continue
         for query in _response_product_suggestion_queries(content):
             name = re.sub(r"\s+", " ", query).strip(" -:;.")
+            if not name:
+                continue
+            family = product_family_name(name)
+            distinctive = {
+                t for t in family.split()
+                if t not in _PREV_REC_STOP and len(t) > 1
+            }
+            if len(distinctive) < 3:
+                continue
+            # Drop if heading family contains a known ingredient family.
+            # Catches cases like "Palmitoyl Tripeptide-1 (Matrixyl)" where
+            # the alias suffix bumps token count past the threshold.
+            if any(
+                ing_family and (ing_family == family or ing_family in family)
+                for ing_family in ingredient_families
+            ):
+                continue
             key = name.lower()
-            if name and key not in seen:
-                names.append(name)
-                seen.add(key)
+            if key in seen:
+                continue
+            names.append(name)
+            seen.add(key)
     return names
 
 
