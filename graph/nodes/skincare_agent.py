@@ -110,10 +110,11 @@ def skincare_agent(state: GraphState) -> GraphState:
     if not api_key:
         return {**state, **_fallback_agent_notes(state)}
 
-    # Analyse and learn modes do not need the agent's product picker or
-    # tool-flagging. Use the deterministic fallback (pure ranking, no LLM)
-    # to skip the main agent LLM + tool loop on those turns.
-    if state.get("mode") in {"analyse", "learn"}:
+    # Analyse mode reviews the saved routine and never needs select_product_cards
+    # or evidence flagging that the message-regex paths don't already cover.
+    # Skip the agent LLM there. Learn mode keeps the agent because users often
+    # want literature/community follow-up on a named ingredient.
+    if state.get("mode") == "analyse":
         return {**state, **_fallback_agent_notes(state)}
 
     from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage
