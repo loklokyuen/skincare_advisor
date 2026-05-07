@@ -110,6 +110,12 @@ def skincare_agent(state: GraphState) -> GraphState:
     if not api_key:
         return {**state, **_fallback_agent_notes(state)}
 
+    # Analyse and learn modes do not need the agent's product picker or
+    # tool-flagging. Use the deterministic fallback (pure ranking, no LLM)
+    # to skip the main agent LLM + tool loop on those turns.
+    if state.get("mode") in {"analyse", "learn"}:
+        return {**state, **_fallback_agent_notes(state)}
+
     from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage
     from langchain_core.tools import tool
 
@@ -193,7 +199,7 @@ def skincare_agent(state: GraphState) -> GraphState:
         response = llm_with_tools.invoke(messages)
         tool_calls = getattr(response, "tool_calls", None) or []
 
-        for _iteration in range(5):
+        for _iteration in range(3):
             if not tool_calls:
                 break
             messages.append(response)

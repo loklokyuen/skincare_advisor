@@ -2,57 +2,15 @@ from __future__ import annotations
 
 import logging
 import re
-from functools import lru_cache
 
 from langchain_core.messages import AIMessage
 
-from config.openai import load_openai_config, openai_chat_kwargs
 from graph.tracing import traceable
 from schemas import GraphState
 from utils.product_match import normalise_match_text, product_family_name
 
 log = logging.getLogger(__name__)
 
-
-@lru_cache(maxsize=4)
-def _get_revision_llm(model: str, api_key: str, base_url: str | None):
-    from langchain_openai import ChatOpenAI
-    return ChatOpenAI(
-        **openai_chat_kwargs(
-            model,
-            api_key,
-            base_url,
-            temperature=0.2,
-            timeout=25,
-            max_completion_tokens=700,
-            reasoning_effort="minimal",
-            verbosity="low",
-        )
-    )
-
-
-_REVISION_SYSTEM = """\
-You are a quality editor for a skincare advisor app. Your job is to revise a draft response so it meets three criteria:
-
-1. FRIENDLY TONE: The response must feel warm, human, and empathetic — not robotic, clinical, or blunt. \
-If the opening is cold or the tone is flat, rewrite it to sound natural and warm. \
-Do not add hollow filler like "Great question!" or "Certainly!". One natural empathetic sentence is enough.
-
-2. ADDRESSES THE USER'S NEED: If the user asked for product recommendations and the response gives only \
-generic advice without naming a specific product, add a concrete product recommendation from the context provided. \
-If products were not requested, do not force one in.
-
-3. NO DUPLICATE PRODUCTS: If any product in the draft was already recommended earlier in the conversation \
-(listed under "Previously recommended"), remove that product block entirely and replace it with a brief note \
-that you already covered it and suggest a different gap to fill instead.
-
-Rules:
-- Return ONLY the revised response text. No meta-commentary, no "Here is the revised version:", no explanations.
-- Keep all factual content intact. Do not invent ingredients, products, or claims.
-- Preserve all markdown formatting exactly as in the draft, including #### headings, **bold** labels, and bullet structure.
-- If the draft already meets all three criteria, return it unchanged.
-- Stay within a similar length to the original (120–250 words unless deep analysis was requested).
-"""
 
 _MEDICAL_TERMS = (
     "rash", "burning", "swelling", "infection", "prescription", "pregnant",
@@ -594,38 +552,6 @@ def _context_aware_empty_fallback(state: GraphState) -> str:
         "I can see your profile and routine, but the model returned an empty answer. "
         "Try asking again, or make the request a little more specific."
     )
-
-
-def _llm_revise(draft: str, state: GraphState) -> str:
-    try:
-        api_key, model, base_url = load_openai_config("SKINIQ_VALIDATE_RESPONSE_MODEL")
-        if not api_key:
-            return draft
-
-        from langchain_core.messages import HumanMessage, SystemMessage
-
-        user_message = str(state.get("message") or "")
-        mode = str(state.get("mode") or "")
-        previous = list(_previous_recommended_product_names(state))
-
-        context_parts = [f"User message: {user_message}", f"Mode: {mode}"]
-        if previous:
-            context_parts.append(
-                "Previously recommended (do not repeat):\n"
-                + "\n".join(f"- {name}" for name in previous[:12])
-            )
-        context_parts.append(f"\nDraft response to revise:\n{draft}")
-
-        llm = _get_revision_llm(model, api_key, base_url)
-        result = llm.invoke([
-            SystemMessage(content=_REVISION_SYSTEM),
-            HumanMessage(content="\n\n".join(context_parts)),
-        ])
-        revised = (result.content or "").strip()
-        return revised if revised else draft
-    except Exception as exc:
-        log.warning("validate_response LLM revision skipped: %s", exc)
-        return draft
 
 
 @traceable(name="validate_response")
