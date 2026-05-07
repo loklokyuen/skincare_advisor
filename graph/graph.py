@@ -543,10 +543,29 @@ def run_advisor_with_progress(
             (result.get("matched_products") or [])
             + (result.get("agent_searched_products") or [])
         )
-        selected_names = result.get("agent_selected_product_names") or []
-        if selected_names:
+        # Response is the source of truth for which products to render as
+        # cards. Start from the agent's selection, then top up with names
+        # the response writer actually used so we never drop a product the
+        # user can see in the answer.
+        from tools.product_tools import _response_product_suggestion_queries
+
+        selected_names = list(result.get("agent_selected_product_names") or [])
+        response_names = _response_product_suggestion_queries(response or "")
+        merged_names: list[str] = []
+        seen_keys: set[str] = set()
+        for name in selected_names + response_names:
+            cleaned = re.sub(r"\s+", " ", str(name or "")).strip(" -:;.")
+            if not cleaned:
+                continue
+            key = product_family_name(cleaned)
+            if not key or key in seen_keys:
+                continue
+            seen_keys.add(key)
+            merged_names.append(cleaned)
+
+        if merged_names:
             matched_products = _cards_for_selected_product_names(
-                selected_names,
+                merged_names,
                 product_candidates,
                 routine_items,
                 limit=RECOMMENDATION_LIMIT,
