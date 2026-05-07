@@ -212,28 +212,6 @@ def _build_context_block(state: GraphState) -> str:
             + "\nInstruction: Do not recommend these again, including different-size variants or near-duplicates."
         )
 
-    saved_profile_updates = []
-    for output in _dict_items(state.get("tool_outputs") or []):
-        if output.get("tool") != "save_user_key_facts":
-            continue
-        for item in _dict_items(output.get("output") or []):
-            if item.get("saved") and item.get("changed_fields"):
-                saved_profile_updates.extend(_text_items(item.get("changed_fields") or []))
-    if saved_profile_updates:
-        unique_updates = []
-        seen_updates = set()
-        for field in saved_profile_updates:
-            key = field.lower()
-            if key not in seen_updates:
-                unique_updates.append(field.replace("_", " "))
-                seen_updates.add(key)
-        lines.append(
-            "\n## Profile updates saved this turn\n"
-            + "\n".join(f"- {field}" for field in unique_updates)
-            + "\nInstruction: Acknowledge this in natural language, for example "
-            "\"I've noted that, so I'd keep this gentle.\" Never write \"Saved:\"."
-        )
-
     advisor_notes = str(state.get("advisor_notes") or "").strip()
     if advisor_notes:
         lines.append(

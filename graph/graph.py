@@ -539,10 +539,7 @@ def run_advisor_with_progress(
         routine_items = user_routine.get("items") or user_routine.get("routine") or []
     matched_products = []
     if result.get("mode") in {"recommend", "build"}:
-        product_candidates = _dedupe_products(
-            (result.get("matched_products") or [])
-            + (result.get("agent_searched_products") or [])
-        )
+        product_candidates = _dedupe_products(result.get("matched_products") or [])
         # Response is the source of truth for which products to render as
         # cards. Start from the agent's selection, then top up with names
         # the response writer actually used so we never drop a product the
@@ -614,7 +611,6 @@ def run_advisor_with_progress(
     return {
         "response": response,
         "matched_products": matched_products,
-        "updated_user_profile": result.get("updated_user_profile"),
         "community_search_request": community_request,
         "literature_search_request": literature_request,
         "evidence_summary": evidence_summary,

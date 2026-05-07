@@ -73,11 +73,11 @@ def get_recommended_ingredients_for_profile(profile: dict) -> list[str]:
 def skin_type_description(skin_type: str) -> str:
     """Return a short description of a skin type for display."""
     descriptions = {
-        "Normal": "Balanced — not too oily or dry, minimal sensitivity",
-        "Oily": "Excess sebum, enlarged pores, prone to shine and breakouts",
-        "Dry": "Tight, flaky, or rough texture — lacks moisture and lipids",
-        "Combination": "Oily T-zone (forehead, nose, chin), drier cheeks",
-        "Sensitive": "Reacts easily to products, prone to redness and irritation",
+        "Normal": "Generally balanced, with oil and dryness usually well managed",
+        "Oily": "Produces more oil, especially through the day, and may appear shiny",
+        "Dry": "Produces less oil and may feel tight, rough, or less comfortable",
+        "Combination": "Oilier in some areas, commonly the T-zone, and drier in others",
+        "Sensitive": "May react more easily to certain products, ingredients, or changes",
     }
     return descriptions.get(skin_type, "")
 

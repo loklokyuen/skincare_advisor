@@ -117,7 +117,7 @@ def _render_add_to_routine_selector(product: dict, key_prefix: str):
         col_confirm, col_cancel = st.columns(2)
         with col_confirm:
             if st.button(
-                "✓ Add to Routine",
+                "Add",
                 type="primary",
                 use_container_width=True,
                 key=f"interested_confirm_add_{key_prefix}",
@@ -128,7 +128,7 @@ def _render_add_to_routine_selector(product: dict, key_prefix: str):
                 st.rerun()
         with col_cancel:
             if st.button(
-                "✗ Cancel",
+                "Cancel",
                 use_container_width=True,
                 key=f"interested_cancel_add_{key_prefix}",
             ):
@@ -202,7 +202,7 @@ def _render_card(product: dict, idx: int):
 
 # ── Page ───────────────────────────────────────────────────────────────────────
 
-st.title("♡ Interested")
+st.title("💭 Interested")
 
 products = st.session_state.interested_products
 
