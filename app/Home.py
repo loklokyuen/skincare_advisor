@@ -29,13 +29,6 @@ st.markdown("""
 | 💬 **Chat** | Get personalised skincare advice |
 
 ---
-> Get started by setting up your **skin profile** — it personalises your entire experience.
+Get started by setting up your **skin profile**.
 """)
 
-col1, col2, col3 = st.columns(3)
-with col1:
-    st.metric("Products", "400+", "in database")
-with col2:
-    st.metric("Ingredients", "66", "tracked")
-with col3:
-    st.metric("Skin Concerns", "12", "categories")
