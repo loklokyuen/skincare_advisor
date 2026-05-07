@@ -14,7 +14,7 @@ load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 DB_CONFIG = {
     "host": os.getenv("DB_HOST", "localhost"),
     "port": int(os.getenv("DB_PORT", 5432)),
-    "database": os.getenv("DB_NAME", "skincare_db"),
+    "database": os.getenv("DB_NAME", "skincare_advisor"),
     "user": os.getenv("DB_USER", "postgres"),
     "password": os.getenv("DB_PASSWORD", ""),
 }

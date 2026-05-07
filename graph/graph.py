@@ -29,7 +29,7 @@ def _build_pg_connstr() -> str:
     password = os.getenv("DB_PASSWORD", "")
     host = os.getenv("DB_HOST", "localhost")
     port = os.getenv("DB_PORT", "5432")
-    dbname = os.getenv("DB_NAME", "skincare_db")
+    dbname = os.getenv("DB_NAME", "skincare_advisor")
     return f"postgresql://{user}:{password}@{host}:{port}/{dbname}"
 
 
@@ -150,6 +150,18 @@ def _cards_for_selected_product_names(
     ]
     if not names:
         return []
+
+    # Drop agent-picked names that the response writer didn't actually use.
+    # The agent over-selects from candidates ("HA serum" + "Copper Peptides"
+    # serum) but the response often only describes one — keep cards aligned.
+    if response:
+        names = [
+            name
+            for name in names
+            if _product_named_in_response({"product_name": name}, response)
+        ]
+        if not names:
+            return []
 
     limit = max(1, min(limit, RECOMMENDATION_LIMIT, len(names)))
     candidates = _dedupe_products(candidate_products)
@@ -473,6 +485,26 @@ def run_advisor_with_progress(
         )
         if prepared is not None:
             _report_progress(on_progress, "Getting recommendation")
+            # Prepared answers ran on a separate prewarm thread, so the
+            # main thread's checkpoint never saw this turn. Persist the
+            # exchange so follow-up turns can see it via state["messages"]
+            # and avoid recommending the same product again.
+            try:
+                from langchain_core.messages import AIMessage, HumanMessage
+
+                prepared_response = str(prepared.get("response") or "").strip()
+                if prepared_response:
+                    advisor_graph.update_state(
+                        {"configurable": {"thread_id": thread_id}},
+                        {
+                            "messages": [
+                                HumanMessage(content=message),
+                                AIMessage(content=prepared_response),
+                            ]
+                        },
+                    )
+            except Exception as exc:
+                log.debug("Could not persist prepared answer to thread %s: %s", thread_id, exc)
             return prepared
 
     config = {"configurable": {"thread_id": thread_id}}
