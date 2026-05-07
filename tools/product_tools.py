@@ -409,6 +409,15 @@ def _heading_product_suggestion_queries(response: str) -> list[str]:
         r"[^\n:]*?)\s*$",
         flags=re.IGNORECASE,
     )
+    # Lines that look like a product title and end on a category keyword,
+    # e.g. "Olay Hyaluronic Acid 24 + Vitamin B5 Day Gel Moisturiser with Niacinamide"
+    category_heading_re = re.compile(
+        r"^\s*(?:\d+\.\s*)?(?P<name>[A-Z][^\n:]{12,180}?\b"
+        r"(?:Moisturi[sz]er|Serum|Cleanser|Toner|Sunscreen|Mask|Essence|"
+        r"Balm|Lotion|Treatment|Eye\s+Cream|Day\s+Cream|Night\s+Cream|"
+        r"Face\s+Oil|Face\s+Wash|Spot\s+Treatment)"
+        r"\b[^\n:]{0,80}?)\s*$"
+    )
     excluded_prefixes = (
         "Based on ",
         "Why it fits",
@@ -437,10 +446,16 @@ def _heading_product_suggestion_queries(response: str) -> list[str]:
         stripped = line.strip().strip("*")
         if not stripped or stripped.startswith(excluded_prefixes):
             continue
+        # Sentence-style lines ending in a period are descriptions, not headings.
+        # Markdown headings handled separately so they keep working.
+        is_markdown_heading = stripped.startswith("#")
+        if not is_markdown_heading and stripped.endswith((".", "!", "?")):
+            continue
         match = (
             markdown_heading_re.match(stripped)
             or heading_slot_re.match(stripped)
             or product_like_re.match(stripped)
+            or category_heading_re.match(stripped)
         )
         if not match:
             continue
