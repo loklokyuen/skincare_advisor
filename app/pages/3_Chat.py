@@ -480,8 +480,8 @@ prewarm_signature = (
         (
             item.get("product_name", ""),
             item.get("brand") or "",
-            item.get("time_of_day") or "",
-            item.get("step") or "",
+            item.get("time") or "",
+            item.get("scope") or "",
         )
         for item in routine_context.get("items") or []
         if isinstance(item, dict)

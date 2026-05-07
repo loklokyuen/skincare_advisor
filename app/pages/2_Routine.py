@@ -126,15 +126,22 @@ def product_html(
     return "<br>".join(parts)
 
 
+@st.cache_data(ttl=600, show_spinner=False)
+def _enrich_lookup(name: str, brand: str) -> list[dict]:
+    if not name:
+        return []
+    try:
+        return search_products(name, limit=3, use_obf_fallback=False)
+    except Exception:
+        return []
+
+
 def enrich_product_details(item: dict) -> dict:
     if item.get("ingredients") or item.get("active_ingredients") or item.get("quantity"):
         return item
-    try:
-        matches = search_products(item.get("product_name", ""), limit=3, use_obf_fallback=False)
-    except Exception:
-        matches = []
     name = (item.get("product_name") or "").lower().strip()
     brand = (item.get("brand") or "").lower().strip()
+    matches = _enrich_lookup(item.get("product_name", ""), item.get("brand") or "")
     for match in matches:
         match_name = (match.get("product_name") or "").lower().strip()
         match_brand = (match.get("brand") or "").lower().strip()
@@ -145,7 +152,6 @@ def enrich_product_details(item: dict) -> dict:
 
 @st.dialog("Product Details")
 def product_details_dialog(item: dict):
-    st.session_state.show_product_details = None
     item = enrich_product_details(item)
     st.markdown(f"### {item['product_name']}")
     meta = " · ".join(part for part in [item.get("brand"), item.get("quantity")] if part)
@@ -217,7 +223,9 @@ if st.session_state.routine_mode in _legacy:
 
 # Open product details dialog if triggered
 if st.session_state.show_product_details:
-    product_details_dialog(st.session_state.show_product_details)
+    item_to_show = st.session_state.show_product_details
+    st.session_state.show_product_details = None
+    product_details_dialog(item_to_show)
 
 st.title("🗓️ My Routine")
 mode = st.session_state.routine_mode
@@ -383,7 +391,6 @@ if st.session_state.adding_product:
                     if new_item:
                         st.session_state.routine.append(new_item)
                         st.session_state.adding_product = None
-                        st.session_state.show_add_form = False
                         st.rerun()
             with col_cancel:
                 if st.button("✗ Cancel", key="cancel_slot", use_container_width=True):

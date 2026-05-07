@@ -12,15 +12,6 @@ APP_CONFIG = {
 # Open Beauty Facts API
 OPEN_BEAUTY_FACTS_BASE = "https://world.openbeautyfacts.org/api/v2"
 
-# Cloud SQL config (loaded from env / secrets)
-DB_CONFIG = {
-    "host": os.getenv("DB_HOST", "localhost"),
-    "port": int(os.getenv("DB_PORT", 5432)),
-    "database": os.getenv("DB_NAME", "skincare_db"),
-    "user": os.getenv("DB_USER", "postgres"),
-    "password": os.getenv("DB_PASSWORD", ""),
-}
-
 # Skin types
 SKIN_TYPES = ["Normal", "Oily", "Dry", "Combination", "Sensitive"]
 

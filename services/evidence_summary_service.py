@@ -172,6 +172,20 @@ def _fallback_paragraph(literature_query: str | None, community_query: str | Non
     return " ".join(claims)
 
 
+_SUMMARY_SYSTEM = """Summarize skincare evidence sources in concise Markdown for a skincare user.
+
+Rules:
+- 55-105 words, natural language.
+- ONLY discuss ingredients listed under "Ingredients covered"; ignore others in sources.
+- Name each covered ingredient explicitly; never use "this ingredient" or "it" without naming.
+- Cover practical meaning: likely benefits, common complaints, tolerance, what stays uncertain.
+- Distinguish clinical literature from Reddit/community experience.
+- Cite inline as [[Title]](url). Never write "study:", "PubMed:", or "discussion:" as label.
+- Multiple community sources: one per Markdown bullet.
+- Summarise — never copy or paraphrase evidence text verbatim.
+- Do not invent claims, certainty, or consensus not present in Sources."""
+
+
 def _summarize_with_llm(
     literature_query: str | None,
     community_query: str | None,
@@ -185,32 +199,20 @@ def _summarize_with_llm(
         return ""
 
     source_text = "\n".join(_source_line(source) for source in sources)
-    ingredient_list = literature_query or "none"
-    prompt = f"""
-Summarize skincare evidence sources in concise Markdown.
-
-Ingredients covered: {ingredient_list}
-Community query: {community_query or "none"}
-
-Sources:
-{source_text}
-
-Requirements:
-- Write 55-105 words in natural language for a skincare user.
-- If citing multiple community sources, put each source on its own Markdown bullet line.
-- ONLY discuss ingredients listed under "Ingredients covered". Do not mention any other ingredients that appear in the source material, even if prominently featured.
-- Cover each ingredient from the list that has sources — name each one explicitly, never use "this ingredient" or "it" without naming it first.
-- Explain what the sources mean in practical terms: likely benefits, common complaints, tolerance, who might like it, and what remains uncertain.
-- Prefer concrete plain-English phrases like "people seem to like...", "the main caution is...", "this is not proof it will work for everyone".
-- Cite each source inline using a markdown link where the display text is the source title in square brackets, e.g. [[Title]](url). Never write "study:", "PubMed", or "discussion:" as part of the citation.
-- Write your own complete sentences. Never copy or paraphrase evidence text verbatim from Sources — summarise the meaning instead.
-- Distinguish clinical literature from Reddit/community experience.
-- Do not invent claims, certainty, study outcomes, or consensus not present in Sources.
-""".strip()
+    user_payload = (
+        f"Ingredients covered: {literature_query or 'none'}\n"
+        f"Community query: {community_query or 'none'}\n\n"
+        f"Sources:\n{source_text}"
+    )
 
     try:
+        from langchain_core.messages import HumanMessage, SystemMessage
+
         llm = _get_summary_llm(model, api_key, base_url)
-        response = llm.invoke(prompt)
+        response = llm.invoke([
+            SystemMessage(content=_SUMMARY_SYSTEM),
+            HumanMessage(content=user_payload),
+        ])
         return str(response.content or "").strip()
     except Exception as exc:
         log.warning("Evidence summary LLM failed: %s", exc)

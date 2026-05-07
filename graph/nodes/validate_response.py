@@ -271,7 +271,11 @@ def _candidate_product_names(state: GraphState) -> list[str]:
     return names
 
 
-def _line_names_candidate_product(line: str, candidate_names: list[str]) -> bool:
+def _line_names_candidate_product(
+    line: str,
+    candidate_names: list[str],
+    candidate_index: list[tuple[str, str]] | None = None,
+) -> bool:
     cleaned = re.sub(r"^\s*(?:[-*]|\d+[.)])\s*", "", line).strip()
     cleaned = re.sub(r"^\s*#{1,6}\s+", "", cleaned).strip()
     cleaned = re.sub(r"[*_`]", "", cleaned)
@@ -306,9 +310,11 @@ def _line_names_candidate_product(line: str, candidate_names: list[str]) -> bool
     if cleaned.lower().startswith(excluded_prefixes):
         return False
 
-    for name in candidate_names:
-        name_norm = normalise_match_text(name)
-        name_family = product_family_name(name)
+    if candidate_index is None:
+        candidate_index = [
+            (normalise_match_text(name), product_family_name(name)) for name in candidate_names
+        ]
+    for name_norm, name_family in candidate_index:
         if not name_norm:
             continue
         if (
@@ -325,12 +331,15 @@ def _promote_product_headings_to_h4(text: str, candidate_names: list[str]) -> st
     if not candidate_names:
         return text.strip()
 
+    candidate_index = [
+        (normalise_match_text(name), product_family_name(name)) for name in candidate_names
+    ]
     promoted = []
     for line in text.splitlines():
         if re.match(r"^\s*#{4}\s+", line):
             promoted.append(line)
             continue
-        if _line_names_candidate_product(line, candidate_names):
+        if _line_names_candidate_product(line, candidate_names, candidate_index):
             cleaned = re.sub(r"^\s*(?:[-*]|\d+[.)])\s*", "", line).strip()
             cleaned = re.sub(r"[*_`]", "", cleaned).strip()
             promoted.append(f"#### {cleaned}")
@@ -338,6 +347,10 @@ def _promote_product_headings_to_h4(text: str, candidate_names: list[str]) -> st
             promoted.append(line)
 
     return re.sub(r"\n{3,}", "\n\n", "\n".join(promoted)).strip()
+
+
+_BLOCK_HEADING_RE = re.compile(r"^\s*#{4}\s+(?P<name>[^\n]{4,180})\s*$")
+_ANY_HEADING_RE = re.compile(r"^\s*#{1,6}\s+")
 
 
 def _remove_blocked_product_blocks(text: str, blocked_names: set[str]) -> str:
@@ -354,11 +367,9 @@ def _remove_blocked_product_blocks(text: str, blocked_names: set[str]) -> str:
 
     lines = text.splitlines()
     remove_ranges: list[tuple[int, int]] = []
-    heading_re = re.compile(r"^\s*#{4}\s+(?P<name>[^\n]{4,180})\s*$")
-    any_heading_re = re.compile(r"^\s*#{1,6}\s+")
 
     for index, line in enumerate(lines):
-        match = heading_re.match(line.strip())
+        match = _BLOCK_HEADING_RE.match(line.strip())
         if not match:
             continue
         heading_family = product_family_name(match.group("name").strip())
@@ -366,7 +377,7 @@ def _remove_blocked_product_blocks(text: str, blocked_names: set[str]) -> str:
             continue
         end = len(lines)
         for following in range(index + 1, len(lines)):
-            if any_heading_re.match(lines[following]):
+            if _ANY_HEADING_RE.match(lines[following]):
                 end = following
                 break
         remove_ranges.append((index, end))
@@ -440,13 +451,15 @@ def _recommendation_candidate(line: str) -> str | None:
     return match.group(1).strip(" -,:;.")
 
 
+_ROUTINE_HEADING_PATTERN = re.compile(r"^\s*(?:#{1,6}\s+|\d+[.)]\s+\S)")
+
+
 def _remove_routine_product_recommendations(text: str, routine_names: set[str]) -> str:
     if not text.strip() or not routine_names:
         return text.strip()
 
     lines = text.splitlines()
     remove_ranges: list[tuple[int, int]] = []
-    heading_pattern = re.compile(r"^\s*(?:#{1,6}\s+|\d+[.)]\s+\S)")
 
     for index, line in enumerate(lines):
         candidate = _recommendation_candidate(line)
@@ -455,7 +468,7 @@ def _remove_routine_product_recommendations(text: str, routine_names: set[str]) 
 
         start = index
         for previous in range(index - 1, -1, -1):
-            if heading_pattern.match(lines[previous]):
+            if _ROUTINE_HEADING_PATTERN.match(lines[previous]):
                 start = previous
                 break
             if not lines[previous].strip():
@@ -464,7 +477,7 @@ def _remove_routine_product_recommendations(text: str, routine_names: set[str]) 
 
         end = len(lines)
         for following in range(index + 1, len(lines)):
-            if heading_pattern.match(lines[following]):
+            if _ROUTINE_HEADING_PATTERN.match(lines[following]):
                 end = following
                 break
         remove_ranges.append((start, end))

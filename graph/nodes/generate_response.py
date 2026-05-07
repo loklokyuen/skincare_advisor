@@ -322,7 +322,7 @@ def _build_context_block(state: GraphState) -> str:
     # Retrieved ingredient details
     if ingredients:
         lines.append("\n## Ingredient details from catalog")
-        for ing in ingredients:
+        for ing in ingredients[:8]:
             name = format_ingredient_name(ing.get("inci_name") or "")
             aliases = format_ingredient_names(_text_items(ing.get("common_names") or []))
             functions = _text_items(ing.get("functions") or [])
@@ -355,7 +355,7 @@ def _build_context_block(state: GraphState) -> str:
             )
         else:
             lines.append("\n## Products mentioned by user (analyse each in depth)")
-        for idx, p in enumerate(matched_products):
+        for idx, p in enumerate(matched_products[:10]):
             name = p.get("product_name", "")
             brand = p.get("brand") or ""
             cats = _text_items(p.get("categories") or [])
@@ -475,7 +475,7 @@ def generate_response(state: GraphState) -> GraphState:
     from langchain_core.messages import SystemMessage
 
     try:
-        context_block = _build_context_block(state)
+        context_block = state.get("context_block") or _build_context_block(state)
         system_content = f"{SYSTEM_PROMPT}\n\n{context_block}"
     except Exception as exc:
         log.error("_build_context_block failed: %s", exc, exc_info=True)

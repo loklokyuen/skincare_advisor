@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 import os
 import re
+from functools import lru_cache
 
 from config.openai import load_openai_config, openai_chat_kwargs
 from graph.tracing import traceable
@@ -54,6 +55,7 @@ def _asks_for_product_category(text: str) -> bool:
     )
 
 
+@lru_cache(maxsize=128)
 def _keyword_fallback(text: str) -> str:
     lower = text.lower()
 

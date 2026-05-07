@@ -1,6 +1,5 @@
 import streamlit as st
-from config.settings import SKIN_CONCERNS, SKIN_TYPES
-from utils.ingredient_format import format_ingredient_name, format_ingredient_names
+from utils.ingredient_format import format_ingredient_name
 
 
 def get_user_profile() -> dict:
