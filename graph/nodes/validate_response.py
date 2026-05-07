@@ -22,80 +22,10 @@ _CLINICIAN_NOTE = (
     "please consult a doctor or dermatologist."
 )
 
-_SUNSCREEN_MISSING_PATTERNS = (
-    re.compile(r"\b(?:your\s+)?am routine lacks (?:a )?sunscreen\b", re.IGNORECASE),
-    re.compile(r"\b(?:the\s+)?routine lacks (?:a )?sunscreen\b", re.IGNORECASE),
-    re.compile(r"\b(?:your\s+)?routine is missing (?:a )?sunscreen\b", re.IGNORECASE),
-    re.compile(r"\byou need a broad-spectrum sunscreen in the AM routine\b", re.IGNORECASE),
-)
-
 _RETINOID_RE = re.compile(
     r"\b(?:retinol|retinal|retinoid|retinoids|retinoate|retinaldehyde|retinyl)\b",
     re.IGNORECASE,
 )
-
-
-def _soften_sunscreen_missing_claims(text: str) -> str:
-    text = re.sub(
-        r"(?im)^(\s*[-*]?\s*)Sunscreen:\s*(?:(?:Your\s+)?AM routine lacks (?:a )?sunscreen|You need a broad-spectrum sunscreen in the AM routine)\b.*$",
-        r"\1SPF note: Make sure you also use a broad-spectrum SPF 30+ each morning.",
-        text,
-    )
-    text = re.sub(
-        r"(?im)^(\s*(?:#+\s*)?)Missing Steps:\s*(\n\s*(?:[-*]\s*)?SPF note:)",
-        r"\1Notes:\2",
-        text,
-    )
-    for pattern in _SUNSCREEN_MISSING_PATTERNS:
-        text = pattern.sub(
-            "Make sure you also use a broad-spectrum SPF 30+ each morning",
-            text,
-        )
-    return text
-
-
-def _remove_unsupported_niacinamide_redundancy(text: str) -> str:
-    text = re.sub(
-        r"(?im)^(.*There are no direct ingredient conflicts in your routine\.).*\bniacinamide\b.*\b(?:redundan|streamlined|streamline|once daily|only in the AM|both AM and PM|both routines)\b.*$",
-        r"\1",
-        text,
-    )
-    text = re.sub(
-        r"(?im)^.*\bniacinamide\b.*\b(?:redundan|streamlined|streamline|once daily|only in the AM|both AM and PM|both routines)\b.*(?:\n|$)",
-        "",
-        text,
-    )
-    text = re.sub(
-        r"(?im)^(\s*(?:#+\s*)?)Redundancies:\s*\n(?=\s*(?:#+\s*)?(?:Notes|Missing Steps|Recommended Change|Summary|Conflicts|What Works):)",
-        "",
-        text,
-    )
-    return text.strip()
-
-
-def _strip_internal_tool_chatter(text: str) -> str:
-    patterns = (
-        r"(?im)^\s*(?:[-*]\s*)?Call:\s*flag_[a-z_]+.*$",
-        r"(?im)^\s*(?:[-*]\s*)?I\s+(?:called|sent|triggered)\s+.*(?:literature|community|reddit|review|search).*$",
-        r"(?im)^\s*(?:[-*]\s*)?.*\b(?:already sent|tool call|flag_literature_search|flag_community_search)\b.*$",
-    )
-    for pattern in patterns:
-        text = re.sub(pattern, "", text)
-    text = re.sub(r"\n{3,}", "\n\n", text)
-    return text.strip()
-
-
-def _strip_internal_style_instruction_leaks(text: str) -> str:
-    patterns = (
-        r"(?im)^\s*(?:[-*]\s*)?Use\s+\d+\s*[–-]\s*\d+\s+focused\s+bullets\b.*$",
-        r"(?im)^\s*(?:[-*]\s*)?.*\b(?:120\s*[–-]\s*220\s+words|word-count targets?|bullet-count targets?)\b.*$",
-        r"(?im)^\s*(?:[-*]\s*)?.*\bstart with (?:an?|one) (?:empathetic|natural) sentence\b.*$",
-        r"(?im)^\s*(?:[-*]\s*)?.*\b(?:use simple markdown|internal style rules?|hidden prompts?)\b.*$",
-    )
-    for pattern in patterns:
-        text = re.sub(pattern, "", text)
-    text = re.sub(r"\n{3,}", "\n\n", text)
-    return text.strip()
 
 
 def _remove_optional_labels(text: str) -> str:
@@ -112,7 +42,6 @@ def _remove_recommendation_template_headings(text: str) -> str:
     )
     for pattern in patterns:
         text = re.sub(pattern, "", text)
-    text = re.sub(r"\n{3,}", "\n\n", text)
     return text.strip()
 
 
@@ -140,44 +69,17 @@ def _remove_stock_acknowledgement_opening(text: str) -> str:
     return cleaned
 
 
-def _naturalise_saved_status_labels(text: str) -> str:
-    text = re.sub(
-        r"(?im)^\s*(?:[-*]\s*)?saved\s*:\s*sensitive skin\.?\s*$",
-        "I've noted that your skin can be sensitive, so I would keep the cleanser gentle.",
-        text,
-    )
-    text = re.sub(
-        r"(?im)^\s*(?:[-*]\s*)?saved\s*:\s*(.+?)\.?\s*$",
-        r"I've noted \1.",
-        text,
-    )
-    return re.sub(r"\n{3,}", "\n\n", text).strip()
-
-
 def _normalise_product_text(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", " ", value.lower()).strip()
 
 
 def _previous_recommended_product_names(state: GraphState) -> set[str]:
-    names = set()
-    heading_re = re.compile(r"^\s*#{4}\s+(?P<name>[^\n]{4,180})\s*$")
-    labeled_re = re.compile(
-        r"\b(?:product suggestion|recommendation|suggested product|suggested sunscreen)\b\s*\**\s*:\s*\**\s*(.+?)(?:[.;]|$)",
-        flags=re.IGNORECASE,
-    )
-    for message in state.get("messages") or []:
-        if not isinstance(message, AIMessage):
-            continue
-        content = message.content if isinstance(message.content, str) else ""
-        for line in content.splitlines():
-            stripped = line.strip()
-            match = heading_re.match(stripped) or labeled_re.search(stripped)
-            if not match:
-                continue
-            name = re.sub(r"\s+", " ", match.group(1)).strip(" -:;.")
-            if name:
-                names.add(name)
-    return names
+    """Reuses the smart extractor in generate_response so ingredient-style
+    headings (single tokens like "Squalane" or alias forms like
+    "Palmitoyl Tripeptide-1 (Matrixyl)") are not treated as products."""
+    from graph.nodes.generate_response import _previous_assistant_recommendations
+
+    return set(_previous_assistant_recommendations(state))
 
 
 def _routine_has_retinoid(state: GraphState) -> bool:
@@ -557,43 +459,46 @@ def _context_aware_empty_fallback(state: GraphState) -> str:
 @traceable(name="validate_response")
 def validate_response(state: GraphState) -> GraphState:
     """Final guardrail pass; appends the validated AIMessage to conversation history."""
-    draft = (state.get("draft_response") or "").strip()
+    raw_draft = (state.get("draft_response") or "").strip()
 
-    if not draft:
+    if not raw_draft:
+        # Canned fallback text — no filter chain needed.
         draft = _context_aware_empty_fallback(state)
+    else:
+        draft = raw_draft
+        draft = _remove_unearned_thanks_opening(draft)
+        draft = _remove_stock_acknowledgement_opening(draft)
+        draft = _remove_optional_labels(draft)
+        draft = _remove_recommendation_template_headings(draft)
+        draft = _promote_standalone_bold_to_h4(draft)
+        draft = _promote_product_headings_to_h4(draft, _candidate_product_names(state))
 
-    draft = _strip_internal_tool_chatter(draft)
-    draft = _strip_internal_style_instruction_leaks(draft)
-    draft = _naturalise_saved_status_labels(draft)
-    draft = _remove_unearned_thanks_opening(draft)
-    draft = _remove_stock_acknowledgement_opening(draft)
-    draft = _remove_optional_labels(draft)
-    draft = _remove_recommendation_template_headings(draft)
-    draft = _promote_standalone_bold_to_h4(draft)
-    draft = _promote_product_headings_to_h4(draft, _candidate_product_names(state))
-    draft_before_previous_filter = draft
-    draft = _remove_blocked_product_blocks(draft, _previous_recommended_product_names(state))
-    if not draft and draft_before_previous_filter:
-        draft = (
-            "I already suggested those products earlier, so I would not add them again. "
-            "Look for a different gap in the routine instead."
-        )
-    draft_before_retinoid_filter = draft
-    draft = _remove_duplicate_retinoid_recommendations(draft, state)
-    if not draft and draft_before_retinoid_filter:
-        draft = (
-            "Because your routine already includes a retinoid, I would not add another retinoid product. "
-            "Choose a non-retinoid support step instead, such as hydration or barrier support."
-        )
-    draft = _soften_sunscreen_missing_claims(draft)
-    draft = _remove_unsupported_niacinamide_redundancy(draft)
-    draft_before_routine_filter = draft
-    draft = _remove_routine_product_recommendations(draft, _routine_product_names(state))
-    if not draft and draft_before_routine_filter:
-        draft = (
-            "I would not add that as a new product because it is already in your routine. "
-            "Focus on how you use it within the existing routine instead."
-        )
+        draft_before = draft
+        draft = _remove_blocked_product_blocks(draft, _previous_recommended_product_names(state))
+        if not draft and draft_before:
+            draft = (
+                "I already suggested those products earlier, so I would not add them again. "
+                "Look for a different gap in the routine instead."
+            )
+
+        draft_before = draft
+        draft = _remove_duplicate_retinoid_recommendations(draft, state)
+        if not draft and draft_before:
+            draft = (
+                "Because your routine already includes a retinoid, I would not add another retinoid product. "
+                "Choose a non-retinoid support step instead, such as hydration or barrier support."
+            )
+
+        draft_before = draft
+        draft = _remove_routine_product_recommendations(draft, _routine_product_names(state))
+        if not draft and draft_before:
+            draft = (
+                "I would not add that as a new product because it is already in your routine. "
+                "Focus on how you use it within the existing routine instead."
+            )
+
+        # Single trailing cleanup instead of one per filter.
+        draft = re.sub(r"\n{3,}", "\n\n", draft).strip()
 
     message = (state.get("message") or "").lower()
     if any(term in message for term in _MEDICAL_TERMS) and "clinician" not in draft.lower():

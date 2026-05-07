@@ -28,15 +28,10 @@ from graph.nodes.retrieve_context import (
 from graph.nodes.validate_response import (
     _remove_optional_labels,
     _remove_stock_acknowledgement_opening,
-    _naturalise_saved_status_labels,
     _remove_recommendation_template_headings,
     _remove_routine_product_recommendations,
     _remove_unearned_thanks_opening,
     _promote_product_headings_to_h4,
-    _strip_internal_style_instruction_leaks,
-    _strip_internal_tool_chatter,
-    _remove_unsupported_niacinamide_redundancy,
-    _soften_sunscreen_missing_claims,
     validate_response,
 )
 from graph.nodes.classify_intent import _keyword_fallback
@@ -870,12 +865,6 @@ def test_context_block_includes_previous_recommendations():
     assert "Do not recommend these again" in context
 
 
-def test_saved_status_label_is_naturalised():
-    assert _naturalise_saved_status_labels("Saved: sensitive skin.") == (
-        "I've noted that your skin can be sensitive, so I would keep the cleanser gentle."
-    )
-
-
 def test_recommendation_query_includes_profile_and_routine_context():
     query = _build_recommendation_query(
         {
@@ -1352,18 +1341,6 @@ def test_reddit_search_collects_wide_pool_before_top_three(monkeypatch):
     assert len(results) == 3
 
 
-def test_softens_sunscreen_missing_step_language():
-    response = (
-        "Missing Steps:\n"
-        "Sunscreen: You need a broad-spectrum sunscreen in the AM routine to protect against UV damage."
-    )
-
-    assert _soften_sunscreen_missing_claims(response) == (
-        "Notes:\n"
-        "SPF note: Make sure you also use a broad-spectrum SPF 30+ each morning."
-    )
-
-
 def test_keyword_fallback_routes_add_to_routine_as_recommend():
     assert _keyword_fallback("What should I add to my routine?") == "recommend"
 
@@ -1375,34 +1352,6 @@ def test_keyword_fallback_routes_products_with_ingredient_as_recommend():
 
 def test_keyword_fallback_routes_topical_ingredient_followup_as_learn():
     assert _keyword_fallback("it is a topical ingredient") == "learn"
-
-
-def test_strips_internal_tool_chatter_from_response():
-    response = (
-        "Call: flag_literature_search (already sent).\n\n"
-        "**Retinal vs Retinol**\n"
-        "- Retinal is one conversion step closer to Retinoic Acid."
-    )
-
-    assert _strip_internal_tool_chatter(response) == (
-        "**Retinal vs Retinol**\n"
-        "- Retinal is one conversion step closer to Retinoic Acid."
-    )
-
-
-def test_strips_internal_style_instruction_leaks():
-    response = (
-        "I understand you're looking for hydration support.\n\n"
-        "Use 1–2 focused bullets; start with empathetic sentence; 120-220 words.\n"
-        "#### The Ordinary Multi-Peptide + Hyaluronic Acid Serum\n"
-        "- **Why it fits:** Adds hydration."
-    )
-
-    assert _strip_internal_style_instruction_leaks(response) == (
-        "I understand you're looking for hydration support.\n\n"
-        "#### The Ordinary Multi-Peptide + Hyaluronic Acid Serum\n"
-        "- **Why it fits:** Adds hydration."
-    )
 
 
 def test_removes_unearned_thanks_opening():
@@ -1459,26 +1408,6 @@ def test_promotes_recommended_product_bullets_to_h4():
         "- **Why it fits:** Adds peptides and hydration.\n\n"
         "#### Skin + Me Fine Lines + Elasticity Serum\n"
         "- **Where to use:** Rest PM nights."
-    )
-
-
-def test_removes_unsupported_niacinamide_redundancy():
-    response = (
-        "Conflicts:\n"
-        "There are no direct ingredient conflicts in your routine. However, using "
-        "niacinamide in both AM and PM may be redundant.\n"
-        "Redundancies:\n"
-        "The use of niacinamide in both the AM and PM routines could be streamlined. "
-        "You might consider using it only in the AM.\n"
-        "Notes:\n"
-        "Next line"
-    )
-
-    assert _remove_unsupported_niacinamide_redundancy(response) == (
-        "Conflicts:\n"
-        "There are no direct ingredient conflicts in your routine.\n"
-        "Notes:\n"
-        "Next line"
     )
 
 
