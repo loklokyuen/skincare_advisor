@@ -13,7 +13,7 @@ APP_CONFIG = {
 OPEN_BEAUTY_FACTS_BASE = "https://world.openbeautyfacts.org/api/v2"
 
 # Skin types
-SKIN_TYPES = ["Normal", "Oily", "Dry", "Combination", "Sensitive"]
+SKIN_TYPES = ["Normal", "Oily", "Dry", "Combination"]
 
 # Skin concerns
 SKIN_CONCERNS = [

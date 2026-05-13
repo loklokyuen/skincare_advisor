@@ -13,6 +13,19 @@ log = logging.getLogger(__name__)
 _TABLE_READY = False
 
 
+def normalize_profile(profile: dict[str, Any]) -> dict[str, Any]:
+    """Normalize persisted profile shape across app versions."""
+    normalized = dict(profile)
+    skin_type = str(normalized.get("skin_type") or "").strip()
+    if skin_type.lower() == "sensitive":
+        normalized["skin_type"] = "Normal"
+        normalized["sensitive_skin"] = True
+    else:
+        normalized["skin_type"] = skin_type
+        normalized["sensitive_skin"] = bool(normalized.get("sensitive_skin", False))
+    return normalized
+
+
 def _ensure_table() -> bool:
     """Create the profile table on first use."""
     global _TABLE_READY
@@ -78,7 +91,7 @@ def get_user_profile(user_id: str) -> dict[str, Any] | None:
     if not rows:
         return None
 
-    profile = dict(rows[0].get("profile") or {})
+    profile = normalize_profile(dict(rows[0].get("profile") or {}))
     profile["user_id"] = rows[0]["user_id"]
     updated_at = rows[0].get("updated_at")
     profile["profile_updated_at"] = updated_at.isoformat() if updated_at else None
@@ -91,7 +104,7 @@ def save_user_profile(user_id: str, profile: dict[str, Any]) -> bool:
     if not _ensure_table():
         return False
 
-    stored_profile = dict(profile)
+    stored_profile = normalize_profile(profile)
     stored_profile["user_id"] = user_id
     stored_profile.pop("profile_updated_at", None)
 
