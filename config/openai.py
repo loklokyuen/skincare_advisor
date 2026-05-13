@@ -6,7 +6,7 @@ from pathlib import Path
 from dotenv import dotenv_values, load_dotenv
 
 _ENV_PATH = Path(__file__).resolve().parents[1] / ".env"
-DEFAULT_OPENAI_CHAT_MODEL = "gpt-5-mini"
+DEFAULT_OPENAI_CHAT_MODEL = "gpt-4o-mini"
 
 
 def _clean(value: object | None) -> str:
@@ -58,11 +58,13 @@ def openai_chat_kwargs(
     max_completion_tokens: int | None = None,
     reasoning_effort: str | None = None,
     verbosity: str | None = None,
+    streaming: bool = False,
 ) -> dict:
     kwargs: dict = {
         "model": model,
         "api_key": api_key,
         "timeout": timeout,
+        "streaming": streaming,
     }
     if temperature is not None and not model.startswith("gpt-5"):
         kwargs["temperature"] = temperature

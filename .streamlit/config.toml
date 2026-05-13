@@ -5,9 +5,13 @@ secondaryBackgroundColor = "#FBE4DF"
 textColor = "#3A3A3A"
 font = "sans serif"
 
+[theme.sidebar]
+backgroundColor = "#FBE4DF"
+secondaryBackgroundColor = "#FFF3EC"
+widgetBackgroundColor = "#FFF3EC"
+widgetBorderColor = "#E8C9C0"
+skeletonBackgroundColor = "#F3D5CB"
+
 [server]
 runOnSave = true
-# "poll" skips walking every installed package's __path__, which made the
-# dev console spam ModuleNotFoundError tracebacks for transformers image
-# processors whose torchvision dependency is not installed.
 fileWatcherType = "poll"
