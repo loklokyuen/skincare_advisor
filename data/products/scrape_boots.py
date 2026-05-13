@@ -641,7 +641,7 @@ def scrape_category(category_name: str, path: str, conn, session: int = 1, limit
         conn = ensure_conn(conn)
         if save_product(product, conn):
             saved += 1
-            log.info(f"  ✓ Saved: {product['product_name']} ({product.get('brand', '—')})")
+            log.info(f"  Saved: {product['product_name']} ({product.get('brand', '—')})")
         else:
             log.warning(f"  ✗ Failed to save: {product['product_name']}")
 
