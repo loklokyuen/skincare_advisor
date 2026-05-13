@@ -119,7 +119,7 @@ def _render_add_to_routine_selector(product: dict, key_prefix: str):
             if st.button(
                 "Add",
                 type="primary",
-                use_container_width=True,
+                width='stretch',
                 key=f"interested_confirm_add_{key_prefix}",
             ):
                 if new_item and not _product_is_in_routine(new_item):
@@ -129,7 +129,7 @@ def _render_add_to_routine_selector(product: dict, key_prefix: str):
         with col_cancel:
             if st.button(
                 "Cancel",
-                use_container_width=True,
+                width='stretch',
                 key=f"interested_cancel_add_{key_prefix}",
             ):
                 st.session_state.interested_adding_product = None
@@ -140,7 +140,7 @@ def _render_card(product: dict, idx: int):
     with st.container(border=True):
         image_url = product.get("image_url") or ""
         if image_url:
-            st.image(image_url, use_container_width=True)
+            st.image(image_url, width='stretch')
         else:
             st.markdown(
                 '<div style="height:120px;background:#f5f5f5;border-radius:8px;'
@@ -173,11 +173,11 @@ def _render_card(product: dict, idx: int):
         already_in_routine = _product_is_in_routine(product)
         add_col, remove_col = st.columns(2)
         with add_col:
-            routine_label = "✓ In routine" if already_in_routine else "Add to routine"
+            routine_label = "In routine" if already_in_routine else "Add to routine"
             if st.button(
                 routine_label,
                 key=f"routine_{name}_{idx}",
-                use_container_width=True,
+                width='stretch',
                 disabled=already_in_routine,
                 type="primary"
             ):
@@ -187,7 +187,7 @@ def _render_card(product: dict, idx: int):
                 }
                 st.rerun()
         with remove_col:
-            if st.button("Remove", key=f"remove_{name}_{idx}", use_container_width=True):
+            if st.button("Remove", key=f"remove_{name}_{idx}", width='stretch'):
                 _remove_product(name)
                 st.session_state.interested_adding_product = None
                 st.rerun()
@@ -208,7 +208,7 @@ products = st.session_state.interested_products
 
 if not products:
     st.info(
-        "No saved products yet. Chat with SkinIQ and tap **♡ Interested** on any product card to save it here."
+        "No saved products yet. Chat with SkinIQ and tap **⭐️ Interested** on any product card to save it here."
     )
     st.stop()
 

@@ -1,3 +1,4 @@
+import re
 import sys
 import uuid
 from html import escape
@@ -7,7 +8,7 @@ import streamlit as st
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from graph.context_status import has_profile, has_routine
+from graph.context_status import has_profile, has_routine, mode_needs_routine
 from utils.helpers import format_ingredient_names
 
 # ── Session init ───────────────────────────────────────────────────────────────
@@ -43,8 +44,9 @@ STARTER_SHORTCUTS = [
         "label": "Can you analyse my skincare routine?",
         "mode": "analyse",
         "prompt": (
-            "Analyse my AM and PM routine. Identify what works, conflicts, redundancies, "
-            "missing steps, and the one change I should prioritise."
+            "Analyse my AM and PM routine briefly. Focus on what to keep, what to improve, "
+            "and the one change I should prioritise. Only mention conflicts or overlap if "
+            "they meaningfully affect results or irritation risk."
         ),
     },
     {
@@ -68,8 +70,8 @@ STARTER_SHORTCUTS = [
         "label": "What should I add to my routine?",
         "mode": "recommend",
         "prompt": (
-            "Suggest 1-2 targeted additions to my routine. Explain why they fit, what gap they fill, "
-            "and where they belong (AM or PM). Prefer one if there is one clear best fit."
+            "Suggest 1-2 targeted additions to my routine. Explain why they fit and where "
+            "they belong (AM or PM). Prefer one if there is one clear best fit."
         ),
     },
 ]
@@ -134,23 +136,19 @@ def _render_add_to_routine_selector(product: dict, key_prefix: str):
     brand_str = f" · {p['brand']}" if p.get("brand") else ""
     with st.container(border=True):
         st.markdown(f"**Add to routine:** {p['product_name']}{brand_str}")
-        new_item = None
 
+        time_slots: list[str] = []
+        group = None
         if mode == "daily":
-            time_slot = st.radio(
-                "Slot",
-                ["AM", "PM"],
-                horizontal=True,
-                key=f"chat_slot_time_{key_prefix}",
-            )
-            new_item = {
-                "id": str(uuid.uuid4()),
-                "scope": "daily",
-                "time": time_slot,
-                **p,
-            }
+            col_am, col_pm = st.columns(2)
+            with col_am:
+                if st.checkbox("AM", value=True, key=f"chat_slot_am_{key_prefix}"):
+                    time_slots.append("AM")
+            with col_pm:
+                if st.checkbox("PM", key=f"chat_slot_pm_{key_prefix}"):
+                    time_slots.append("PM")
         elif mode == "active_rest":
-            col_grp, col_time = st.columns(2)
+            col_grp, col_am, col_pm = st.columns(3)
             with col_grp:
                 group = st.radio(
                     "Routine",
@@ -158,37 +156,44 @@ def _render_add_to_routine_selector(product: dict, key_prefix: str):
                     horizontal=True,
                     key=f"chat_slot_group_{key_prefix}",
                 )
-            with col_time:
-                time_slot = st.radio(
-                    "Time",
-                    ["AM", "PM"],
-                    horizontal=True,
-                    key=f"chat_slot_time_{key_prefix}",
-                )
-            new_item = {
-                "id": str(uuid.uuid4()),
-                "scope": "ar",
-                "time": time_slot,
-                "group": group,
-                **p,
-            }
+            with col_am:
+                if st.checkbox("AM", value=True, key=f"chat_slot_am_{key_prefix}"):
+                    time_slots.append("AM")
+            with col_pm:
+                if st.checkbox("PM", key=f"chat_slot_pm_{key_prefix}"):
+                    time_slots.append("PM")
+
+        if not time_slots:
+            st.caption("Pick at least one slot (AM or PM).")
+
+        def _new_routine_item(slot: str) -> dict:
+            base = {"id": str(uuid.uuid4()), "time": slot, **p}
+            if mode == "active_rest":
+                base["scope"] = "ar"
+                base["group"] = group
+            else:
+                base["scope"] = "daily"
+            return base
 
         col_confirm, col_cancel = st.columns(2)
         with col_confirm:
             if st.button(
-                "✓ Add to Routine",
+                "Add to Routine",
                 type="primary",
-                use_container_width=True,
+                width='stretch',
                 key=f"chat_confirm_add_{key_prefix}",
+                disabled=not time_slots,
             ):
-                if new_item and not _product_is_in_routine(new_item):
-                    st.session_state.routine.append(new_item)
+                for slot in time_slots:
+                    item = _new_routine_item(slot)
+                    if not _product_is_in_routine(item):
+                        st.session_state.routine.append(item)
                 st.session_state.chat_adding_product = None
                 st.rerun()
         with col_cancel:
             if st.button(
-                "✗ Cancel",
-                use_container_width=True,
+                "Cancel",
+                width='stretch',
                 key=f"chat_cancel_add_{key_prefix}",
             ):
                 st.session_state.chat_adding_product = None
@@ -211,7 +216,11 @@ def _available_shortcuts(profile: dict, routine_context: dict) -> list[dict]:
     return [
         shortcut
         for shortcut in STARTER_SHORTCUTS
-        if shortcut["mode"] != "analyse" or (profile_ready and routine_ready)
+        if profile_ready
+        and (
+            not mode_needs_routine(shortcut["mode"], shortcut["prompt"])
+            or routine_ready
+        )
     ]
 
 
@@ -333,7 +342,7 @@ def _render_product_cards(products: list[dict], key_prefix: str):
             with image_col:
                 image_url = product.get("image_url") or ""
                 if image_url:
-                    st.image(image_url, use_container_width=True)
+                    st.image(image_url, width='stretch')
                 else:
                     st.markdown(
                         '<div style="height:120px;background:#f5f5f5;border-radius:8px;'
@@ -377,23 +386,23 @@ def _render_product_cards(products: list[dict], key_prefix: str):
                 already_in_routine = _product_is_in_routine(product)
                 interested_col, routine_col = st.columns(2)
                 with interested_col:
-                    btn_label = "✓ Saved" if already_saved else "♡ Interested"
+                    btn_label = "Saved" if already_saved else "⭐️ Interested"
                     btn_type = "secondary" if already_saved else "primary"
                     if st.button(
                         btn_label,
                         key=f"interested_{key_prefix}_{name}_{idx}",
-                        use_container_width=True,
+                        width='stretch',
                         type=btn_type,
                         disabled=already_saved,
                     ):
                         _add_to_interested(product)
                         st.rerun()
                 with routine_col:
-                    routine_label = "✓ In routine" if already_in_routine else "Add to routine"
+                    routine_label = "In routine" if already_in_routine else "Add to routine"
                     if st.button(
                         routine_label,
                         key=f"routine_{key_prefix}_{name}_{idx}",
-                        use_container_width=True,
+                        width='stretch',
                         disabled=already_in_routine,
                     ):
                         st.session_state.chat_adding_product = {
@@ -410,10 +419,46 @@ def _render_product_cards(products: list[dict], key_prefix: str):
                     )
 
 
-def _render_assistant_markdown(content: str):
+_PREAMBLE_KEYWORDS = (
+    r"product\s+suggestions?",
+    r"product\s+recommendations?",
+    r"recommendations?",
+    r"suggested\s+products?",
+    r"suggested\s+sunscreens?",
+    r"my\s+pick",
+    r"my\s+picks",
+    r"top\s+pick",
+    r"top\s+picks",
+)
+_PREAMBLE_GROUP = "|".join(_PREAMBLE_KEYWORDS)
+# Matches lines like:
+#   "Product Suggestion: X"
+#   "**Product Suggestion**: X"
+#   "#### Product Suggestion"
+#   "- Product suggestion - X"
+#   "**Recommendation**"
+_PRODUCT_PREAMBLE_RE = re.compile(
+    rf"^\s*(?:#{{1,6}}\s+)?[-*]?\s*\**\s*(?:{_PREAMBLE_GROUP})\**\s*[:\-–—]?\s*.*$",
+    flags=re.IGNORECASE,
+)
+
+
+def _strip_product_preamble(content: str) -> str:
+    """Drop standalone product-suggestion preamble lines used as card headers."""
+    if not content:
+        return content
+    kept = [line for line in content.splitlines() if not _PRODUCT_PREAMBLE_RE.match(line)]
+    return "\n".join(kept).strip()
+
+
+def _render_assistant_markdown(content: str, has_cards: bool = True):
     """Render assistant Markdown, forcing H4 product headings to display as headings."""
     if not content:
         return
+    if not has_cards:
+        content = _strip_product_preamble(content)
+        if not content:
+            return
 
     buffer = []
     for line in content.splitlines():
@@ -437,7 +482,7 @@ title_col, action_col = st.columns([4, 1])
 with title_col:
     st.title("💬 Chat")
 with action_col:
-    if st.button("New chat", type="primary", use_container_width=True):
+    if st.button("New chat", type="primary", width='stretch'):
         st.session_state.chat_messages = []
         st.session_state.chat_thread_id = str(uuid.uuid4())
         st.session_state.chat_shortcuts_hidden = False
@@ -458,13 +503,7 @@ routine_ready = has_routine(routine_context)
 if not profile_ready:
     st.warning("Create or load a profile before using chat.")
     if st.button("Go to Profile", type="primary"):
-        st.switch_page("pages/1_Profile.py")
-    st.stop()
-
-if not routine_ready:
-    st.warning("Add your routine before using chat.")
-    if st.button("Go to Routine", type="primary"):
-        st.switch_page("pages/2_Routine.py")
+        st.switch_page("pages/1_👤_Profile.py")
     st.stop()
 
 if profile.get("name"):
@@ -473,6 +512,7 @@ if profile.get("name"):
 prewarm_signature = (
     profile.get("user_id"),
     profile.get("skin_type"),
+    profile.get("sensitive_skin", False),
     tuple(profile.get("concerns") or []),
     tuple(profile.get("goals") or []),
     profile.get("notes", ""),
@@ -493,7 +533,7 @@ if st.session_state.advisor_prewarm_signature != prewarm_signature:
     prepare_advisor_answers(
         prompts=[
             shortcut
-            for shortcut in STARTER_SHORTCUTS
+            for shortcut in _available_shortcuts(profile, routine_context)
             if shortcut["mode"] in {"recommend", "learn"}
         ],
         user_profile=profile,
@@ -506,11 +546,12 @@ if st.session_state.advisor_prewarm_signature != prewarm_signature:
 for msg_idx, message in enumerate(st.session_state.chat_messages):
     with st.chat_message(message["role"]):
         if message["role"] == "assistant":
-            _render_assistant_markdown(message["content"])
+            history_products = message.get("matched_products") or []
+            _render_assistant_markdown(message["content"], has_cards=bool(history_products))
         else:
             st.markdown(message["content"])
         if message["role"] == "assistant":
-            _render_product_cards(message.get("matched_products") or [], f"history_{msg_idx}")
+            _render_product_cards(history_products, f"history_{msg_idx}")
             if message.get("evidence_summary"):
                 _render_evidence_summary(message.get("evidence_summary"))
             else:
@@ -539,7 +580,7 @@ if not st.session_state.chat_messages and not st.session_state.chat_shortcuts_hi
                         st.button(
                             shortcut["label"],
                             key=f"starter_{shortcut['mode']}",
-                            use_container_width=True,
+                            width='stretch',
                             on_click=_queue_shortcut,
                             args=(shortcut,),
                         )
@@ -571,23 +612,47 @@ if llm_prompt:
         st.markdown(user_content)
 
     with st.chat_message("assistant"):
-        with st.spinner("Thinking..."):
-            from graph.graph import run_advisor_with_progress
+        from graph.graph import run_advisor_streaming
 
-            sub_status = st.empty()
+        sub_status = st.empty()
+        stream_placeholder = st.empty()
+        tokens: list[str] = []
+        result: dict | None = None
 
-            def show_progress(message: str) -> None:
-                sub_status.caption(message)
+        import time
+        last_flush = 0.0
+        tokens_since_flush = 0
+        FLUSH_INTERVAL_S = 0.05  # 20 updates/sec ceiling
+        FLUSH_TOKENS = 4
 
-            result = run_advisor_with_progress(
-                llm_prompt,
-                user_profile=profile,
-                user_routine=routine_context,
-                thread_id=st.session_state.chat_thread_id,
-                on_progress=show_progress,
-                explicit_mode=selected_mode,
-            )
-            sub_status.empty()
+        for kind, payload in run_advisor_streaming(
+            llm_prompt,
+            user_profile=profile,
+            user_routine=routine_context,
+            thread_id=st.session_state.chat_thread_id,
+            explicit_mode=selected_mode,
+        ):
+            if kind == "progress":
+                sub_status.caption(payload)
+            elif kind == "token":
+                tokens.append(payload)
+                tokens_since_flush += 1
+                now = time.time()
+                if tokens_since_flush >= FLUSH_TOKENS or (now - last_flush) >= FLUSH_INTERVAL_S:
+                    stream_placeholder.markdown(_strip_product_preamble("".join(tokens)))
+                    last_flush = now
+                    tokens_since_flush = 0
+            elif kind == "done":
+                # Flush any leftover buffered tokens before showing final.
+                if tokens_since_flush:
+                    stream_placeholder.markdown(_strip_product_preamble("".join(tokens)))
+                result = payload
+
+        sub_status.empty()
+        stream_placeholder.empty()
+
+        if result is None:
+            result = {"response": "", "matched_products": []}
 
         response_text = result["response"]
         matched_products = result["matched_products"]
@@ -595,7 +660,7 @@ if llm_prompt:
         literature_request = result.get("literature_search_request")
         evidence_summary = result.get("evidence_summary")
 
-        _render_assistant_markdown(response_text)
+        _render_assistant_markdown(response_text, has_cards=bool(matched_products))
         _render_product_cards(matched_products, f"live_{len(st.session_state.chat_messages)}")
         if evidence_summary:
             _render_evidence_summary(evidence_summary)

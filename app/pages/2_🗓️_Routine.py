@@ -7,7 +7,7 @@ import streamlit as st
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from services.product_service import search_products, search_products_for_routine
-from services.profile_service import normalize_user_id, save_user_profile
+from services.profile_service import normalize_profile, normalize_user_id, save_user_profile
 from graph.context_status import has_profile
 from utils.helpers import format_ingredient_names
 
@@ -48,7 +48,7 @@ def clear_product_search():
 
 
 def sync_routine_to_profile():
-    profile = dict(st.session_state.get("user_profile") or {})
+    profile = normalize_profile(st.session_state.get("user_profile") or {})
     user_id = normalize_user_id(profile.get("user_id") or st.session_state.get("profile_user_id"))
     if not profile.get("skin_type") or user_id == "default":
         st.session_state.routine_sync_status = "missing_profile"
@@ -180,7 +180,7 @@ def product_details_dialog(item: dict):
 
 def product_card(item: dict):
     with st.container(border=True):
-        col_info, col_btns = st.columns([4, 1])
+        col_info, col_btns = st.columns([3, 1])
         with col_info:
             st.markdown(
                 product_html(
@@ -234,7 +234,7 @@ profile = st.session_state.get("user_profile", {})
 if not has_profile(profile):
     st.warning("Create or load a profile before building your routine.")
     if st.button("Go to Profile", type="primary"):
-        st.switch_page("pages/1_Profile.py")
+        st.switch_page("pages/1_👤_Profile.py")
     st.stop()
 
 sync_status = st.session_state.pop("routine_sync_status", None)
@@ -259,7 +259,7 @@ if mode is None:
         with st.container(border=True):
             st.markdown("#### 📅 Daily")
             st.caption("Same products every morning and evening. Simple and consistent.")
-            if st.button("Choose", key="choose_daily", type="primary", use_container_width=True):
+            if st.button("Choose", key="choose_daily", type="primary", width='stretch'):
                 st.session_state.routine_mode = "daily"
                 st.rerun()
     with col2:
@@ -269,7 +269,7 @@ if mode is None:
                 "Two routines: one for active days (e.g. Mon + Thu), one for the rest. "
                 "Great if you use strong actives that need rest days."
             )
-            if st.button("Choose", key="choose_ar", type="primary", use_container_width=True):
+            if st.button("Choose", key="choose_ar", type="primary", width='stretch'):
                 st.session_state.routine_mode = "active_rest"
                 init_ar_days()
                 st.rerun()
@@ -284,7 +284,7 @@ col_label, col_switch = st.columns([3, 1])
 with col_label:
     st.markdown(f"**{MODE_LABELS[mode]}**")
 with col_switch:
-    if st.button(f"Switch to {MODE_LABELS[other_mode]}", use_container_width=True):
+    if st.button(f"Switch to {MODE_LABELS[other_mode]}", width='stretch'):
         do_migrate(other_mode)
 
 
@@ -299,9 +299,9 @@ with search_col:
         label_visibility="collapsed",
     )
 with search_btn:
-    search_clicked = st.button("Search", type="primary", use_container_width=True)
+    search_clicked = st.button("Search", type="primary", width='stretch')
 with cancel_btn:
-    st.button("Cancel", use_container_width=True, on_click=clear_product_search)
+    st.button("Cancel", width='stretch', on_click=clear_product_search)
 
 if search_clicked:
     cleaned_query = query.strip()
@@ -333,7 +333,7 @@ if st.session_state.routine_last_search:
                         unsafe_allow_html=True,
                     )
                 with c2:
-                    if st.button("Add", key=f"add_{r_key}", type="primary", use_container_width=True):
+                    if st.button("Add", key=f"add_{r_key}", type="primary", width='stretch'):
                         st.session_state.adding_product = {
                             "product_name": row["product_name"],
                             "brand": row.get("brand") or "",
@@ -354,46 +354,59 @@ if st.session_state.adding_product:
     with slot_col:
         with st.container(border=True):
             st.markdown(f"**{p['product_name']}**{brand_str}")
-            new_item = None
 
+            time_slots: list[str] = []
+            group = None
             if mode == "daily":
-                time_slot = st.radio("Slot", TIMES, horizontal=True, key="slot_time")
-                new_item = {
-                    "id": str(uuid.uuid4()),
-                    "scope": "daily",
-                    "time": time_slot,
-                    **{k: p[k] for k in (
-                        "product_name", "brand", "key_ingredients", "active_ingredients",
-                        "ingredients", "quantity", "image_url", "categories",
-                    )},
-                }
-
+                col_am, col_pm = st.columns(2)
+                with col_am:
+                    if st.checkbox("AM", value=True, key="slot_am"):
+                        time_slots.append("AM")
+                with col_pm:
+                    if st.checkbox("PM", key="slot_pm"):
+                        time_slots.append("PM")
             elif mode == "active_rest":
-                col_grp, col_time = st.columns(2)
+                col_grp, col_am, col_pm = st.columns(3)
                 with col_grp:
                     group = st.radio("Routine", ["Active", "Rest"], horizontal=True, key="slot_group")
-                with col_time:
-                    time_slot = st.radio("Time", TIMES, horizontal=True, key="slot_time")
-                new_item = {
-                    "id": str(uuid.uuid4()),
-                    "scope": "ar",
-                    "time": time_slot,
-                    "group": group,
-                    **{k: p[k] for k in (
-                        "product_name", "brand", "key_ingredients", "active_ingredients",
-                        "ingredients", "quantity", "image_url", "categories",
-                    )},
-                }
+                with col_am:
+                    if st.checkbox("AM", value=True, key="slot_am"):
+                        time_slots.append("AM")
+                with col_pm:
+                    if st.checkbox("PM", key="slot_pm"):
+                        time_slots.append("PM")
+
+            if not time_slots:
+                st.caption("Pick at least one slot (AM or PM).")
+
+            product_fields = {k: p[k] for k in (
+                "product_name", "brand", "key_ingredients", "active_ingredients",
+                "ingredients", "quantity", "image_url", "categories",
+            )}
+
+            def _new_item(slot: str) -> dict:
+                base = {"id": str(uuid.uuid4()), "time": slot, **product_fields}
+                if mode == "active_rest":
+                    base["scope"] = "ar"
+                    base["group"] = group
+                else:
+                    base["scope"] = "daily"
+                return base
 
             col_confirm, col_cancel = st.columns(2)
             with col_confirm:
-                if st.button("✓ Add to Routine", type="primary", use_container_width=True):
-                    if new_item:
-                        st.session_state.routine.append(new_item)
-                        st.session_state.adding_product = None
-                        st.rerun()
+                if st.button(
+                    "Add to Routine",
+                    type="primary",
+                    width='stretch',
+                    disabled=not time_slots,
+                ):
+                    for slot in time_slots:
+                        st.session_state.routine.append(_new_item(slot))
+                    st.session_state.adding_product = None
+                    st.rerun()
             with col_cancel:
-                if st.button("✗ Cancel", key="cancel_slot", use_container_width=True):
+                if st.button("Cancel", key="cancel_slot", width='stretch'):
                     st.session_state.adding_product = None
                     st.rerun()
 
@@ -437,7 +450,7 @@ elif mode == "active_rest":
             with pat_cols[i]:
                 is_current = set(ar_days.get("Active", [])) == set(active_days)
                 if st.button(
-                    label, key=f"pat_{i}", use_container_width=True,
+                    label, key=f"pat_{i}", width='stretch',
                     type="primary" if is_current else "secondary",
                 ):
                     st.session_state.ar_days = {
