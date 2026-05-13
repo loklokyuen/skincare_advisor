@@ -150,13 +150,17 @@ def analyse_product_candidates(
             continue
         key = product_identity_key(product, family=True)
         family = product_family_name(str(product.get("product_name") or ""))
-        if key in seen or key in routine_keys or family in previous_families:
+        if key in seen or key in routine_keys:
             continue
         seen.add(key)
         text = _product_text(product)
         if routine_retinoid and not explicit_retinoid and _RETINOID_RE.search(text):
             continue
         score, reasons, cautions = _score_product(product, profile_with_routine, message)
+        previously_recommended = family in previous_families
+        if previously_recommended:
+            score -= 5
+            cautions = (cautions or []) + ["previously recommended"]
         ranked.append(
             {
                 "product_name": product.get("product_name") or "",
@@ -165,6 +169,7 @@ def analyse_product_candidates(
                 "score": score,
                 "reasons": reasons[:4],
                 "cautions": cautions[:4],
+                "previously_recommended": previously_recommended,
                 "key_ingredients": (
                     product.get("key_ingredients")
                     or product.get("active_ingredients")

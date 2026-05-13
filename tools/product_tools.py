@@ -298,6 +298,24 @@ _GENERIC_PRODUCT_TOKENS = {
     "skin", "face", "day", "night", "spray", "wash",
 }
 
+_NON_PRODUCT_NAME_PREFIXES = (
+    "for ",
+    "a ",
+    "an ",
+    "the best ",
+    "one ",
+    "this ",
+    "that ",
+    "option ",
+    "choice ",
+    "alternative ",
+    "idea ",
+    "plan ",
+    "pick ",
+    "first choice ",
+    "second choice ",
+)
+
 
 def _product_named_in_response(product: dict, response: str) -> bool:
     raw_name = str(product.get("product_name") or "")
@@ -313,23 +331,15 @@ def _product_named_in_response(product: dict, response: str) -> bool:
     if family_name and len(family_name) > 12 and family_name in response_family:
         return True
 
-    # Catalog products often have variant suffixes after a comma, e.g.
-    #   "Skin + Me Breakouts + Visible Pores Serum, for Dry to Normal Skin, ..."
-    # The response writer typically only quotes the part before the first
-    # comma. Match if that core prefix family is contained in the response.
+    # Match catalog variant suffix prefix before the first comma.
     core = raw_name.split(",", 1)[0]
     core_family = product_family_name(core)
     if core_family and len(core_family) > 12 and core_family in response_family:
         return True
 
-    # DB name may differ from what LLM wrote (extra suffix, missing "with",
-    # different size, etc.). Compare distinctive tokens only — drop generic
-    # product-category words (serum, cream, ...) so two products in the same
-    # category aren't treated as the same.
-    stop = {"for", "the", "and", "with", "a", "an", "to", "of", "in", "by", "on", "or"}
     name_tokens = {
         t for t in family_name.split()
-        if t not in stop and t not in _GENERIC_PRODUCT_TOKENS and len(t) > 1
+        if t not in _STOP and t not in _GENERIC_PRODUCT_TOKENS and len(t) > 1
     }
     if len(name_tokens) >= 3:
         matched = sum(1 for t in name_tokens if t in response_text)
@@ -340,6 +350,68 @@ def _product_named_in_response(product: dict, response: str) -> bool:
 
 
 _STOP = {"for", "the", "and", "with", "a", "an", "to", "of", "in", "by", "on", "or"}
+
+_QUANTITY_PAREN_RE = re.compile(
+    r"^\s*\d+(?:\.\d+)?\s*(?:[-–—]\s*\d+(?:\.\d+)?\s*)?"
+    r"(?:ml|l|g|kg|oz|fl\s*oz|count|ct|pcs?|pack|tablet|capsule)s?\s*$",
+    flags=re.IGNORECASE,
+)
+
+
+def _has_category_descriptor_parens(name: str) -> bool:
+    """True when parens hold a category descriptor rather than a size/variant tag."""
+    for match in re.finditer(r"\(([^)]+)\)", name):
+        content = match.group(1).strip()
+        if not content or _QUANTITY_PAREN_RE.match(content):
+            continue
+        lowered = content.lower()
+        has_generic_token = any(
+            re.search(rf"\b{re.escape(token)}\b", lowered)
+            for token in _GENERIC_PRODUCT_TOKENS
+        )
+        has_concentration = bool(re.search(r"\d+\s*(?:[-–—]\s*\d+\s*)?%", content))
+        if has_generic_token or has_concentration:
+            return True
+    return False
+
+
+def _looks_like_specific_product_name(value: str) -> bool:
+    """Reject generic request/category phrases before creating UI cards."""
+    name = re.sub(r"\s+", " ", str(value or "")).strip(" -:;.")
+    if not name:
+        return False
+
+    lower = name.lower()
+    if lower.startswith(_NON_PRODUCT_NAME_PREFIXES):
+        return False
+
+    if not re.match(r"^[A-Z0-9]", name):
+        return False
+
+    if _has_category_descriptor_parens(name):
+        return False
+
+    family_tokens = [
+        token
+        for token in product_family_name(name).split()
+        if token not in _STOP and len(token) > 1
+    ]
+    if len(family_tokens) < 3:
+        return False
+
+    has_product_category = any(
+        token in _GENERIC_PRODUCT_TOKENS
+        for token in family_tokens
+    )
+    has_size_or_spf = bool(
+        re.search(
+            r"\b(?:SPF\s*\d+\+?|PA\+{2,4}|\d+(?:\.\d+)?\s*(?:ml|g|oz|fl\s*oz))\b",
+            name,
+            flags=re.IGNORECASE,
+        )
+    )
+    has_brand_like_shape = len(name.split()) >= 4 and not lower.startswith(("product ", "suggestion "))
+    return has_product_category or has_size_or_spf or has_brand_like_shape
 
 
 def _query_match_ratio(query: str, candidate_name: str) -> tuple[int, float]:
@@ -485,7 +557,8 @@ def _heading_product_suggestion_queries(response: str) -> list[str]:
         # or "Suggested product: ...".
         query = re.sub(
             r"^(?:recommendation|recommended|suggested\s+(?:product|sunscreen)?|"
-            r"product\s+suggestion|suggestion|alternative|second\s+choice|"
+            r"product\s+suggestion|suggestion|alternative|option|choice|idea|"
+            r"pick|plan|first\s+choice|second\s+choice|"
             r"or)\b\s*[-–—:.]*\s*",
             "",
             query,
@@ -533,7 +606,7 @@ def extract_recommended_product_names_from_response(response: str, limit: int = 
 
 def _minimal_product_card(name: str, brand: str = "") -> dict | None:
     product_name = re.sub(r"\s+", " ", str(name or "")).strip(" -:;.")
-    if not product_name:
+    if not product_name or not _looks_like_specific_product_name(product_name):
         return None
     return {
         "product_name": product_name,

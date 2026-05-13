@@ -180,10 +180,40 @@ Rules:
 - Name each covered ingredient explicitly; never use "this ingredient" or "it" without naming.
 - Cover practical meaning: likely benefits, common complaints, tolerance, what stays uncertain.
 - Distinguish clinical literature from Reddit/community experience.
+- Put distinct points on separate Markdown bullets or separate short paragraphs.
 - Cite inline as [[Title]](url). Never write "study:", "PubMed:", or "discussion:" as label.
 - Multiple community sources: one per Markdown bullet.
+- Do not write a community section when no community sources are present.
+- Do not say "provided clinical review" or "provided literature"; say "retrieved PubMed results" or "retrieved sources".
 - Summarise — never copy or paraphrase evidence text verbatim.
 - Do not invent claims, certainty, or consensus not present in Sources."""
+
+
+def _clean_summary_paragraph(paragraph: str, sources: list[dict]) -> str:
+    cleaned = str(paragraph or "").strip()
+    if not cleaned:
+        return ""
+
+    if not any(s.get("kind") == "community" for s in sources):
+        cleaned = re.sub(
+            r"(?:^|\n)\s*(?:[-*]\s*)?\**Community sources?\**\s*:\s*none provided\.?\s*",
+            "\n", cleaned, flags=re.IGNORECASE,
+        )
+        cleaned = re.sub(
+            r"\s+\**Community sources?\**\s*:\s*none provided\.?",
+            "", cleaned, flags=re.IGNORECASE,
+        )
+
+    cleaned = re.sub(r"\bprovided clinical review\b", "retrieved PubMed results", cleaned, flags=re.IGNORECASE)
+    cleaned = re.sub(r"\bprovided literature\b", "retrieved PubMed sources", cleaned, flags=re.IGNORECASE)
+
+    for label in ("Clinical literature", "Common practical notes", "Community sources", "Practical meaning"):
+        cleaned = re.sub(
+            rf"(?<!^)(?<![\n-])\s+({re.escape(label)}\s*:)",
+            r"\n\n\1", cleaned, flags=re.IGNORECASE,
+        )
+
+    return re.sub(r"\n{3,}", "\n\n", cleaned).strip()
 
 
 def _summarize_with_llm(
@@ -193,7 +223,7 @@ def _summarize_with_llm(
 ) -> str:
     api_key, model, base_url = load_openai_config(
         model_env="OPENAI_SUMMARY_MODEL",
-        default_model="gpt-5-mini",
+        default_model="gpt-4o-mini",
     )
     if not api_key or not sources:
         return ""
@@ -246,6 +276,7 @@ def summarize_evidence(
     paragraph = _summarize_with_llm(literature_query, community_query, sources)
     if not paragraph:
         paragraph = _fallback_paragraph(literature_query, community_query, sources)
+    paragraph = _clean_summary_paragraph(paragraph, sources)
 
     return {
         "paragraph": paragraph,
