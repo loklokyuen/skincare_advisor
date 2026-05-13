@@ -19,11 +19,13 @@ from graph.graph import (
 from graph import recommendation_cache
 from graph.recommendation_cache import get_prepared_answer, store_prepared_answer
 from graph.nodes.generate_response import _build_context_block
+import graph.nodes.retrieve_context as retrieve_context_module
 from graph.nodes.retrieve_context import (
     _build_recommendation_query,
     _filter_duplicate_retinoids,
     _filter_skin_type_mismatches,
     _rank_products_for_profile,
+    retrieve_context,
 )
 from graph.nodes.validate_response import (
     _remove_optional_labels,
@@ -36,7 +38,9 @@ from graph.nodes.validate_response import (
 )
 from graph.nodes.classify_intent import _keyword_fallback
 from services.literature_service import _is_relevant_article, _key_point, _pubmed_search_term
+from services.profile_service import normalize_profile
 from services.evidence_summary_service import (
+    _clean_summary_paragraph,
     _skip_literature_for_same_community_query,
     summarize_evidence,
 )
@@ -57,6 +61,30 @@ def _clear_recommendation_cache():
         recommendation_cache._cache.clear()
         recommendation_cache._timestamps.clear()
         recommendation_cache._inflight.clear()
+
+
+def test_normalize_profile_migrates_sensitive_skin_type_to_flag():
+    profile = normalize_profile({"skin_type": "Sensitive", "concerns": []})
+
+    assert profile["skin_type"] == "Normal"
+    assert profile["sensitive_skin"] is True
+
+
+def test_recommendation_query_includes_sensitive_skin_separately():
+    query = _build_recommendation_query(
+        {
+            "message": "Suggest a cleanser",
+            "user_profile": {
+                "skin_type": "Dry",
+                "sensitive_skin": True,
+                "concerns": [],
+            },
+            "user_routine": {},
+        }
+    )
+
+    assert "Skin type: Dry" in query
+    assert "Sensitive skin: yes" in query
 
 
 def test_prepared_answer_exact_match_is_scoped_to_profile_and_routine():
@@ -461,6 +489,91 @@ def test_select_recommended_product_cards_returns_minimal_card_when_catalog_miss
     ]
 
 
+def test_select_recommended_product_cards_rejects_option_label_ingredient_headings(monkeypatch):
+    monkeypatch.setattr(product_tools, "search_products", lambda *args, **kwargs: [])
+    monkeypatch.setattr(product_tools, "_ask_product_card_llm", lambda *args, **kwargs: [])
+
+    result = product_tools.select_recommended_product_cards.invoke(
+        {
+            "response": (
+                "#### Option — Azelaic Acid (serum, 10–15%)\n"
+                "- Fits oily, acne-prone skin.\n\n"
+                "#### Option — 2% Salicylic Acid (leave-on BHA serum or gel)\n"
+                "- Use on retinol-free PM nights."
+            ),
+            "candidate_products": [],
+            "routine_items": [],
+            "limit": 2,
+        }
+    )
+
+    assert result == []
+
+
+def test_select_recommended_product_cards_rejects_descriptor_paren_ingredient(monkeypatch):
+    monkeypatch.setattr(product_tools, "search_products", lambda *args, **kwargs: [])
+    monkeypatch.setattr(product_tools, "_ask_product_card_llm", lambda *args, **kwargs: [])
+
+    result = product_tools.select_recommended_product_cards.invoke(
+        {
+            "response": (
+                "#### Azelaic Acid (serum, 10-15%)\n"
+                "- Fits oily, acne-prone skin."
+            ),
+            "candidate_products": [],
+            "routine_items": [],
+            "limit": 1,
+        }
+    )
+
+    assert result == []
+
+
+def test_select_recommended_product_cards_strips_option_prefix_for_real_product(monkeypatch):
+    monkeypatch.setattr(product_tools, "search_products", lambda *args, **kwargs: [])
+    monkeypatch.setattr(product_tools, "_ask_product_card_llm", lambda *args, **kwargs: [])
+
+    result = product_tools.select_recommended_product_cards.invoke(
+        {
+            "response": (
+                "#### Option — The Ordinary Niacinamide 10% + Zinc 1% Oil Control Serum\n"
+                "- Adds oil control."
+            ),
+            "candidate_products": [],
+            "routine_items": [],
+            "limit": 1,
+        }
+    )
+
+    assert len(result) == 1
+    assert result[0]["product_name"] == "The Ordinary Niacinamide 10% + Zinc 1% Oil Control Serum"
+
+
+def test_select_recommended_product_cards_rejects_generic_bha_request_phrase(monkeypatch):
+    monkeypatch.setattr(product_tools, "search_products", lambda *args, **kwargs: [])
+    monkeypatch.setattr(product_tools, "_ask_product_card_llm", lambda *args, **kwargs: [])
+
+    result = product_tools.select_recommended_product_cards.invoke(
+        {
+            "response": "#### for a 2% BHA leave-on\nUse it on retinol-free PM nights.",
+            "candidate_products": [],
+            "routine_items": [],
+            "limit": 1,
+        }
+    )
+
+    assert result == []
+
+
+def test_selected_product_names_reject_generic_bha_request_phrase():
+    assert _cards_for_selected_product_names(
+        ["for a 2% BHA leave-on"],
+        [],
+        [],
+        response="Product suggestion for a 2% BHA leave-on",
+    ) == []
+
+
 def test_select_recommended_product_cards_reads_plain_product_lines(monkeypatch):
     numbuzin = {
         "product_name": "Numbuzin No.1 Clear Filter Sun Essence SPF50+ PA++++ 50ml",
@@ -843,6 +956,73 @@ def test_context_block_ignores_malformed_string_entries():
     assert "User notes: Please keep routines minimal." in context
 
 
+def test_analyse_context_marks_candidates_as_not_routine_products():
+    context = _build_context_block(
+        {
+            "mode": "analyse",
+            "user_profile": {"skin_type": "Oily"},
+            "user_routine": {
+                "mode": "daily",
+                "items": [
+                    {
+                        "product_name": "Night Retinol Serum",
+                        "time": "PM",
+                        "key_ingredients": ["Retinol", "Glycerin"],
+                    }
+                ],
+            },
+            "matched_products": [
+                {
+                    "product_name": "Mandelic Acid Toner",
+                    "key_ingredients": ["Mandelic Acid"],
+                }
+            ],
+        }
+    )
+
+    assert "## Current routine products" in context
+    assert "- Night Retinol Serum (PM) [Retinol, Glycerin]" in context
+    assert "## Products mentioned by user (analyse each in depth)" in context
+    assert "## Context boundary" in context
+    assert "The only products the user currently uses are listed under \"Current routine products\"" in context
+
+
+def test_retrieve_context_analyse_uses_only_explicit_product_matches(monkeypatch):
+    monkeypatch.setattr(
+        retrieve_context_module,
+        "retrieve_semantic_context",
+        lambda *args, **kwargs: (
+            [{"product_name": "Candidate Acid Serum", "source": "semantic"}],
+            [],
+            None,
+        ),
+    )
+    monkeypatch.setattr(
+        retrieve_context_module,
+        "_find_matched_products",
+        lambda message: [{"product_name": "Explicitly Mentioned Cleanser"}],
+    )
+    monkeypatch.setattr(retrieve_context_module, "extract_ingredient_terms", type(
+        "Extractor",
+        (),
+        {"invoke": staticmethod(lambda payload: [])},
+    )())
+
+    result = retrieve_context(
+        {
+            "mode": "analyse",
+            "message": "Can you analyse my routine?",
+            "user_profile": {"skin_type": "Oily"},
+            "user_routine": {"items": [{"product_name": "Night Retinol Serum"}]},
+        }
+    )
+
+    matched_names = [product["product_name"] for product in result["matched_products"]]
+    assert matched_names == ["Explicitly Mentioned Cleanser"]
+    retrieved_names = [product["product_name"] for product in result["retrieved_products"]]
+    assert "Candidate Acid Serum" in retrieved_names
+
+
 def test_context_block_includes_previous_recommendations():
     context = _build_context_block(
         {
@@ -1130,6 +1310,49 @@ def test_evidence_summary_is_blank_when_no_sources(monkeypatch):
 
     assert result["paragraph"] == ""
     assert result["sources"] == []
+
+
+def test_evidence_summary_cleans_absent_community_and_splits_point_labels():
+    paragraph = (
+        "Resveratrol — Clinical literature: retrieved antioxidant context. "
+        "Common practical notes: tolerance can vary. Community sources: none provided. "
+        "Palmitoyl Tripeptide-1 — Practical meaning: evidence is limited."
+    )
+
+    result = _clean_summary_paragraph(
+        paragraph,
+        [{"id": "L1", "kind": "literature", "title": "Antioxidants for Skin Health"}],
+    )
+
+    assert "Community sources" not in result
+    assert "\n\nCommon practical notes:" in result
+    assert "\n\nPractical meaning:" in result
+
+
+def test_evidence_summary_fetches_each_comma_separated_ingredient(monkeypatch):
+    calls = []
+
+    def fake_paper_sources(query, limit=4):
+        calls.append((query, limit))
+        return [
+            {
+                "id": f"L{len(calls)}",
+                "kind": "literature",
+                "title": f"{query} source",
+                "url": f"https://pubmed.ncbi.nlm.nih.gov/{len(calls)}/",
+                "source": "PubMed",
+                "evidence": f"{query} evidence",
+            }
+        ]
+
+    monkeypatch.setattr("services.evidence_summary_service._summarize_with_llm", lambda *args: "")
+    monkeypatch.setattr("services.evidence_summary_service._paper_sources", fake_paper_sources)
+    monkeypatch.setattr("services.evidence_summary_service._community_sources", lambda query, limit=3: [])
+
+    result = summarize_evidence(literature_query="Resveratrol, Palmitoyl Tripeptide-1")
+
+    assert calls == [("Resveratrol", 2), ("Palmitoyl Tripeptide-1", 2)]
+    assert len(result["sources"]) == 2
 
 
 def test_evidence_summary_skips_literature_for_same_community_query(monkeypatch):
