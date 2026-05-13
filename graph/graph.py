@@ -7,11 +7,10 @@ import re
 
 from langgraph.graph import END, StateGraph
 
-from graph.nodes.analyse_routine import analyse_routine
+from graph.nodes.analyse_routine import analyse_basics, analyse_ingredients, analyse_products
 from graph.nodes.classify_intent import _keyword_fallback, classify_intent
 from graph.nodes.generate_response import generate_response
 from graph.nodes.retrieve_context import retrieve_context
-from graph.nodes.skincare_agent import skincare_agent
 from graph.nodes.validate_response import validate_response
 from graph.tracing import traceable
 from graph.recommendation_cache import get_prepared_answer
@@ -60,16 +59,21 @@ def build_graph():
 
     workflow.add_node("classify_intent", classify_intent)
     workflow.add_node("retrieve_context", retrieve_context)
-    workflow.add_node("analyse_routine", analyse_routine)
-    workflow.add_node("skincare_agent", skincare_agent)
+    workflow.add_node("analyse_basics", analyse_basics)
+    workflow.add_node("analyse_products", analyse_products)
+    workflow.add_node("analyse_ingredients", analyse_ingredients)
     workflow.add_node("generate_response", generate_response)
     workflow.add_node("validate_response", validate_response)
 
     workflow.set_entry_point("classify_intent")
     workflow.add_edge("classify_intent", "retrieve_context")
-    workflow.add_edge("retrieve_context", "analyse_routine")
-    workflow.add_edge("analyse_routine", "skincare_agent")
-    workflow.add_edge("skincare_agent", "generate_response")
+    workflow.add_edge("retrieve_context", "analyse_basics")
+    workflow.add_edge("retrieve_context", "analyse_products")
+    workflow.add_edge("retrieve_context", "analyse_ingredients")
+    workflow.add_edge(
+        ["analyse_basics", "analyse_products", "analyse_ingredients"],
+        "generate_response",
+    )
     workflow.add_edge("generate_response", "validate_response")
     workflow.add_edge("validate_response", END)
 
@@ -128,32 +132,17 @@ def _cards_for_selected_product_names(
     limit: int = RECOMMENDATION_LIMIT,
     response: str | None = None,
 ) -> list[dict]:
-    """Resolve agent-selected names into UI card payloads.
-
-    Prefer the catalog objects already in hand. The selector returns names as
-    text, so we map those names back onto candidate objects by product family
-    before falling back to catalog lookup for genuinely missing products.
-
-    When ``response`` is provided, only return products whose name actually
-    appears in that response. The agent can over-select (e.g. pick both a
-    Hyaluronic Acid serum and a Copper Peptides serum from the candidate
-    list) but the response writer often only describes one — gating on the
-    final response keeps the cards aligned with what the user actually
-    sees.
-    """
-    from tools.product_tools import _product_named_in_response
+    """Resolve agent-selected names into UI card payloads."""
+    from tools.product_tools import _looks_like_specific_product_name, _product_named_in_response
 
     names = [
         re.split(r"\s+[·|]\s+", str(name).strip(), maxsplit=1)[0].strip()
         for name in selected_names
-        if str(name).strip()
+        if str(name).strip() and _looks_like_specific_product_name(str(name).strip())
     ]
     if not names:
         return []
 
-    # Drop agent-picked names that the response writer didn't actually use.
-    # The agent over-selects from candidates ("HA serum" + "Copper Peptides"
-    # serum) but the response often only describes one — keep cards aligned.
     if response:
         names = [
             name
@@ -187,22 +176,25 @@ def _cards_for_selected_product_names(
         if len(resolved) >= limit:
             return resolved
 
-    synthetic_response = "\n".join(f"#### {name}" for name in names)
-    fallback = select_recommended_product_cards.invoke(
-        {
-            "response": synthetic_response,
-            "candidate_products": candidates,
-            "routine_items": routine_items,
-            "limit": limit,
-        }
-    )
-    for product in fallback:
-        key = _product_family_key(product)
-        if key not in seen_keys:
-            resolved.append(product)
-            seen_keys.add(key)
-        if len(resolved) >= limit:
-            break
+    # Only invoke the LLM-backed resolver when family lookup didn't already
+    # cover the writer-agent's picks. Avoids a second LLM hop on every turn.
+    if len(resolved) < limit:
+        synthetic_response = "\n".join(f"#### {name}" for name in names)
+        fallback = select_recommended_product_cards.invoke(
+            {
+                "response": synthetic_response,
+                "candidate_products": candidates,
+                "routine_items": routine_items,
+                "limit": limit,
+            }
+        )
+        for product in fallback:
+            key = _product_family_key(product)
+            if key not in seen_keys:
+                resolved.append(product)
+                seen_keys.add(key)
+            if len(resolved) >= limit:
+                break
     for name in names:
         if len(resolved) >= limit:
             break
@@ -281,7 +273,7 @@ def _extract_recommended_ingredients(response: str) -> list[str]:
         names.append(name)
         seen.add(key)
 
-    # Primary: H4 headings (#### Name) — format used by generate_response SYSTEM_PROMPT
+    # Primary: H4 headings
     h4_re = re.compile(r"^#{4}\s+(.{3,60})$")
     for line in response.splitlines():
         m = h4_re.match(line.strip())
@@ -291,7 +283,6 @@ def _extract_recommended_ingredients(response: str) -> list[str]:
     if names:
         return names[:RECOMMENDATION_LIMIT]
 
-    # Secondary: numbered list lines with a leading bold term
     numbered_re = re.compile(r"^\d+\.\s+\*\*([^*]{3,50})\*\*")
     for line in response.splitlines():
         m = numbered_re.match(line.strip())
@@ -301,7 +292,6 @@ def _extract_recommended_ingredients(response: str) -> list[str]:
     if names:
         return names[:RECOMMENDATION_LIMIT]
 
-    # Fallback: any short bolded term (≤4 words) that looks like an ingredient
     bold_re = re.compile(r"\*\*([A-Z][A-Za-z0-9 '\-]{2,40})\*\*")
     for m in bold_re.finditer(response):
         name = m.group(1).strip()
@@ -516,8 +506,9 @@ def run_advisor_with_progress(
     next_status = {
         "classify_intent": "Gathering relevant information",
         "retrieve_context": "Analysing your routine",
-        "analyse_routine": "Analysing",
-        "skincare_agent": "Choosing supporting tools",
+        "analyse_basics": "Analysing",
+        "analyse_products": "Analysing",
+        "analyse_ingredients": "Analysing",
         "generate_response": "Drafting the response",
         "validate_response": "Ready",
     }
@@ -533,6 +524,16 @@ def run_advisor_with_progress(
             if node_name in next_status:
                 _report_progress(on_progress, next_status[node_name])
 
+    return _finalize_advisor_result(result, message, user_routine, on_progress)
+
+
+def _finalize_advisor_result(
+    result: dict,
+    message: str,
+    user_routine: dict | None,
+    on_progress: Callable[[str], None] | None = None,
+) -> dict:
+    """Post-graph processing: card resolution + evidence requests + summary."""
     response = result.get("final_response") or result.get("draft_response") or ""
     routine_items = []
     if isinstance(user_routine, dict):
@@ -540,29 +541,14 @@ def run_advisor_with_progress(
     matched_products = []
     if result.get("mode") in {"recommend", "build"}:
         product_candidates = _dedupe_products(result.get("matched_products") or [])
-        # Response is the source of truth for which products to render as
-        # cards. Start from the agent's selection, then top up with names
-        # the response writer actually used so we never drop a product the
-        # user can see in the answer.
-        from tools.product_tools import _response_product_suggestion_queries
-
-        selected_names = list(result.get("agent_selected_product_names") or [])
-        response_names = _response_product_suggestion_queries(response or "")
-        merged_names: list[str] = []
-        seen_keys: set[str] = set()
-        for name in selected_names + response_names:
-            cleaned = re.sub(r"\s+", " ", str(name or "")).strip(" -:;.")
-            if not cleaned:
-                continue
-            key = product_family_name(cleaned)
-            if not key or key in seen_keys:
-                continue
-            seen_keys.add(key)
-            merged_names.append(cleaned)
-
-        if merged_names:
+        selected_names = [
+            re.sub(r"\s+", " ", str(name or "")).strip(" -:;.")
+            for name in result.get("agent_selected_product_names") or []
+            if str(name or "").strip()
+        ]
+        if selected_names:
             matched_products = _cards_for_selected_product_names(
-                merged_names,
+                selected_names,
                 product_candidates,
                 routine_items,
                 limit=RECOMMENDATION_LIMIT,
@@ -615,3 +601,142 @@ def run_advisor_with_progress(
         "literature_search_request": literature_request,
         "evidence_summary": evidence_summary,
     }
+
+
+_STREAMING_PROGRESS = {
+    "classify_intent": "Gathering relevant information",
+    "retrieve_context": "Analysing your routine",
+    "analyse_basics": "Analysing",
+    "analyse_products": "Analysing",
+    "analyse_ingredients": "Analysing",
+    "generate_response": "Drafting the response",
+    "validate_response": "Ready",
+}
+
+
+def _is_writer_token_event(event: dict) -> bool:
+    """True for AIMessageChunk tokens emitted by the writer-agent chat model."""
+    if event.get("event") != "on_chat_model_stream":
+        return False
+    meta = event.get("metadata") or {}
+    ns = str(meta.get("checkpoint_ns") or "")
+    node = str(meta.get("langgraph_node") or "")
+    # Tokens flow from inside generate_response (which runs create_agent inline).
+    # Match by namespace prefix to also pick up the sub-agent's inner LLM call.
+    if "generate_response" not in ns and node != "generate_response":
+        return False
+    chunk = (event.get("data") or {}).get("chunk")
+    text = getattr(chunk, "content", "") if chunk else ""
+    if not isinstance(text, str) or not text:
+        return False
+    if getattr(chunk, "tool_call_chunks", None):
+        return False
+    return True
+
+
+def run_advisor_streaming(
+    message: str,
+    user_profile: dict | None = None,
+    user_routine: dict | None = None,
+    thread_id: str = "default",
+    explicit_mode: str | None = None,
+    allow_prepared_answer: bool = True,
+):
+    """Generator. Yields tuples: ('progress', str) | ('token', str) | ('done', dict).
+
+    Final 'done' payload matches run_advisor_with_progress return shape.
+    """
+    import asyncio
+    import queue as _queue
+    import threading
+
+    initial_mode = (
+        explicit_mode
+        if explicit_mode in {"build", "analyse", "learn", "recommend"}
+        else _keyword_fallback(message)
+    )
+    if allow_prepared_answer and initial_mode in {"recommend", "learn"}:
+        yield "progress", "Checking recommendations"
+        prepared = get_prepared_answer(
+            message,
+            initial_mode,
+            user_profile,
+            user_routine,
+            wait_timeout=45.0,
+        )
+        if prepared is not None:
+            yield "progress", "Getting recommendation"
+            try:
+                from langchain_core.messages import AIMessage, HumanMessage
+
+                prepared_response = str(prepared.get("response") or "").strip()
+                if prepared_response:
+                    advisor_graph.update_state(
+                        {"configurable": {"thread_id": thread_id}},
+                        {
+                            "messages": [
+                                HumanMessage(content=message),
+                                AIMessage(content=prepared_response),
+                            ]
+                        },
+                    )
+            except Exception as exc:
+                log.debug("Could not persist prepared answer to thread %s: %s", thread_id, exc)
+            yield "done", prepared
+            return
+
+    config = {"configurable": {"thread_id": thread_id}}
+    initial_state = _initial_state(message, user_profile, user_routine, explicit_mode)
+
+    yield "progress", "Routing your question"
+
+    q: _queue.Queue = _queue.Queue()
+    SENTINEL = object()
+
+    async def _stream():
+        announced: set[str] = set()
+        try:
+            async for event in advisor_graph.astream_events(
+                initial_state, config=config, version="v2"
+            ):
+                etype = event.get("event")
+                if etype == "on_chain_start":
+                    node = str((event.get("metadata") or {}).get("langgraph_node") or "")
+                    if node in _STREAMING_PROGRESS and node not in announced:
+                        announced.add(node)
+                        q.put(("progress", _STREAMING_PROGRESS[node]))
+                elif _is_writer_token_event(event):
+                    chunk = event["data"]["chunk"]
+                    q.put(("token", chunk.content))
+        except Exception as exc:
+            q.put(("error", exc))
+        finally:
+            q.put(SENTINEL)
+
+    def _runner():
+        asyncio.run(_stream())
+
+    thread = threading.Thread(target=_runner, daemon=True)
+    thread.start()
+
+    while True:
+        item = q.get()
+        if item is SENTINEL:
+            break
+        kind, payload = item
+        if kind == "error":
+            thread.join()
+            raise payload
+        yield kind, payload
+
+    thread.join()
+
+    # astream_events doesn't return the final state; read it from the checkpointer.
+    try:
+        snapshot = advisor_graph.get_state(config)
+        final_state = dict(snapshot.values) if snapshot and snapshot.values else {}
+    except Exception as exc:
+        log.warning("Could not read final state from checkpointer: %s", exc)
+        final_state = {}
+
+    yield "done", _finalize_advisor_result(final_state, message, user_routine)

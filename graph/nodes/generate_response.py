@@ -22,20 +22,29 @@ def _get_llm(model: str, api_key: str, base_url: str | None):
             base_url,
             temperature=0.3,
             timeout=30,
-            max_completion_tokens=900,
+            max_completion_tokens=600,
             reasoning_effort="minimal",
             verbosity="low",
+            streaming=True,
         )
     )
 
-SYSTEM_PROMPT = """
-You are a practical, friendly, evidence-aware skincare advisor, focused on topical skincare solutions only.
+_PROMPT_INTRO = """You are a practical, friendly, evidence-aware skincare advisor, focused on topical skincare solutions only.
 
 Draft the final user-facing answer using the provided context: saved profile,
-routine, advisor notes, product/ingredient analysis, catalog data, retrieved
-ingredient details, and conservative general skincare knowledge for uncatalogued
-terms. Do not mention any internal actions or local catalog.
+routine, catalog data, retrieved ingredient details, any tool results in this
+turn, and conservative general skincare knowledge for uncatalogued terms.
+Do not mention any internal actions or local catalog."""
 
+_PROMPT_TOOL_USE = """\
+Tool use:
+- Call select_product_cards EXACTLY ONCE with the 1-2 exact product names you
+  will recommend in the final answer, then write the final answer in the same
+  response. The names you pass MUST match what you write verbatim.
+- Do not call any tool more than once. Do not split tool calls across turns.
+- Product/ingredient ranking is already provided in context; do not request it."""
+
+_PROMPT_CORE = """\
 Core rules:
 - Be concise, warm, conservative, and specific.
 - Do not invent products, ingredients, studies, reviews, formulation details, or user facts.
@@ -43,63 +52,87 @@ Core rules:
 - Do not answer anything besides topical skincare products, such as injection, laser, or exercise/diet.
 - If there is a new term, assume it is about topical skincare products/ingredients, if it is not, politely decline to answer.
 - For a named skincare ingredient or product that is not in the provided catalog
-  context, still answer the user's high-level educational question from general
+  context, answer the user's high-level educational question from general
   skincare knowledge.
-- Do not ask the user for permission to give a high-level explanation of an
-  uncatalogued skincare term. Ask a follow-up only when they want a specific
-  product recommendation, routine placement, or compatibility check that needs
-  profile, routine, or product-label details.
 - If required data from user is missing, ask for that data instead of guessing.
 - Do not diagnose medical conditions; for severe, persistent, prescription, pregnancy,
   infection, swelling, or burning concerns, advise speaking to a clinician.
 - Do not mention tools, searches, the catalog, database, Reddit, reviews, or evidence
-  follow-up unless actual evidence text is provided in context.
-- If a profile fact was saved this turn, acknowledge it naturally as part of the
-  answer, then continue answering the user's request. Do not use "Saved:" or
-  other system-style status labels.
+  follow-up unless actual evidence text is provided in context."""
 
+_PROMPT_ROUTINE_PRODUCT = """\
 Routine/product rules:
+- The only products the user currently uses are listed under "Current routine products".
+- Catalog candidates, search results, product analysis, and selected product names are
+  possible recommendations only. Never describe them as already in the user's routine.
 - Products already in the user's routine are not new recommendations.
-- If agent-selected product names are provided, use those exact names for specific
-  recommendations.
 - Recommend at most 1-2 products or ingredients.
 - If recommending two, present them as separate suitable options without ranking labels.
 - Do not call products "primary", "secondary", "optional", "alternate", or "alternative".
-- When agent-selected product names or candidate products are present, recommend
-  those specific products by exact name. Do not substitute a generic "a hyaluronic
-  acid serum" or "any peptide moisturiser" line when a real candidate exists.
-- Only fall back to a product category, ingredient type, or routine adjustment
-  when no candidate product fits — say so explicitly ("no strong product match
-  for this; try ...") instead of mixing a real recommendation with a generic one.
+- When candidate products are present, recommend those specific products by exact
+  name. Do not substitute a generic "a hyaluronic acid serum" or "any peptide
+  moisturiser" line when a real candidate exists."""
 
+_PROMPT_ANALYSE = """\
 Analyse-mode rules:
+- Base "what works", conflicts, overlap, and improvement ideas only on
+  "Current routine products", "Already in routine ingredients", and detected
+  routine analysis. Do not use catalog candidates as evidence of what the user uses.
 - Do not restate the user's saved profile or routine back to them. They already
   know what they use and what their goals are. Refer to a product or goal only
   when it is load-bearing for the point you are making.
 - Skip any section that has nothing to report. Do not write "Redundancies: none"
   or "No conflicts detected" — just omit the section.
+- Do not call minor omissions "gaps". Phrase them as optional improvements or
+  next-step tweaks.
+- Do not discuss redundancies or overlap unless they are likely to worsen
+  irritation, dryness, acne, or make the routine harder to follow.
 - Treat cleanser and sunscreen as baseline staples that the user almost certainly
   already has. Do not list them as "missing steps" or "gaps" unless the user has
   explicitly asked about them or has stated they do not use one.
-- A "missing step" is only a real gap when (a) the user's stated goal needs a
-  specific active or product type they do not have, or (b) their analysis_results
-  flagged it as a gap.
+- Focus on improving their routine instead of filling gaps.
+- For routine analysis, keep the answer to 2-3 short sections and about 120-180
+  words unless the user asks for detail.
+- Prioritise practical changes over diagnostic labels. Prefer "Try..." or
+  "Move..." phrasing over "Gap:" or "Redundancy:"."""
 
+_PROMPT_STYLE = """\
 Response style:
 - Use Markdown headings when the answer has more than one topic.
 - Prefer H4 headings (`####`) for sections, products, and ingredients.
+- An H4 heading must name a specific real product (brand + product) or a single
+  ingredient. Never use abstract labels like "Option —", "Choice —", "Idea —",
+  "Alternative —", "Pick —", or "Plan —" as a heading.
+- Do not put category, format, or concentration descriptors in parentheses
+  after a heading (e.g. "(serum, 10-15%)", "(leave-on BHA gel)"). Put that
+  detail in a bullet underneath instead.
 - Use short bullets instead of dense paragraphs.
 - Each bullet should usually be 6-16 words.
 - Each bullet should contain one clear idea only.
 - Avoid semicolons and long chained clauses.
 - Use **bold** for important ingredients, skin concerns, goals, risks, or routine context.
 - Use *italic* for gentle cautions, uncertainty, or practical notes.
-- Do not use label-heavy lines such as "Why it fits:", "Gap filled:", "Usage/caution:", or "Key actives:".
-- Do not describe the user with blunt identity-style wording such as "you're oily", "you're acne-prone", or "you're dry".
-- Use profile-aware phrasing instead, such as "with oily, acne-prone skin" or "for a dry skin profile".
+- Use profile-aware phrasing, such as "with oily, acne-prone skin" or "for a dry skin profile".
 - Keep the answer concise by default.
-- End with at most one natural next step, and only when useful.
+- End with at most one natural next step, and only when useful."""
 
+_PROMPT_LEARN = """\
+Learn-mode rules:
+- Default to teaching about the term. Treat any unknown ingredient name as a
+  cosmetic / topical skincare ingredient unless it is clearly non-skincare
+  (food, exercise, oral medication, surgery, injection-only with no topical
+  form). When in doubt, answer.
+- Mesotherapy or injectable ingredients (e.g. PDRN, polynucleotides, certain
+  peptides) often have topical formulations too — explain the topical use
+  case from general skincare knowledge instead of declining.
+- If catalog/RAG context is empty for the term, rely on general skincare
+  knowledge: what it is, how it works on skin, typical use, cautions.
+- Keep the answer educational and concise. Do not push products unless asked.
+- Only decline when the term is plainly off-topic (e.g. "what is squat depth",
+  "what is amoxicillin dose")."""
+
+
+_PROMPT_EXAMPLE_RECOMMEND = """\
 Example output:You already use **Retinol** in PM and **Niacinamide** regularly, so I’d keep any new acne step separate from your active nights.
 
 #### CeraVe Blemish Control Gel Moisturiser with 2% Salicylic Acid & Niacinamide
@@ -114,8 +147,21 @@ Example output:You already use **Retinol** in PM and **Niacinamide** regularly, 
 - Fits if you want a gentler-feeling option for **breakouts**, **oiliness**, and visible pores.
 - **Azelaic Acid** can support blemish-prone skin without adding another retinoid.
 - 🕒 Use on **Rest PM** nights or in the morning.
-- Avoid applying it at the same time as retinol until you know your skin tolerates it.*
-"""
+- Avoid applying it at the same time as retinol until you know your skin tolerates it.*"""
+
+
+def _build_system_prompt(mode: str) -> str:
+    sections: list[str] = [_PROMPT_INTRO, _PROMPT_CORE]
+    if mode in {"recommend", "build"}:
+        sections.extend([_PROMPT_TOOL_USE, _PROMPT_ROUTINE_PRODUCT, _PROMPT_STYLE, _PROMPT_EXAMPLE_RECOMMEND])
+    elif mode == "analyse":
+        sections.extend([_PROMPT_ROUTINE_PRODUCT, _PROMPT_ANALYSE, _PROMPT_STYLE])
+    elif mode == "learn":
+        sections.extend([_PROMPT_LEARN, _PROMPT_STYLE])
+    else:
+        sections.extend([_PROMPT_ROUTINE_PRODUCT, _PROMPT_STYLE])
+    return "\n\n".join(sections)
+
 
 def _dict_items(value: object) -> list[dict]:
     if not isinstance(value, list):
@@ -136,15 +182,30 @@ _PREV_REC_STOP = {
 }
 
 
-def _previous_assistant_recommendations(state: GraphState) -> list[str]:
-    """Return product names recommended in earlier assistant turns.
+_ROUTINE_ACTIVE_RE = re.compile(
+    "|".join(re.escape(token) for token in (
+        "retinol", "retinal", "retinoid", "retinaldehyde", "retinyl", "retinoate",
+        "tretinoin", "adapalene", "bakuchiol",
+        "niacinamide", "azelaic", "salicylic", "glycolic", "lactic", "mandelic",
+        "kojic", "arbutin", "tranexamic", "ferulic",
+        "ascorbate", "ascorbic", "ascorbyl", "vitamin c", "vitamin a", "vitamin b",
+        "tocopherol", "panthenol", "allantoin",
+        "peptide", "matrixyl", "hexapeptide", "tripeptide", "tetrapeptide",
+        "ceramide", "squalane", "shea", "centella", "cica", "madecassoside",
+        "hyaluronic", "sodium hyaluronate", "polyglutamic", "snail",
+        "benzoyl peroxide", "sulfur", "tea tree", "zinc",
+        "resveratrol", "alpha lipoic", "coenzyme q10", "ubiquinone",
+        "glycerin", "urea", "lactobionic", "gluconolactone",
+    ))
+)
 
-    Filters out ingredient-style headings (e.g. "Squalane", "Azelaic Acid",
-    "Palmitoyl Tripeptide-1") so a follow-up like "tell me more about
-    Matrixyl" is not blocked. A heading counts as a real product only when
-    it has at least three distinctive tokens AND does not match an
-    ingredient name in the current retrieved_ingredients set.
-    """
+
+def _is_routine_active(name: str) -> bool:
+    return bool(_ROUTINE_ACTIVE_RE.search(name.lower()))
+
+
+def _previous_assistant_recommendations(state: GraphState) -> list[str]:
+    """Product names recommended in earlier assistant turns, skipping ingredient-style headings."""
     from langchain_core.messages import AIMessage
     from tools.product_tools import _response_product_suggestion_queries
     from utils.product_match import product_family_name
@@ -185,9 +246,6 @@ def _previous_assistant_recommendations(state: GraphState) -> list[str]:
             }
             if len(distinctive) < 3:
                 continue
-            # Drop if heading family contains a known ingredient family.
-            # Catches cases like "Palmitoyl Tripeptide-1 (Matrixyl)" where
-            # the alias suffix bumps token count past the threshold.
             if any(
                 ing_family and (ing_family == family or ing_family in family)
                 for ing_family in ingredient_families
@@ -218,8 +276,26 @@ def _build_context_block(state: GraphState) -> str:
     if not isinstance(input_status, dict):
         input_status = {}
     mode = state.get("mode", "analyse")
+    is_learn = mode == "learn"
+
+    if is_learn:
+        message_lower = (state.get("message") or "").lower()
+        if message_lower:
+            relevant: list[dict] = []
+            for ing in ingredients:
+                names = [str(ing.get("inci_name") or ""), str(ing.get("display_name") or "")]
+                names.extend(str(n) for n in (ing.get("common_names") or []) if n)
+                if any(n and n.lower() in message_lower for n in names):
+                    relevant.append(ing)
+            ingredients = relevant
 
     lines = [f"## Conversation mode: {mode}"]
+    if not is_learn:
+        lines.append(
+            "\n## Context boundary\n"
+            "- The only products the user currently uses are listed under \"Current routine products\".\n"
+            "- Catalog candidates, search results, product analysis, and selected product names are possible recommendations only."
+        )
     missing_inputs = _text_items(input_status.get("missing") or analysis.get("missing_inputs") or [])
     if missing_inputs:
         lines.append(
@@ -230,48 +306,48 @@ def _build_context_block(state: GraphState) -> str:
             "to answer the user's request."
         )
 
-    # Profile
     skin_type = profile.get("skin_type") or "unknown"
-    concerns = _text_items(profile.get("concerns") or [])
-    goals = _text_items(profile.get("goals") or [])
-    allergens = _text_items(profile.get("allergens") or [])
-    notes = str(profile.get("notes") or "").strip()
-    avoid = [
-        k.replace("avoid_", "").replace("_", " ")
-        for k in ("avoid_fragrance", "avoid_alcohol", "avoid_parabens", "avoid_silicones")
-        if profile.get(k)
-    ]
-    lines.append(
-        f"\n## User profile\n"
-        f"- Skin type: {skin_type}\n"
-        f"- Concerns: {', '.join(concerns) or 'none stated'}\n"
-        f"- Goals: {', '.join(goals) or 'none stated'}\n"
-        f"- User notes: {notes or 'none stated'}\n"
-        f"- Ingredients to avoid: {', '.join(avoid) or 'none'}\n"
-        f"- Known allergens: {', '.join(allergens) or 'none'}"
-    )
-
-    previous_recommendations = _previous_assistant_recommendations(state)
-    if previous_recommendations:
+    sensitive_skin = "yes" if profile.get("sensitive_skin") else "no"
+    if is_learn:
         lines.append(
-            "\n## Previously recommended products\n"
-            + "\n".join(f"- {name}" for name in previous_recommendations[:12])
-            + "\nInstruction: Do not recommend these again, including different-size variants or near-duplicates."
+            f"\n## User profile\n"
+            f"- Skin type: {skin_type}\n"
+            f"- Sensitive skin: {sensitive_skin}"
+        )
+    else:
+        concerns = _text_items(profile.get("concerns") or [])
+        goals = _text_items(profile.get("goals") or [])
+        allergens = _text_items(profile.get("allergens") or [])
+        notes = str(profile.get("notes") or "").strip()
+        avoid = [
+            k.replace("avoid_", "").replace("_", " ")
+            for k in ("avoid_fragrance", "avoid_alcohol", "avoid_parabens", "avoid_silicones")
+            if profile.get(k)
+        ]
+        lines.append(
+            f"\n## User profile\n"
+            f"- Skin type: {skin_type}\n"
+            f"- Sensitive skin: {sensitive_skin}\n"
+            f"- Concerns: {', '.join(concerns) or 'none stated'}\n"
+            f"- Goals: {', '.join(goals) or 'none stated'}\n"
+            f"- User notes: {notes or 'none stated'}\n"
+            f"- Ingredients to avoid: {', '.join(avoid) or 'none'}\n"
+            f"- Known allergens: {', '.join(allergens) or 'none'}"
         )
 
-    advisor_notes = str(state.get("advisor_notes") or "").strip()
-    if advisor_notes:
-        lines.append(
-            "\n## Advisor agent notes\n"
-            + advisor_notes
-            + "\nInstruction: Treat these as internal planning notes, not user-facing text."
-        )
+    if not is_learn:
+        previous_recommendations = _previous_assistant_recommendations(state)
+        if previous_recommendations:
+            lines.append(
+                "\n## Previously recommended products\n"
+                + "\n".join(f"- {name}" for name in previous_recommendations[:12])
+                + "\nInstruction: Do not recommend these again, including different-size variants or near-duplicates."
+            )
 
     product_analysis = _dict_items(state.get("product_recommendation_analysis") or [])
-    selected_names = _text_items(state.get("agent_selected_product_names") or [])
     if product_analysis:
         lines.append("\n## Product recommendation analysis")
-        for item in product_analysis[:2]:
+        for item in product_analysis[:4]:
             name = item.get("product_name") or ""
             brand = item.get("brand") or ""
             score = item.get("score", "")
@@ -285,17 +361,27 @@ def _build_context_block(state: GraphState) -> str:
             if cautions:
                 parts.append(f"cautions: {'; '.join(cautions[:3])}")
             lines.append(" | ".join(parts))
-    if selected_names:
         lines.append(
-            "\n## Agent-selected product recommendations\n"
-            + "\n".join(f"- {name}" for name in selected_names[:2])
-            + "\nInstruction: If recommending specific products, use these exact names."
+            "Instruction: pick 1-2 candidates that best match the user's specific "
+            "phrasing, concerns, and goals — not strictly the top score. Use exact "
+            "product names from this list. Pass them to select_product_cards."
         )
 
-    ingredient_analysis = _dict_items(state.get("ingredient_recommendation_analysis") or [])
+    ingredient_analysis = (
+        _dict_items(state.get("ingredient_recommendation_analysis") or [])
+        if mode not in {"recommend", "build"}
+        else []
+    )
+    if is_learn and ingredient_analysis:
+        message_lower = (state.get("message") or "").lower()
+        if message_lower:
+            ingredient_analysis = [
+                item for item in ingredient_analysis
+                if str(item.get("ingredient") or "").lower() in message_lower
+            ]
     if ingredient_analysis:
         lines.append("\n## Ingredient recommendation analysis")
-        for item in ingredient_analysis[:2]:
+        for item in ingredient_analysis[:3]:
             name = item.get("ingredient") or ""
             reasons = _text_items(item.get("reasons") or [])
             cautions = _text_items(item.get("cautions") or [])
@@ -307,15 +393,14 @@ def _build_context_block(state: GraphState) -> str:
                 parts.append(f"cautions: {'; '.join(cautions[:3])}")
             lines.append(" | ".join(parts))
 
-    # Routine products
     routine_items = _dict_items(routine.get("items") or routine.get("routine") or [])
-    if routine_items:
+    if routine_items and not is_learn:
         routine_ingredients = []
         seen_routine_ingredients = set()
         mode_label = routine.get("mode") or "unknown"
         ar_days = routine.get("ar_days") or {}
-        lines.append(f"\n## Routine schedule\n- Mode: {mode_label}")
         if mode_label == "active_rest":
+            lines.append(f"\n## Routine schedule\n- Mode: {mode_label}")
             active_days = ", ".join(ar_days.get("Active") or []) or "not specified"
             rest_days = ", ".join(ar_days.get("Rest") or []) or "not specified"
             lines.append(f"- Active days: {active_days}")
@@ -347,14 +432,18 @@ def _build_context_block(state: GraphState) -> str:
             if not ing_str and item_ingredients:
                 ing_str = f" [{', '.join(item_ingredients[:4])}]"
             lines.append(f"- {name}{' · ' + brand if brand else ''}{' (' + slot + ')' if slot else ''}{ing_str}")
-        if routine_ingredients:
+        active_routine_ingredients = [
+            ingredient for ingredient in routine_ingredients
+            if _is_routine_active(ingredient)
+        ]
+        if active_routine_ingredients:
             lines.append(
                 "\n## Already in routine ingredients\n"
-                + "\n".join(f"- {ingredient}" for ingredient in routine_ingredients[:30])
+                + "\n".join(f"- {ingredient}" for ingredient in active_routine_ingredients[:20])
                 + "\nInstruction: Do not present these as new ingredients to try or add."
             )
 
-    # Retrieved ingredient details
+    drop_guidance = mode in {"recommend", "build"}
     if ingredients:
         lines.append("\n## Ingredient details from catalog")
         for ing in ingredients[:8]:
@@ -375,12 +464,11 @@ def _build_context_block(state: GraphState) -> str:
                 parts.append(f"avoid for: {', '.join(avoid_for)}")
             if cautions:
                 parts.append(f"cautions: {'; '.join(cautions)}")
-            if guidance:
+            if guidance and not drop_guidance:
                 parts.append(f"guidance: {guidance}")
             lines.append(" | ".join(parts))
 
-    # Catalog-backed product candidates for recommendations and product analysis.
-    if matched_products:
+    if matched_products and not is_learn:
         if mode in {"recommend", "build"}:
             lines.append(
                 "\n## Catalog recommendation candidates\n"
@@ -398,14 +486,11 @@ def _build_context_block(state: GraphState) -> str:
             active_ings = format_ingredient_names(_text_items(p.get("active_ingredients") or []))
             ingredients = format_ingredient_names(_text_items(p.get("ingredients") or []))
             quantity = p.get("quantity") or ""
-            source = p.get("source") or ""
             index_prefix = f"[{idx}] " if mode in {"recommend", "build"} else ""
             header = f"### {index_prefix}{name}" + (f" · {brand}" if brand else "")
             lines.append(header)
             if quantity:
                 lines.append(f"- Size: {quantity}")
-            if source:
-                lines.append(f"- Catalog source: {source}")
             if cats:
                 lines.append(f"- Categories: {', '.join(cats[:6])}")
             if key_ings:
@@ -417,9 +502,8 @@ def _build_context_block(state: GraphState) -> str:
             if ingredients:
                 lines.append(f"- Ingredient list excerpt: {', '.join(ingredients[:18])}")
 
-    # Additional searched products (recommend mode)
     catalog_products = [p for p in products if p.get("source") == "catalog_search"]
-    if catalog_products:
+    if catalog_products and not is_learn:
         lines.append("\n## Catalog search results")
         for p in catalog_products[:15]:
             name = p.get("product_name", "")
@@ -431,10 +515,9 @@ def _build_context_block(state: GraphState) -> str:
             size = f" ({quantity})" if quantity else ""
             lines.append(f"- {name}{' · ' + brand if brand else ''}{size}" + (f" [{', '.join(ings[:4])}]" if ings else ""))
 
-    # Analysis
-    conflicts = _dict_items(analysis.get("conflicts") or [])
-    gaps = _text_items(analysis.get("gaps") or [])
-    notes = _text_items(analysis.get("suitability_notes") or [])
+    conflicts = _dict_items(analysis.get("conflicts") or []) if not is_learn else []
+    gaps = _text_items(analysis.get("gaps") or []) if not is_learn else []
+    notes = _text_items(analysis.get("suitability_notes") or []) if not is_learn else []
     if conflicts:
         lines.append("\n## Detected conflicts")
         for c in conflicts:
@@ -446,9 +529,18 @@ def _build_context_block(state: GraphState) -> str:
                 f" (products: {', '.join(products_involved)}): {c.get('reason') or ''}"
             )
     if gaps:
-        lines.append("\n## Routine gaps\n" + "\n".join(f"- {g}" for g in gaps))
+        lines.append(
+            "\n## Improvement ideas\n"
+            + "\n".join(f"- {g}" for g in gaps)
+            + "\nInstruction: Present these as optional ways to improve the routine, "
+            "not as major gaps unless clearly serious."
+        )
     if notes:
-        lines.append("\n## Suitability notes\n" + "\n".join(f"- {n}" for n in notes))
+        lines.append(
+            "\n## Practical notes\n"
+            + "\n".join(f"- {n}" for n in notes)
+            + "\nInstruction: Include only if it changes how the user should use the routine."
+        )
 
     return "\n".join(lines)
 
@@ -478,14 +570,16 @@ def _fallback_response(state: GraphState) -> str:
             )
         return (
             "I need your saved routine before I can analyse what you use. "
-            "Add the products in your AM and PM routine, then I can review conflicts, gaps, and priorities."
+            "Add the products in your AM and PM routine, then I can suggest the most useful improvements."
         )
 
     parts = [f"I can see your skin type is {skin_type}."]
+    if profile.get("sensitive_skin"):
+        parts.append("I will also treat your skin as sensitive.")
     if concerns:
         parts.append(f"Your main concerns are: {', '.join(concerns[:3])}.")
     if gaps:
-        parts.append("Worth noting: " + " ".join(gaps))
+        parts.append("One useful improvement: " + " ".join(gaps[:1]))
     parts.append(
         "Tell me the exact products you use and when, and I can give you a more specific analysis."
     )
@@ -500,18 +594,21 @@ def _key_hint(k: str) -> str:
 
 @traceable(name="generate_response")
 def generate_response(state: GraphState) -> GraphState:
-    """Draft the assistant answer from prepared context. No orchestration side effects."""
+    """Draft the assistant answer from prepared context."""
+    from langchain.agents import create_agent
+    from langchain_core.tools import tool
+
     api_key, model, base_url = load_openai_config("SKINIQ_GENERATE_RESPONSE_MODEL")
 
     if not api_key:
         log.warning("No API key found — using fallback response")
         return {**state, "draft_response": _fallback_response(state)}
 
-    from langchain_core.messages import SystemMessage
+    mode = state.get("mode") or "analyse"
 
     try:
         context_block = state.get("context_block") or _build_context_block(state)
-        system_content = f"{SYSTEM_PROMPT}\n\n{context_block}"
+        system_content = f"{_build_system_prompt(mode)}\n\n{context_block}"
     except Exception as exc:
         log.error("_build_context_block failed: %s", exc, exc_info=True)
         return {
@@ -519,20 +616,28 @@ def generate_response(state: GraphState) -> GraphState:
             "draft_response": f"**Debug — context build failed**\n{type(exc).__name__}: {exc}",
         }
 
-    try:
-        conversation = list(state.get("messages") or [])
-        llm_messages = [SystemMessage(content=system_content)] + conversation
-    except Exception as exc:
-        log.error("Message assembly failed: %s", exc, exc_info=True)
-        return {
-            **state,
-            "draft_response": f"**Debug — message assembly failed**\n{type(exc).__name__}: {exc}",
-        }
+    conversation = list(state.get("messages") or [])
+
+    selected_names: list[str] = []
+    tools = []
+    if mode in {"recommend", "build"}:
+        @tool
+        def select_product_cards(product_names: list[str]) -> dict:
+            """Commit to the 1-2 exact product names you will recommend. The UI renders these as product cards. Call exactly once."""
+            selected_names[:] = [str(n).strip() for n in product_names[:2] if str(n).strip()]
+            return {"selected": list(selected_names)}
+
+        tools = [select_product_cards]
 
     try:
         llm = _get_llm(model, api_key, base_url)
-        response = llm.invoke(llm_messages)
-        draft = response.content or ""
+        writer = create_agent(llm, tools=tools, system_prompt=system_content, name="skincare_writer")
+        result = writer.invoke({"messages": conversation}, config={"recursion_limit": 8})
+        messages = result.get("messages") or []
+        draft = ""
+        if messages:
+            content = getattr(messages[-1], "content", "")
+            draft = content if isinstance(content, str) else ""
     except Exception as exc:
         status = getattr(getattr(exc, "response", None), "status_code", None)
         body = ""
@@ -554,4 +659,8 @@ def generate_response(state: GraphState) -> GraphState:
         )
         return {**state, "draft_response": detail}
 
-    return {**state, "draft_response": draft}
+    return {
+        **state,
+        "draft_response": draft,
+        "agent_selected_product_names": selected_names,
+    }

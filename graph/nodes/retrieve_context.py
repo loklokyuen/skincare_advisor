@@ -88,6 +88,8 @@ def _text_list(value: object) -> list[str]:
 
 def _target_ingredients_for_profile(profile: dict) -> list[str]:
     concerns = _text_list(profile.get("concerns") or [])
+    if profile.get("sensitive_skin") and "Sensitivity / Irritation" not in concerns:
+        concerns.append("Sensitivity / Irritation")
     targets = []
     seen = set()
     for concern in concerns:
@@ -115,7 +117,8 @@ def _avoid_terms_for_profile(profile: dict) -> list[str]:
 
 def _profile_skin_type(profile: dict) -> str:
     raw = str(profile.get("skin_type") or "").lower().strip()
-    return _SKIN_TYPE_ALIASES.get(raw, raw)
+    skin_type = _SKIN_TYPE_ALIASES.get(raw, raw)
+    return "" if skin_type == "sensitive" else skin_type
 
 
 def _explicit_product_skin_types(product: dict) -> set[str]:
@@ -227,6 +230,8 @@ def _build_recommendation_query(state: GraphState) -> str:
     skin_type = str(profile.get("skin_type") or "").strip()
     if skin_type:
         parts.append(f"Skin type: {skin_type}")
+    if profile.get("sensitive_skin"):
+        parts.append("Sensitive skin: yes")
 
     concerns = _text_list(profile.get("concerns") or [])
     if concerns:
@@ -295,6 +300,8 @@ def _product_profile_score(product: dict, profile: dict) -> int:
     score = sum(2 for ingredient in target_ingredients if ingredient in searchable)
     skin_type = _profile_skin_type(profile)
     if skin_type and skin_type in searchable:
+        score += 1
+    if profile.get("sensitive_skin") and "sensitive" in searchable:
         score += 1
     if _is_product_skin_type_mismatch(product, profile):
         score -= 8
@@ -530,13 +537,17 @@ def retrieve_context(state: GraphState) -> GraphState:
             {"tool": "search_products_for_routine", "input": product_query, "output": result}
         )
 
-    matched_products = _dedupe_by_key(
-        _find_matched_products(message)
-        + _find_recommended_products(product_query, mode, query_embedding)
-        + product_card_candidates
-        + _cards_from_product_context(products),
-        "product_name",
-    )
+    matched_source_products = _find_matched_products(message)
+    if mode == "analyse":
+        matched_products = _dedupe_by_key(matched_source_products, "product_name")
+    else:
+        matched_products = _dedupe_by_key(
+            matched_source_products
+            + _find_recommended_products(product_query, mode, query_embedding)
+            + product_card_candidates
+            + _cards_from_product_context(products),
+            "product_name",
+        )
     if mode in {"recommend", "build"}:
         matched_products = _filter_skin_type_mismatches(matched_products, profile)
         matched_products = _filter_duplicate_retinoids(matched_products, raw_items, message)
