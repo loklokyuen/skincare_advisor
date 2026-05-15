@@ -20,7 +20,7 @@ Product recommendations come with ingredient breakdowns and can be saved to an "
 | Frontend     | Streamlit                                                            |
 | LLM / graph  | LangGraph + LangChain OpenAI (`gpt-4o-mini`)                         |
 | Embeddings   | OpenAI `text-embedding-ada-002` via pgvector                         |
-| Database     | PostgreSQL + pgvector (profiles, products, ingredients, checkpoints) |
+| Database     | Supabase (PostgreSQL + pgvector) — originally on GCP Cloud SQL       |
 | Evidence     | PubMed (via NCBI E-utils) + Reddit (pushshift/community search)      |
 | Product data | Scraped from Boots using ScraperAPI                                  |
 

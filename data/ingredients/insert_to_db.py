@@ -1,11 +1,22 @@
 import json
+import os
 import psycopg2
 import psycopg2.extras
+from dotenv import load_dotenv
+from pathlib import Path
+
+load_dotenv(Path(__file__).resolve().parents[2] / ".env")
 
 with open("ingredients.json") as f:
     ingredients = json.load(f)
 
-conn = psycopg2.connect("postgresql://postgres:Zp8)baeUzBEB^c`M@34.147.213.190/skincare_advisor")
+conn = psycopg2.connect(
+    host=os.getenv("DB_HOST", "localhost"),
+    port=int(os.getenv("DB_PORT", 5432)),
+    dbname=os.getenv("DB_NAME", "postgres"),
+    user=os.getenv("DB_USER", "postgres"),
+    password=os.getenv("DB_PASSWORD", ""),
+)
 cur = conn.cursor()
 
 for row in ingredients:

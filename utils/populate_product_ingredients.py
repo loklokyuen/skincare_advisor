@@ -1,16 +1,19 @@
 import os
 import re
+from pathlib import Path
 
+from dotenv import load_dotenv
 import psycopg2
 from psycopg2.extras import execute_values
 
+load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
 SCHEMA = "skincare_advisor"
 
 DB_CONFIG = {
     "host": os.getenv("DB_HOST", "34.147.213.190"),
     "port": int(os.getenv("DB_PORT", 5432)),
-    "database": os.getenv("DB_NAME", "skincare_advisor"),
+    "database": os.getenv("DB_NAME", "postgres"),
     "user": os.getenv("DB_USER", "postgres"),
     "password": os.getenv("DB_PASSWORD", ""),
 }
