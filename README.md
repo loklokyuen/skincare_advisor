@@ -21,7 +21,7 @@ Product recommendations come with ingredient breakdowns and can be saved to an "
 | LLM / graph  | LangGraph + LangChain OpenAI (`gpt-4o-mini`)                         |
 | Embeddings   | OpenAI `text-embedding-ada-002` via pgvector                         |
 | Database     | Supabase (PostgreSQL + pgvector) — originally on GCP Cloud SQL       |
-| Evidence     | PubMed (via NCBI E-utils) + Reddit (pushshift/community search)      |
+| Evidence     | PubMed + Reddit                                                      |
 | Product data | Scraped from Boots using ScraperAPI                                  |
 
 Conversation state is checkpointed to Postgres so sessions persist across restarts.
