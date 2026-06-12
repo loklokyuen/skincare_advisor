@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import re
 
 from graph.tracing import traceable
@@ -10,6 +11,8 @@ from services.product_service import search_products_for_routine
 from services.rag_service import retrieve_semantic_context
 from tools.ingredient_tools import extract_ingredient_terms, search_ingredient_catalog
 from utils.product_match import product_identity_key
+
+log = logging.getLogger(__name__)
 
 
 _CONCERN_INGREDIENTS = {
@@ -213,9 +216,71 @@ def _filter_duplicate_retinoids(
     ]
 
 
+_GENERIC_FOLLOWUP_RE = re.compile(
+    r"^(?:related products?|products? for (?:this|it)|show me products?|"
+    r"(?:any|what|some) products?|where (?:can i|to) (?:buy|find)|products? (?:with|containing)|"
+    r"recommend (?:a |some )?products?|more products?|other products?|alternatives?|"
+    r"can you (?:find|show|recommend)|what (?:about|else)|follow[\s-]?up)$",
+    re.IGNORECASE,
+)
+
+_GENERIC_HEADING_RE = re.compile(
+    r"^(?:what it is|how it works|how it['’]?s thought to work|mechanism|"
+    r"evidence|evidence and safety|safety|practical guidance|how to use|where it fits|"
+    r"summary|overview|introduction|background|key points?|conclusion)$",
+    re.IGNORECASE,
+)
+
+
+def _topic_from_last_ai_message(state: GraphState) -> str | None:
+    """Extract the main ingredient/topic from the last AI message in the thread."""
+    try:
+        messages = state.get("messages") or []
+        for msg in reversed(messages):
+            # LangGraph messages are either dicts or LC message objects
+            if isinstance(msg, dict):
+                if msg.get("type") != "ai":
+                    continue
+                content = str(msg.get("content") or "")
+            elif hasattr(msg, "type"):
+                if msg.type != "ai":
+                    continue
+                content = str(msg.content or "")
+            else:
+                continue
+
+            if not content:
+                continue
+
+            # Prefer first non-generic H1-H4 heading
+            for line in content.splitlines():
+                m = re.match(r"^#{1,4}\s+(.{2,60})$", line.strip())
+                if m:
+                    heading = m.group(1).strip(" *_")
+                    if not _GENERIC_HEADING_RE.match(heading):
+                        return heading
+
+            # Fallback: first non-empty sentence (up to 80 chars)
+            first = content.strip().split("\n")[0].strip(" #*_")
+            if first and len(first) <= 120:
+                return first[:80]
+    except Exception:
+        log.debug("Could not extract topic from last AI message", exc_info=True)
+    return None
+
+
 def _build_recommendation_query(state: GraphState) -> str:
     """Build the product retrieval query from user intent plus saved personalization."""
     message = (state.get("message") or "").strip()
+
+    # If this looks like a short, context-dependent follow-up ("related products",
+    # "show me products", etc.) inject the topic from the last AI turn so the
+    # semantic search finds ingredients/products discussed in context.
+    if _GENERIC_FOLLOWUP_RE.match(message.strip()):
+        topic = _topic_from_last_ai_message(state)
+        if topic and topic.lower() not in message.lower():
+            message = f"{topic} products"
+
     profile = state.get("user_profile") or {}
     routine = state.get("user_routine") or {}
     if not isinstance(profile, dict):
@@ -227,6 +292,8 @@ def _build_recommendation_query(state: GraphState) -> str:
     skin_type = str(profile.get("skin_type") or "").strip()
     if skin_type:
         parts.append(f"Skin type: {skin_type}")
+    if profile.get("sensitive_skin"):
+        parts.append("Sensitive skin: yes")
 
     concerns = _text_list(profile.get("concerns") or [])
     if concerns:
