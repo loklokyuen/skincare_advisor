@@ -172,6 +172,28 @@ def _fallback_paragraph(literature_query: str | None, community_query: str | Non
     return " ".join(claims)
 
 
+def _clean_summary_paragraph(paragraph: str, sources: list[dict]) -> str:
+    cleaned = str(paragraph or "").strip()
+    if not cleaned:
+        return ""
+
+    has_community = any(source.get("kind") == "community" for source in sources)
+    if not has_community:
+        cleaned = re.sub(
+            r"\s*Community sources:\s*(?:none provided|not provided|none|n/a)\.?",
+            "",
+            cleaned,
+            flags=re.IGNORECASE,
+        )
+
+    cleaned = re.sub(
+        r"\s+(Common practical notes:|Practical meaning:)",
+        r"\n\n\1",
+        cleaned,
+    )
+    return cleaned.strip()
+
+
 _SUMMARY_SYSTEM = """Summarize skincare evidence sources in concise Markdown for a skincare user.
 
 Rules:
@@ -193,7 +215,7 @@ def _summarize_with_llm(
 ) -> str:
     api_key, model, base_url = load_openai_config(
         model_env="OPENAI_SUMMARY_MODEL",
-        default_model="gpt-5-mini",
+        default_model="gpt-4o-mini",
     )
     if not api_key or not sources:
         return ""
@@ -246,6 +268,7 @@ def summarize_evidence(
     paragraph = _summarize_with_llm(literature_query, community_query, sources)
     if not paragraph:
         paragraph = _fallback_paragraph(literature_query, community_query, sources)
+    paragraph = _clean_summary_paragraph(paragraph, sources)
 
     return {
         "paragraph": paragraph,
