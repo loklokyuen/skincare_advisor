@@ -10,6 +10,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 from config.settings import SKIN_CONCERNS, SKIN_GOALS, SKIN_TYPES
 from services.profile_service import (
     get_user_profile,
+    normalize_profile,
     normalize_user_id,
     profile_exists,
     save_user_profile,
@@ -187,6 +188,10 @@ def show_profile_form():
             horizontal=True,
             label_visibility="collapsed",
         )
+        sensitive_skin = st.checkbox(
+            "Sensitive or reactive skin",
+            value=bool(profile.get("sensitive_skin") or current_skin == "Sensitive"),
+        )
 
         st.divider()
         st.subheader("Skin Concerns")
@@ -268,11 +273,12 @@ def show_profile_form():
             st.error("That profile ID is already in use. Change the Profile ID and save again.")
             return
 
-        saved_profile = {
+        saved_profile = normalize_profile({
             "user_id": user_id,
             "name": name,
             "age_range": age_range,
             "skin_type": skin_type,
+            "sensitive_skin": sensitive_skin,
             "concerns": selected_concerns,
             "goals": selected_goals,
             "notes": profile_notes.strip(),
@@ -287,7 +293,7 @@ def show_profile_form():
             "routine_mode": st.session_state.get("routine_mode") or profile.get("routine_mode"),
             "routine": st.session_state.get("routine", profile.get("routine", [])),
             "ar_days": st.session_state.get("ar_days", profile.get("ar_days", {})),
-        }
+        })
         if save_user_profile(user_id, saved_profile):
             st.session_state.user_profile = saved_profile
             st.session_state.profile_user_id = user_id
@@ -329,6 +335,8 @@ def show_profile_view():
 
     if profile.get("age_range") and profile["age_range"] != "Prefer not to say":
         st.caption(f"Age range: {profile['age_range']}")
+    if profile.get("sensitive_skin"):
+        st.caption("Sensitive or reactive skin")
 
     concerns = profile.get("concerns", [])
     if concerns:
