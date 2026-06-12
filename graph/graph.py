@@ -141,13 +141,18 @@ def _cards_for_selected_product_names(
     final response keeps the cards aligned with what the user actually
     sees.
     """
-    from tools.product_tools import _product_named_in_response
+    from tools.product_tools import (
+        _looks_like_generic_product_request,
+        _product_named_in_response,
+        _same_product_family,
+    )
 
     names = [
         re.split(r"\s+[·|]\s+", str(name).strip(), maxsplit=1)[0].strip()
         for name in selected_names
         if str(name).strip()
     ]
+    names = [name for name in names if not _looks_like_generic_product_request(name)]
     if not names:
         return []
 
@@ -176,36 +181,51 @@ def _cards_for_selected_product_names(
     for name in names:
         product = family_index.get(product_family_name(name))
         if not product:
+            product = next(
+                (
+                    candidate
+                    for candidate in candidates
+                    if _same_product_family(name, candidate)
+                    and (not response or _product_named_in_response(candidate, response))
+                ),
+                None,
+            )
+        if not product:
             continue
         if response and not _product_named_in_response(product, response):
             continue
         key = _product_family_key(product)
-        if key in seen_keys:
+        if key in seen_keys or any(_same_product_family(product, existing) for existing in resolved):
             continue
         resolved.append(product)
         seen_keys.add(key)
         if len(resolved) >= limit:
             return resolved
 
-    synthetic_response = "\n".join(f"#### {name}" for name in names)
-    fallback = select_recommended_product_cards.invoke(
-        {
-            "response": synthetic_response,
-            "candidate_products": candidates,
-            "routine_items": routine_items,
-            "limit": limit,
-        }
-    )
-    for product in fallback:
-        key = _product_family_key(product)
-        if key not in seen_keys:
-            resolved.append(product)
-            seen_keys.add(key)
-        if len(resolved) >= limit:
-            break
+    # Names not found in family_index: try a direct DB lookup (no OBF, no LLM)
+    # before falling back to a name-only minimal card.
+    from tools.product_tools import _find_catalog_product
+
+    resolved_family_names = {key[0] for key in seen_keys}
     for name in names:
         if len(resolved) >= limit:
             break
+        if product_family_name(name) in resolved_family_names or any(
+            _same_product_family(name, product) for product in resolved
+        ):
+            continue
+        db_hit = _find_catalog_product(name, allow_first=True, use_obf=False)
+        if db_hit:
+            key = _product_family_key(db_hit)
+            if (
+                key not in seen_keys
+                and not any(_same_product_family(db_hit, product) for product in resolved)
+                and (not response or _product_named_in_response(db_hit, response))
+            ):
+                resolved.append(db_hit)
+                seen_keys.add(key)
+                resolved_family_names.add(key[0])
+                continue
         minimal = {
             "product_name": name,
             "brand": "",
@@ -218,9 +238,10 @@ def _cards_for_selected_product_names(
             "source": "assistant_recommendation",
         }
         key = _product_family_key(minimal)
-        if key not in seen_keys:
+        if key not in seen_keys and not any(_same_product_family(minimal, product) for product in resolved):
             resolved.append(minimal)
             seen_keys.add(key)
+            resolved_family_names.add(key[0])
     return resolved
 
 
@@ -481,7 +502,7 @@ def run_advisor_with_progress(
             initial_mode,
             user_profile,
             user_routine,
-            wait_timeout=45.0,
+            wait_timeout=4.0,
         )
         if prepared is not None:
             _report_progress(on_progress, "Getting recommendation")
