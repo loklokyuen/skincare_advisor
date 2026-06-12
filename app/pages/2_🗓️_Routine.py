@@ -243,7 +243,7 @@ if sync_status == "saved":
 elif sync_status == "missing_profile":
     st.warning("Create or load a profile before syncing your routine.")
 elif sync_status == "failed":
-    st.error("Could not sync your routine to Cloud SQL. Check the database connection and try again.")
+    st.error("Could not sync your routine. Check the terminal for details.")
 
 if mode is not None:
     sync_label = "Sync routine to profile"
