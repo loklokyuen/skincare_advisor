@@ -65,6 +65,9 @@ def _keyword_fallback(text: str) -> str:
         "what should i add", "should i add", "add to my routine",
         "add to routine", "addition to my routine", "add next",
         "product options", "products with", "products containing",
+        "related products", "products for this", "products for it",
+        "show me products", "any products", "what products",
+        "where can i buy", "where to buy", "where to find",
     )
     learn_signals = (
         "what is", "what does", "explain", "how does", "tell me about",

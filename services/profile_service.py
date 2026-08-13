@@ -43,6 +43,21 @@ def normalize_user_id(raw_user_id: str | None) -> str:
     return user_id or "default"
 
 
+def normalize_profile(profile: dict[str, Any] | None) -> dict[str, Any]:
+    """Normalize stored profile data across older profile shapes."""
+    normalized = dict(profile or {})
+    skin_type = str(normalized.get("skin_type") or "").strip()
+
+    if skin_type.lower() == "sensitive":
+        normalized["skin_type"] = "Normal"
+        normalized["sensitive_skin"] = True
+    elif skin_type:
+        normalized["skin_type"] = skin_type
+
+    normalized["sensitive_skin"] = bool(normalized.get("sensitive_skin", False))
+    return normalized
+
+
 def profile_exists(user_id: str) -> bool:
     """Return whether a profile ID already exists in Cloud SQL."""
     user_id = normalize_user_id(user_id)
@@ -78,7 +93,7 @@ def get_user_profile(user_id: str) -> dict[str, Any] | None:
     if not rows:
         return None
 
-    profile = dict(rows[0].get("profile") or {})
+    profile = normalize_profile(rows[0].get("profile") or {})
     profile["user_id"] = rows[0]["user_id"]
     updated_at = rows[0].get("updated_at")
     profile["profile_updated_at"] = updated_at.isoformat() if updated_at else None
@@ -91,14 +106,14 @@ def save_user_profile(user_id: str, profile: dict[str, Any]) -> bool:
     if not _ensure_table():
         return False
 
-    stored_profile = dict(profile)
+    stored_profile = normalize_profile(profile)
     stored_profile["user_id"] = user_id
     stored_profile.pop("profile_updated_at", None)
 
     return run_mutation(
         """
-        INSERT INTO skincare_advisor.user_profiles (user_id, profile)
-        VALUES (%s, %s)
+        INSERT INTO skincare_advisor.user_profiles (user_id, profile, created_at, updated_at)
+        VALUES (%s, %s, NOW(), NOW())
         ON CONFLICT (user_id) DO UPDATE
         SET profile = EXCLUDED.profile,
             updated_at = NOW()

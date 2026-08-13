@@ -53,6 +53,26 @@ def _dedupe_products(products: list[dict]) -> list[dict]:
     return deduped
 
 
+def _family_contains(left: str, right: str) -> bool:
+    left_tokens = left.split()
+    right_tokens = right.split()
+    if min(len(left_tokens), len(right_tokens)) < 5:
+        return False
+    padded_left = f" {left} "
+    padded_right = f" {right} "
+    return padded_left in padded_right or padded_right in padded_left
+
+
+def _same_product_family(left: dict | str, right: dict | str) -> bool:
+    left_name = left.get("product_name") if isinstance(left, dict) else left
+    right_name = right.get("product_name") if isinstance(right, dict) else right
+    left_family = product_family_name(str(left_name or ""))
+    right_family = product_family_name(str(right_name or ""))
+    if not left_family or not right_family:
+        return False
+    return left_family == right_family or _family_contains(left_family, right_family)
+
+
 def _routine_product_keys(routine_items: list[dict] | None) -> set[tuple[str, str]]:
     return {
         _product_key(item)
@@ -295,7 +315,20 @@ def _same_product(left: dict, right: dict) -> bool:
 _GENERIC_PRODUCT_TOKENS = {
     "serum", "cream", "lotion", "moisturiser", "moisturizer", "gel", "balm",
     "mask", "toner", "cleanser", "sunscreen", "oil", "treatment", "essence",
-    "skin", "face", "day", "night", "spray", "wash",
+    "skin", "face", "day", "night", "spray", "wash", "leave", "on",
+}
+
+_INGREDIENT_REQUEST_TOKENS = {
+    "acid", "aha", "azelaic", "bha", "benzoyl", "c", "ceramide", "ceramides",
+    "glycolic", "hyaluronic", "lactic", "mandelic", "niacinamide", "peptide",
+    "peptides", "peroxide", "retinal", "retinoid", "retinol", "salicylic",
+    "vitamin", "zinc",
+}
+
+_PRODUCT_BRAND_HINTS = {
+    "avene", "bioderma", "boots", "byoma", "cerave", "cetaphil", "clinique",
+    "eucerin", "garnier", "inkey", "laroche", "loreal", "neutrogena", "nivea",
+    "olay", "ordinary", "paula", "theordinary", "vichy",
 }
 
 
@@ -322,6 +355,20 @@ def _product_named_in_response(product: dict, response: str) -> bool:
     if core_family and len(core_family) > 12 and core_family in response_family:
         return True
 
+    marketing_core = re.split(
+        r"\s+\b(?:to\s+target|for\s+(?:signs\s+of\s+)?aging\s+skin|for\s+sensitive\s+skin)\b",
+        raw_name,
+        maxsplit=1,
+        flags=re.IGNORECASE,
+    )[0]
+    marketing_core_family = product_family_name(marketing_core)
+    if (
+        marketing_core_family
+        and len(marketing_core_family) > 12
+        and marketing_core_family in response_family
+    ):
+        return True
+
     # DB name may differ from what LLM wrote (extra suffix, missing "with",
     # different size, etc.). Compare distinctive tokens only — drop generic
     # product-category words (serum, cream, ...) so two products in the same
@@ -335,6 +382,41 @@ def _product_named_in_response(product: dict, response: str) -> bool:
         matched = sum(1 for t in name_tokens if t in response_text)
         if matched / len(name_tokens) >= 0.85:
             return True
+
+    return False
+
+
+def _looks_like_generic_product_request(query: str) -> bool:
+    cleaned = re.sub(r"\s+", " ", str(query or "")).strip(" -:;.")
+    if not cleaned:
+        return True
+
+    lower = cleaned.lower()
+    if re.match(r"^(?:for|use|try|add|choose)\s+(?:a|an|the)?\b", lower):
+        return True
+
+    family = product_family_name(cleaned)
+    tokens = [
+        token
+        for token in family.split()
+        if token not in _STOP
+        and token not in _GENERIC_PRODUCT_TOKENS
+        and not token.isdigit()
+        and len(token) > 1
+    ]
+    if not tokens:
+        return True
+
+    brandish = any(token in _PRODUCT_BRAND_HINTS for token in tokens)
+    ingredientish = [token for token in tokens if token in _INGREDIENT_REQUEST_TOKENS]
+    if ingredientish and len(ingredientish) == len(tokens):
+        return True
+
+    if not brandish and re.search(
+        r"\((?:[^)]*\b(?:serum|gel|cream|leave-on|leave on|toner|cleanser)\b[^)]*)\)",
+        lower,
+    ):
+        return True
 
     return False
 
@@ -425,7 +507,7 @@ def _heading_product_suggestion_queries(response: str) -> list[str]:
     )
     product_like_re = re.compile(
         r"^\s*(?:\d+\.\s*)?(?P<name>[A-Z][^\n:]{8,180}?\b"
-        r"(?:SPF\s*\d+\+?|PA\+{2,4}|\d+(?:\.\d+)?\s*(?:ml|g|oz|fl\s*oz))"
+        r"(?:SPF\s*\d+\+?|PA\+{2,4}|\d+(?:\.\d+)?\s*(?:ml|g|oz|fl\s*oz|%))"
         r"[^\n:]*?)\s*$",
         flags=re.IGNORECASE,
     )
@@ -435,7 +517,7 @@ def _heading_product_suggestion_queries(response: str) -> list[str]:
         r"^\s*(?:\d+\.\s*)?(?P<name>[A-Z][^\n:]{12,180}?\b"
         r"(?:Moisturi[sz]er|Serum|Cleanser|Toner|Sunscreen|Mask|Essence|"
         r"Balm|Lotion|Treatment|Eye\s+Cream|Day\s+Cream|Night\s+Cream|"
-        r"Face\s+Oil|Face\s+Wash|Spot\s+Treatment)"
+        r"Face\s+Oil|Face\s+Wash|Spot\s+Treatment|Booster)"
         r"\b[^\n:]{0,80}?)\s*$"
     )
     excluded_prefixes = (
@@ -486,7 +568,7 @@ def _heading_product_suggestion_queries(response: str) -> list[str]:
         query = re.sub(
             r"^(?:recommendation|recommended|suggested\s+(?:product|sunscreen)?|"
             r"product\s+suggestion|suggestion|alternative|second\s+choice|"
-            r"or)\b\s*[-–—:.]*\s*",
+            r"option|or)\b\s*[-–—:.]*\s*",
             "",
             query,
             flags=re.IGNORECASE,
@@ -511,7 +593,7 @@ def _response_product_suggestion_queries(response: str, limit: int | None = None
     for query in _explicit_product_suggestion_queries(response) + _heading_product_suggestion_queries(response):
         cleaned = re.sub(r"\s+", " ", str(query or "")).strip(" -:;.")
         key = product_family_name(cleaned)
-        if not cleaned or not key or key in seen:
+        if not cleaned or not key or key in seen or _looks_like_generic_product_request(cleaned):
             continue
         queries.append(cleaned)
         seen.add(key)
@@ -559,15 +641,17 @@ def _fallback_named_product_cards(
         for product in existing_products or []
         if isinstance(product, dict)
     }
+    existing = [product for product in existing_products or [] if isinstance(product, dict)]
     for query in _response_product_suggestion_queries(response):
         card = _minimal_product_card(query)
         if not card:
             continue
         key = product_family_name(card["product_name"])
-        if key in seen:
+        if key in seen or any(_same_product_family(card, product) for product in existing):
             continue
         cards.append(card)
         seen.add(key)
+        existing.append(card)
         if len(cards) >= limit:
             break
     return cards
@@ -581,6 +665,8 @@ def _resolve_catalog_product_cards_first(
     resolved = []
 
     for candidate in candidate_products:
+        if any(_same_product_family(candidate, product) for product in resolved):
+            continue
         if not _product_named_in_response(candidate, response):
             continue
         product = _find_catalog_product(
@@ -588,11 +674,17 @@ def _resolve_catalog_product_cards_first(
             brand=str(candidate.get("brand") or ""),
             allow_first=False,
         )
-        resolved.append(product or candidate)
+        resolved_product = product or candidate
+        if not any(_same_product_family(resolved_product, existing) for existing in resolved):
+            resolved.append(resolved_product)
         if len(resolved) >= limit:
             return resolved
 
     for query in _response_product_suggestion_queries(response):
+        if _looks_like_generic_product_request(query):
+            continue
+        if any(_same_product_family(query, product) for product in resolved):
+            continue
         product = _find_catalog_product(query, allow_first=True, use_obf=True)
         if product and _product_named_in_response(product, response):
             resolved.append(product)
@@ -628,6 +720,8 @@ def _resolve_llm_product_selection(
                     product = candidate
 
         if product:
+            if any(_same_product_family(product, existing) for existing in resolved):
+                continue
             resolved.append(product)
         if len(resolved) >= limit:
             break

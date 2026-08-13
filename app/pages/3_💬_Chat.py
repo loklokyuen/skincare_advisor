@@ -1,5 +1,6 @@
 import sys
 import uuid
+import re
 from html import escape
 from pathlib import Path
 
@@ -328,19 +329,23 @@ def _render_product_cards(products: list[dict], key_prefix: str):
     st.markdown("---")
     st.caption("Product suggestions")
     for idx, product in enumerate(loaded_products):
+        is_minimal = product.get("source") == "assistant_recommendation"
         with st.container(border=True):
-            image_col, detail_col = st.columns([1, 2])
-            with image_col:
-                image_url = product.get("image_url") or ""
-                if image_url:
-                    st.image(image_url, use_container_width=True)
-                else:
-                    st.markdown(
-                        '<div style="height:120px;background:#f5f5f5;border-radius:8px;'
-                        'display:flex;align-items:center;justify-content:center;'
-                        'color:#bbb;font-size:0.8rem">No image</div>',
-                        unsafe_allow_html=True,
-                    )
+            if not is_minimal:
+                image_col, detail_col = st.columns([1, 2])
+                with image_col:
+                    image_url = product.get("image_url") or ""
+                    if image_url:
+                        st.image(image_url, use_container_width=True)
+                    else:
+                        st.markdown(
+                            '<div style="height:120px;background:#f5f5f5;border-radius:8px;'
+                            'display:flex;align-items:center;justify-content:center;'
+                            'color:#bbb;font-size:0.8rem">No image</div>',
+                            unsafe_allow_html=True,
+                        )
+            else:
+                detail_col = st.container()
 
             with detail_col:
                 name = product.get("product_name", "")
@@ -414,6 +419,7 @@ def _render_assistant_markdown(content: str):
     """Render assistant Markdown, forcing H4 product headings to display as headings."""
     if not content:
         return
+    content = re.sub(r"\\([*_`#[\]()])", r"\1", content)
 
     buffer = []
     for line in content.splitlines():

@@ -260,7 +260,8 @@ def search(query: str, limit: int = 5) -> list[dict]:
         fetch_resp.raise_for_status()
         results = _parse_pubmed_articles(fetch_resp.text, limit, clean_query)
     except Exception:
-        results = []
+        # Do not cache failures (timeout, network error) — let the next call retry.
+        return []
 
     _cache_set(key, results)
     return results

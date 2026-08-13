@@ -25,6 +25,8 @@ from graph.nodes.retrieve_context import (
     _filter_duplicate_retinoids,
     _filter_skin_type_mismatches,
     _rank_products_for_profile,
+    _topic_from_last_ai_message,
+    _GENERIC_FOLLOWUP_RE,
     retrieve_context,
 )
 from graph.nodes.validate_response import (
@@ -232,6 +234,54 @@ def test_cards_for_selected_product_names_resolves_brand_suffix():
     ) == products
 
 
+def test_cards_for_selected_product_names_keeps_second_distinct_product(monkeypatch):
+    ordinary = {
+        "product_name": (
+            "The Ordinary Multi-Peptide + Copper Peptides 1% Serum to Target "
+            "Signs of Aging - 30ml"
+        ),
+        "brand": "The Ordinary",
+        "quantity": "30ml",
+        "image_url": "https://example.com/ordinary.jpg",
+        "key_ingredients": ["Copper Tripeptide-1"],
+    }
+    skin_me = {
+        "product_name": (
+            "Skin + Me Breakouts + Visible Pores Serum, with Azelaic Acid"
+        ),
+        "brand": "Skin + Me",
+        "quantity": "12ml",
+        "image_url": "https://example.com/skin-me.jpg",
+        "key_ingredients": ["Azelaic Acid"],
+    }
+
+    def fake_find_catalog_product(query, *args, **kwargs):
+        if "Skin + Me Breakouts" in query:
+            return skin_me
+        if "Multi-Peptide + Copper Peptides" in query:
+            return ordinary
+        return None
+
+    monkeypatch.setattr(product_tools, "_find_catalog_product", fake_find_catalog_product)
+
+    response = (
+        "The Ordinary Multi-Peptide + Copper Peptides 1% Serum\n"
+        "Peptides support skin firmness.\n\n"
+        "Skin + Me Breakouts + Visible Pores Serum, with Azelaic Acid\n"
+        "Azelaic Acid helps improve skin texture."
+    )
+
+    assert _cards_for_selected_product_names(
+        [
+            "The Ordinary Multi-Peptide + Copper Peptides 1% Serum",
+            "Skin + Me Breakouts + Visible Pores Serum, with Azelaic Acid",
+        ],
+        [ordinary],
+        routine_items=[],
+        response=response,
+    ) == [ordinary, skin_me]
+
+
 def test_product_family_name_removes_size_suffixes():
     assert product_family_name(
         "The Ordinary Multi-Peptide + Hyaluronic Acid Serum for Aging Skin - 30ml"
@@ -240,7 +290,8 @@ def test_product_family_name_removes_size_suffixes():
     )
 
 
-def test_select_recommended_product_cards_dedupes_size_variants():
+def test_select_recommended_product_cards_dedupes_size_variants(monkeypatch):
+    monkeypatch.setattr(product_tools, "search_products", lambda *args, **kwargs: [])
     products = [
         {
             "product_name": "The Ordinary Multi-Peptide + Hyaluronic Acid Serum for Aging Skin - 30ml",
@@ -269,7 +320,8 @@ def test_select_recommended_product_cards_dedupes_size_variants():
     ) == [products[0]]
 
 
-def test_select_recommended_product_cards_handles_brand_suffix_in_suggestion():
+def test_select_recommended_product_cards_handles_brand_suffix_in_suggestion(monkeypatch):
+    monkeypatch.setattr(product_tools, "search_products", lambda *args, **kwargs: [])
     product = {
         "product_name": "The Ordinary Multi-Peptide + Hyaluronic Acid Serum for Aging Skin - 30ml",
         "brand": "The Ordinary",
@@ -316,7 +368,8 @@ def test_select_recommended_product_cards_reads_h4_product_headings(monkeypatch)
     ) == [product]
 
 
-def test_select_recommended_product_cards_matches_combined_size_heading():
+def test_select_recommended_product_cards_matches_combined_size_heading(monkeypatch):
+    monkeypatch.setattr(product_tools, "search_products", lambda *args, **kwargs: [])
     products = [
         {
             "product_name": "The Ordinary Multi-Peptide + Hyaluronic Acid Serum for Aging Skin - 30ml",
@@ -456,6 +509,52 @@ def test_select_recommended_product_cards_resolves_heading_suggestions_from_cata
         ("Clinique Superdefense Night Moisturiser - Combination/Oily", True),
         ("Innisfree Green Tea Enzyme Vitamin C Brightening Toner Pads", True),
     ]
+
+
+def test_select_recommended_product_cards_reads_bold_percent_and_booster_products(monkeypatch):
+    resveratrol = {
+        "product_name": "The Ordinary Resveratrol 3% + Ferulic Acid 3%",
+        "brand": "The Ordinary",
+        "source": "db",
+        "image_url": "https://example.com/resveratrol.jpg",
+    }
+    azelaic = {
+        "product_name": "Paula's Choice 10% Azelaic Acid Booster",
+        "brand": "Paula's Choice",
+        "source": "db",
+        "image_url": "https://example.com/azelaic.jpg",
+    }
+    products_by_query = {
+        resveratrol["product_name"]: [resveratrol],
+        azelaic["product_name"]: [azelaic],
+    }
+
+    def fake_search_products(query, limit=5, use_obf_fallback=True):
+        return products_by_query.get(query, [])
+
+    monkeypatch.setattr(product_tools, "search_products", fake_search_products)
+    monkeypatch.setattr(product_tools, "_ask_product_card_llm", lambda *args, **kwargs: [])
+
+    response = dedent(
+        """
+        Here are two product recommendations that contain the suggested ingredients:
+
+        **The Ordinary Resveratrol 3% + Ferulic Acid 3%**
+        Combines Resveratrol with Ferulic Acid for antioxidant support.
+
+        **Paula's Choice 10% Azelaic Acid Booster**
+        Contains Azelaic Acid to target uneven skin tone and texture.
+        """
+    )
+
+    assert product_tools.select_recommended_product_cards.invoke(
+        {
+            "response": response,
+            "candidate_products": [],
+            "routine_items": [],
+            "limit": 2,
+        }
+    ) == [resveratrol, azelaic]
 
 
 def test_select_recommended_product_cards_returns_minimal_card_when_catalog_misses(monkeypatch):
@@ -1746,3 +1845,193 @@ def test_validate_response_removes_extra_retinoid_when_routine_has_retinol():
         "Because your routine already includes a retinoid, I would not add another retinoid product. "
         "Choose a non-retinoid support step instead, such as hydration or barrier support."
     )
+
+
+# ── Fix: literature_service does not cache API timeouts ───────────────────────
+
+def test_literature_search_does_not_cache_on_exception(monkeypatch):
+    """A timeout/network error must not write an empty list to the 24-hour cache."""
+    import services.literature_service as lit
+    import requests
+
+    lit._CACHE.clear()
+
+    def _raise(*args, **kwargs):
+        raise requests.exceptions.Timeout("simulated timeout")
+
+    monkeypatch.setattr(requests, "get", _raise)
+
+    result = lit.search("PDRN")
+    assert result == []
+    # Cache must stay empty so the next call actually hits the network.
+    assert "pdrn:5" not in lit._CACHE
+
+
+def test_literature_search_caches_real_empty_result(monkeypatch):
+    """A successful API call returning zero IDs should still be cached."""
+    import services.literature_service as lit
+    import requests
+
+    lit._CACHE.clear()
+
+    class _FakeResp:
+        status_code = 200
+        def raise_for_status(self): pass
+        def json(self):
+            return {"esearchresult": {"idlist": []}}
+
+    monkeypatch.setattr(requests, "get", lambda *a, **kw: _FakeResp())
+
+    result = lit.search("PDRN", limit=5)
+    assert result == []
+    # Zero-result successful response IS cached.
+    assert "pdrn:5" in lit._CACHE
+
+
+# ── Fix: keyword_fallback "related products" → recommend ──────────────────────
+
+def test_keyword_fallback_related_products():
+    assert _keyword_fallback("related products") == "recommend"
+
+
+def test_keyword_fallback_show_me_products():
+    assert _keyword_fallback("show me products") == "recommend"
+
+
+def test_keyword_fallback_any_products():
+    assert _keyword_fallback("any products") == "recommend"
+
+
+def test_keyword_fallback_products_for_this():
+    assert _keyword_fallback("products for this") == "recommend"
+
+
+def test_keyword_fallback_where_to_buy():
+    assert _keyword_fallback("where to buy") == "recommend"
+
+
+# ── Fix: _topic_from_last_ai_message extracts context ────────────────────────
+
+def test_topic_from_last_ai_message_h4_heading():
+    """Extracts first non-generic H4 heading from last AI message."""
+    from langchain_core.messages import AIMessage, HumanMessage
+
+    state = {
+        "messages": [
+            HumanMessage(content="what is PDRN?"),
+            AIMessage(content="#### PDRN\n\n- **PDRN** (Polydeoxyribonucleotide) is a DNA-derived ingredient.\n\n#### How It Works\n\n- Supports tissue regeneration."),
+        ]
+    }
+    topic = _topic_from_last_ai_message(state)
+    assert topic == "PDRN"
+
+
+def test_topic_from_last_ai_message_skips_generic_headings():
+    """Generic section headings (What It Is, How It Works, etc.) are skipped."""
+    from langchain_core.messages import AIMessage
+
+    state = {
+        "messages": [
+            AIMessage(content="#### What It Is\n\nSome ingredient info.\n\n#### How It Works\n\nDetails here."),
+        ]
+    }
+    # All headings are generic → falls back to first line
+    topic = _topic_from_last_ai_message(state)
+    assert topic is not None
+    # Should be the first non-heading line or first sentence (not a heading itself)
+
+
+def test_topic_from_last_ai_message_no_messages():
+    assert _topic_from_last_ai_message({"messages": []}) is None
+    assert _topic_from_last_ai_message({}) is None
+
+
+def test_topic_from_last_ai_message_only_human_messages():
+    from langchain_core.messages import HumanMessage
+
+    state = {"messages": [HumanMessage(content="hello")]}
+    assert _topic_from_last_ai_message(state) is None
+
+
+# ── Fix: _build_recommendation_query enriches short follow-up with context ────
+
+def test_build_recommendation_query_enriches_related_products():
+    """'related products' message is enriched with topic from last AI message."""
+    from langchain_core.messages import AIMessage, HumanMessage
+
+    state = {
+        "message": "related products",
+        "mode": "recommend",
+        "messages": [
+            HumanMessage(content="what is PDRN?"),
+            AIMessage(content="#### PDRN\n\n- PDRN is a DNA-derived ingredient used in dermatology."),
+        ],
+        "user_profile": {},
+        "user_routine": {},
+    }
+    query = _build_recommendation_query(state)
+    assert "pdrn" in query.lower()
+
+
+def test_build_recommendation_query_unaffected_for_specific_message():
+    """A specific, non-generic message is NOT modified by the enrichment logic."""
+    from langchain_core.messages import AIMessage
+
+    state = {
+        "message": "suggest a vitamin C serum for oily skin",
+        "mode": "recommend",
+        "messages": [
+            AIMessage(content="#### PDRN\n\n- ..."),
+        ],
+        "user_profile": {},
+        "user_routine": {},
+    }
+    query = _build_recommendation_query(state)
+    assert "vitamin c" in query.lower()
+    # PDRN should NOT appear — specific message was not replaced
+    assert "pdrn" not in query.lower()
+
+
+def test_build_recommendation_query_no_history_uses_message():
+    """Without conversation history the query stays unchanged."""
+    state = {
+        "message": "related products",
+        "mode": "recommend",
+        "messages": [],
+        "user_profile": {},
+        "user_routine": {},
+    }
+    query = _build_recommendation_query(state)
+    # No topic injected, original message preserved
+    assert "related products" in query.lower()
+
+
+# ── Fix: _GENERIC_FOLLOWUP_RE matches expected phrases ───────────────────────
+
+def test_generic_followup_re_matches():
+    matches = [
+        "related products",
+        "related product",
+        "products for this",
+        "products for it",
+        "show me products",
+        "any products",
+        "what products",
+        "more products",
+        "other products",
+        "alternatives",
+    ]
+    for phrase in matches:
+        assert _GENERIC_FOLLOWUP_RE.match(phrase), f"Expected match for: {phrase!r}"
+
+
+def test_generic_followup_re_no_match_for_specific():
+    no_matches = [
+        "suggest a vitamin C serum",
+        "what is PDRN",
+        "analyse my routine",
+        "retinol for acne",
+        "products with niacinamide for oily skin",
+    ]
+    for phrase in no_matches:
+        assert not _GENERIC_FOLLOWUP_RE.match(phrase), f"Expected no match for: {phrase!r}"

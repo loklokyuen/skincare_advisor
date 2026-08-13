@@ -389,6 +389,12 @@ def _build_context_block(state: GraphState) -> str:
                 "category, or routine adjustment instead."
             )
         else:
+            lines.append(
+                "\n## Context boundary\n"
+                "The only products the user currently uses are listed under \"Current routine products\". "
+                "Instruction: Products below are not part of the current routine unless they also appear "
+                "under Current routine products."
+            )
             lines.append("\n## Products mentioned by user (analyse each in depth)")
         for idx, p in enumerate(matched_products[:10]):
             name = p.get("product_name", "")
