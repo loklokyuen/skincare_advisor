@@ -2,7 +2,7 @@
 
 A personalised skincare advisor built with LangGraph, OpenAI, and Streamlit. It maintains a user profile and routine, retrieves relevant products and ingredient evidence, and answers questions in one of four modes depending on what the user is asking.
 
-[Live Demo](https://skincare-advisor-405192745511.europe-west2.run.app)
+[Live Demo](https://skiniq-advisor.streamlit.app/)
 
 ## What it does
 
